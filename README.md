@@ -6,19 +6,21 @@ Visual Studio project and patch files for Jonathan Shewchuk's Triangle mesh gene
 ##Instructions.
 
 1. Download the current Triangle release form http://www.cs.cmu.edu/~quake/triangle.html (version 1.6, released 07/28/2005)
-2. Replace the triangle.h and triangle.c files with the ones from the Triangle archive.
-3. Apply patches triangle.h.patch and triangle.c.patch.
+2. Replace the *triangle.h* and *triangle.c* files with the ones from the Triangle archive.
+3. Apply patches *triangle.h.patch* and *triangle.c.patch*.
 4. Download the current aCute release form https://www.cise.ufl.edu/~ungor/aCute/download.html (version 1.0, released 06/15/2009)
-5. Replace newSPLocation.h with the one from the aCute archive.
-6. Apply patch newSPLocation.h.patch.
+5. Replace *newSPLocation.h* with the one from the aCute archive.
+6. Apply patch *newSPLocation.h.patch*.
 7. Build the DLL using the Visual Studio project.
 
-**Remark** If you don't want to use the aCute extension, use the triangle.c.patch-x file in step 3 and ignore steps 4-6.
+**Remarks.**
+ - If you don't want to use the aCute extension, use the *triangle.c.patch-x* file in step 3 and ignore steps 4-6.
+ - If you need a tool for applying the patch files, try http://wo80.bplaced.net/projects/patch/
 
 ##Patches.
 
 triangle.h.patch:
- - adds the "errorcode" field to triangulateio struct
+ - adds an integer 'errorcode' field to triangulateio struct
  - adds __declspec(dllexport) to exported methods
  
 triangle.c.patch:
