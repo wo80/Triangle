@@ -1,0 +1,566 @@
+diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
+--- D:/Projekte/Triangle/src/triangle.c	Thu Jul 28 15:11:32 2005
++++ D:/Projekte/Triangle/new/triangle.c	Sun Mar 23 16:50:37 2014
+@@ -208,6 +208,14 @@
+ /*   recommend double precision unless you want to generate a mesh for which */
+ /*   you do not have enough memory.                                          */
+ 
++/* Error codes */
++
++#define ERR_CMD_LINE 1
++#define ERR_SPLIT_ENC_SEGS 2
++#define ERR_FIND_DIRECTION 3
++#define ERR_SEG_INTERSECTION 4
++#define ERR_SEG_INSERT 5
++
+ /* #define SINGLE */
+ 
+ #ifdef SINGLE
+@@ -216,10 +224,12 @@
+ #define REAL double
+ #endif /* not SINGLE */
+ 
++#define ANSI_DECLARATORS
++
+ /* If yours is not a Unix system, define the NO_TIMER compiler switch to     */
+ /*   remove the Unix-specific timing code.                                   */
+ 
+-/* #define NO_TIMER */
++#define NO_TIMER
+ 
+ /* To insert lots of self-checks for internal errors, define the SELF_CHECK  */
+ /*   symbol.  This will slow down the program significantly.  It is best to  */
+@@ -233,7 +243,7 @@
+ /*   TRILIBRARY symbol.  Read the file triangle.h for details on how to call */
+ /*   the procedure triangulate() that results.                               */
+ 
+-/* #define TRILIBRARY */
++#define TRILIBRARY
+ 
+ /* It is possible to generate a smaller version of Triangle using one or     */
+ /*   both of the following symbols.  Define the REDUCED symbol to eliminate  */
+@@ -245,7 +255,7 @@
+ /*   generating an object library (triangle.o) by defining the TRILIBRARY    */
+ /*   symbol.                                                                 */
+ 
+-/* #define REDUCED */
++#define REDUCED
+ /* #define CDT_ONLY */
+ 
+ /* On some machines, my exact arithmetic routines might be defeated by the   */
+@@ -3280,7 +3290,7 @@
+ /*****************************************************************************/
+ 
+ #ifdef ANSI_DECLARATORS
+-void parsecommandline(int argc, char **argv, struct behavior *b)
++void parsecommandline(int argc, char **argv, struct behavior *b, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void parsecommandline(argc, argv, b)
+ int argc;
+@@ -3366,8 +3376,13 @@
+             workstring[k] = '\0';
+             b->maxarea = (REAL) strtod(workstring, (char **) NULL);
+             if (b->maxarea <= 0.0) {
++#ifndef TRILIBRARY
+               printf("Error:  Maximum area must be greater than zero.\n");
+               triexit(1);
++#else
++              *err = ERR_CMD_LINE;
++              return;
++#endif
+ 	    }
+ 	  } else {
+             b->vararea = 1;
+@@ -3527,9 +3542,14 @@
+   }
+   b->goodangle *= b->goodangle;
+   if (b->refine && b->noiterationnum) {
++#ifndef TRILIBRARY
+     printf(
+       "Error:  You cannot use the -I switch when refining a triangulation.\n");
+     triexit(1);
++#else
++    *err = ERR_CMD_LINE;
++    return;
++#endif
+   }
+   /* Be careful not to allocate space for element area constraints that */
+   /*   will never be assigned any value (other than the default -1.0).  */
+@@ -5161,10 +5181,10 @@
+   INEXACT REAL detleft, detright;
+   REAL detlefttail, detrighttail;
+   REAL det, errbound;
+-  REAL B[4], C1[8], C2[12], D[16];
++  REAL B[5], C1[8], C2[12], D[16];
+   INEXACT REAL B3;
+   int C1length, C2length, Dlength;
+-  REAL u[4];
++  REAL u[5];
+   INEXACT REAL u3;
+   INEXACT REAL s1, t1;
+   REAL s0, t0;
+@@ -5341,7 +5361,7 @@
+   INEXACT REAL aa3, bb3, cc3;
+   INEXACT REAL ti1, tj1;
+   REAL ti0, tj0;
+-  REAL u[4], v[4];
++  REAL u[5], v[5];
+   INEXACT REAL u3, v3;
+   REAL temp8[8], temp16a[16], temp16b[16], temp16c[16];
+   REAL temp32a[32], temp32b[32], temp48[48], temp64[64];
+@@ -6951,7 +6971,7 @@
+     length *= multiplier;
+   }
+   /* `length' is approximately squareroot(2.0) to what exponent? */
+-  exponent = 2.0 * exponent + (length > SQUAREROOTTWO);
++  exponent = 2 * exponent + (length > SQUAREROOTTWO);
+   /* `exponent' is now in the range 0...2047 for IEEE double precision.   */
+   /*   Choose a queue in the range 0...4095.  The shortest edges have the */
+   /*   highest priority (queue 4095).                                     */
+@@ -11592,7 +11612,7 @@
+ #ifdef ANSI_DECLARATORS
+ enum finddirectionresult finddirection(struct mesh *m, struct behavior *b,
+                                        struct otri *searchtri,
+-                                       vertex searchpoint)
++                                       vertex searchpoint, int *err)
+ #else /* not ANSI_DECLARATORS */
+ enum finddirectionresult finddirection(m, b, searchtri, searchpoint)
+ struct mesh *m;
+@@ -11632,11 +11652,16 @@
+     /* Turn left until satisfied. */
+     onextself(*searchtri);
+     if (searchtri->tri == m->dummytri) {
++#ifndef TRILIBRARY
+       printf("Internal error in finddirection():  Unable to find a\n");
+       printf("  triangle leading from (%.12g, %.12g) to", startvertex[0],
+              startvertex[1]);
+       printf("  (%.12g, %.12g).\n", searchpoint[0], searchpoint[1]);
+       internalerror();
++#else
++      *err = ERR_FIND_DIRECTION;
++	  return WITHIN;
++#endif
+     }
+     apex(*searchtri, leftvertex);
+     rightccw = leftccw;
+@@ -11647,11 +11672,16 @@
+     /* Turn right until satisfied. */
+     oprevself(*searchtri);
+     if (searchtri->tri == m->dummytri) {
++#ifndef TRILIBRARY
+       printf("Internal error in finddirection():  Unable to find a\n");
+       printf("  triangle leading from (%.12g, %.12g) to", startvertex[0],
+              startvertex[1]);
+       printf("  (%.12g, %.12g).\n", searchpoint[0], searchpoint[1]);
+       internalerror();
++#else
++      *err = ERR_FIND_DIRECTION;
++	  return WITHIN;
++#endif
+     }
+     dest(*searchtri, rightvertex);
+     leftccw = rightccw;
+@@ -11687,7 +11717,7 @@
+ #ifdef ANSI_DECLARATORS
+ void segmentintersection(struct mesh *m, struct behavior *b,
+                          struct otri *splittri, struct osub *splitsubseg,
+-                         vertex endpoint2)
++                         vertex endpoint2, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void segmentintersection(m, b, splittri, splitsubseg, endpoint2)
+ struct mesh *m;
+@@ -11726,9 +11756,14 @@
+   ety = torg[1] - endpoint2[1];
+   denom = ty * ex - tx * ey;
+   if (denom == 0.0) {
++#ifndef TRILIBRARY
+     printf("Internal error in segmentintersection():");
+     printf("  Attempt to find intersection of parallel segments.\n");
+     internalerror();
++#else
++      *err = ERR_SEG_INTERSECTION;
++	  return;
++#endif
+   }
+   split = (ey * etx - ex * ety) / denom;
+   /* Create the new vertex. */
+@@ -11747,9 +11782,14 @@
+   /* Insert the intersection vertex.  This should always succeed. */
+   success = insertvertex(m, b, newvertex, splittri, splitsubseg, 0, 0);
+   if (success != SUCCESSFULVERTEX) {
++#ifndef TRILIBRARY
+     printf("Internal error in segmentintersection():\n");
+     printf("  Failure to split a segment.\n");
+     internalerror();
++#else
++      *err = ERR_SEG_INTERSECTION;
++	  return;
++#endif
+   }
+   /* Record a triangle whose origin is the new vertex. */
+   setvertex2tri(newvertex, encode(*splittri));
+@@ -11773,16 +11813,24 @@
+ 
+   /* Inserting the vertex may have caused edge flips.  We wish to rediscover */
+   /*   the edge connecting endpoint1 to the new intersection vertex.         */
+-  collinear = finddirection(m, b, splittri, endpoint1);
++  collinear = finddirection(m, b, splittri, endpoint1, err);
++#ifdef TRILIBRARY
++  if (*err > 0) return;
++#endif
+   dest(*splittri, rightvertex);
+   apex(*splittri, leftvertex);
+   if ((leftvertex[0] == endpoint1[0]) && (leftvertex[1] == endpoint1[1])) {
+     onextself(*splittri);
+   } else if ((rightvertex[0] != endpoint1[0]) ||
+              (rightvertex[1] != endpoint1[1])) {
++#ifndef TRILIBRARY
+     printf("Internal error in segmentintersection():\n");
+     printf("  Topological inconsistency after splitting a segment.\n");
+     internalerror();
++#else
++      *err = ERR_SEG_INTERSECTION;
++	  return;
++#endif
+   }
+   /* `splittri' should have destination endpoint1. */
+ }
+@@ -11813,7 +11861,7 @@
+ 
+ #ifdef ANSI_DECLARATORS
+ int scoutsegment(struct mesh *m, struct behavior *b, struct otri *searchtri,
+-                 vertex endpoint2, int newmark)
++                 vertex endpoint2, int newmark, int *err)
+ #else /* not ANSI_DECLARATORS */
+ int scoutsegment(m, b, searchtri, endpoint2, newmark)
+ struct mesh *m;
+@@ -11830,7 +11878,10 @@
+   enum finddirectionresult collinear;
+   subseg sptr;                      /* Temporary variable used by tspivot(). */
+ 
+-  collinear = finddirection(m, b, searchtri, endpoint2);
++  collinear = finddirection(m, b, searchtri, endpoint2, err);
++#ifdef TRILIBRARY
++  if (*err > 0) return -1;
++#endif
+   dest(*searchtri, rightvertex);
+   apex(*searchtri, leftvertex);
+   if (((leftvertex[0] == endpoint2[0]) && (leftvertex[1] == endpoint2[1])) ||
+@@ -11848,14 +11899,14 @@
+     lprevself(*searchtri);
+     insertsubseg(m, b, searchtri, newmark);
+     /* Insert the remainder of the segment. */
+-    return scoutsegment(m, b, searchtri, endpoint2, newmark);
++    return scoutsegment(m, b, searchtri, endpoint2, newmark, err);
+   } else if (collinear == RIGHTCOLLINEAR) {
+     /* We've collided with a vertex between the segment's endpoints. */
+     insertsubseg(m, b, searchtri, newmark);
+     /* Make the collinear vertex be the triangle's origin. */
+     lnextself(*searchtri);
+     /* Insert the remainder of the segment. */
+-    return scoutsegment(m, b, searchtri, endpoint2, newmark);
++    return scoutsegment(m, b, searchtri, endpoint2, newmark, err);
+   } else {
+     lnext(*searchtri, crosstri);
+     tspivot(crosstri, crosssubseg);
+@@ -11864,11 +11915,14 @@
+       return 0;
+     } else {
+       /* Insert a vertex at the intersection. */
+-      segmentintersection(m, b, &crosstri, &crosssubseg, endpoint2);
++      segmentintersection(m, b, &crosstri, &crosssubseg, endpoint2, err);
++#ifdef TRILIBRARY
++      if (*err > 0) return -1;
++#endif
+       otricopy(crosstri, *searchtri);
+       insertsubseg(m, b, searchtri, newmark);
+       /* Insert the remainder of the segment. */
+-      return scoutsegment(m, b, searchtri, endpoint2, newmark);
++      return scoutsegment(m, b, searchtri, endpoint2, newmark, err);
+     }
+   }
+ }
+@@ -12147,7 +12201,7 @@
+ 
+ #ifdef ANSI_DECLARATORS
+ void constrainededge(struct mesh *m, struct behavior *b,
+-                     struct otri *starttri, vertex endpoint2, int newmark)
++                     struct otri *starttri, vertex endpoint2, int newmark, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void constrainededge(m, b, starttri, endpoint2, newmark)
+ struct mesh *m;
+@@ -12223,7 +12277,7 @@
+           /* We've collided with a segment between endpoint1 and endpoint2. */
+           collision = 1;
+           /* Insert a vertex at the intersection. */
+-          segmentintersection(m, b, &fixuptri, &crosssubseg, endpoint2);
++          segmentintersection(m, b, &fixuptri, &crosssubseg, endpoint2, err);
+           done = 1;
+         }
+       }
+@@ -12235,8 +12289,8 @@
+   /*   segment connecting that vertex with endpoint2.                     */
+   if (collision) {
+     /* Insert the remainder of the segment. */
+-    if (!scoutsegment(m, b, &fixuptri, endpoint2, newmark)) {
+-      constrainededge(m, b, &fixuptri, endpoint2, newmark);
++    if (!scoutsegment(m, b, &fixuptri, endpoint2, newmark, err)) {
++      constrainededge(m, b, &fixuptri, endpoint2, newmark, err);
+     }
+   }
+ }
+@@ -12249,7 +12303,7 @@
+ 
+ #ifdef ANSI_DECLARATORS
+ void insertsegment(struct mesh *m, struct behavior *b,
+-                   vertex endpoint1, vertex endpoint2, int newmark)
++                   vertex endpoint1, vertex endpoint2, int newmark, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void insertsegment(m, b, endpoint1, endpoint2, newmark)
+ struct mesh *m;
+@@ -12284,18 +12338,23 @@
+     symself(searchtri1);
+     /* Search for the segment's first endpoint by point location. */
+     if (locate(m, b, endpoint1, &searchtri1) != ONVERTEX) {
++#ifndef TRILIBRARY
+       printf(
+         "Internal error in insertsegment():  Unable to locate PSLG vertex\n");
+       printf("  (%.12g, %.12g) in triangulation.\n",
+              endpoint1[0], endpoint1[1]);
+       internalerror();
++#else
++      *err = ERR_SEG_INSERT;
++	  return;
++#endif
+     }
+   }
+   /* Remember this triangle to improve subsequent point location. */
+   otricopy(searchtri1, m->recenttri);
+   /* Scout the beginnings of a path from the first endpoint */
+   /*   toward the second.                                   */
+-  if (scoutsegment(m, b, &searchtri1, endpoint2, newmark)) {
++  if (scoutsegment(m, b, &searchtri1, endpoint2, newmark, err)) {
+     /* The segment was easily inserted. */
+     return;
+   }
+@@ -12317,18 +12376,23 @@
+     symself(searchtri2);
+     /* Search for the segment's second endpoint by point location. */
+     if (locate(m, b, endpoint2, &searchtri2) != ONVERTEX) {
++#ifndef TRILIBRARY
+       printf(
+         "Internal error in insertsegment():  Unable to locate PSLG vertex\n");
+       printf("  (%.12g, %.12g) in triangulation.\n",
+              endpoint2[0], endpoint2[1]);
+       internalerror();
++#else
++      *err = ERR_SEG_INSERT;
++	  return;
++#endif
+     }
+   }
+   /* Remember this triangle to improve subsequent point location. */
+   otricopy(searchtri2, m->recenttri);
+   /* Scout the beginnings of a path from the second endpoint */
+   /*   toward the first.                                     */
+-  if (scoutsegment(m, b, &searchtri2, endpoint1, newmark)) {
++  if (scoutsegment(m, b, &searchtri2, endpoint1, newmark, err)) {
+     /* The segment was easily inserted. */
+     return;
+   }
+@@ -12345,7 +12409,7 @@
+ #endif /* not CDT_ONLY */
+ #endif /* not REDUCED */
+     /* Insert the segment directly into the triangulation. */
+-    constrainededge(m, b, &searchtri1, endpoint2, newmark);
++    constrainededge(m, b, &searchtri1, endpoint2, newmark, err);
+ #ifndef REDUCED
+ #ifndef CDT_ONLY
+   }
+@@ -12407,7 +12471,7 @@
+ 
+ #ifdef ANSI_DECLARATORS
+ void formskeleton(struct mesh *m, struct behavior *b, int *segmentlist,
+-                  int *segmentmarkerlist, int numberofsegments)
++                  int *segmentmarkerlist, int numberofsegments, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void formskeleton(m, b, segmentlist, segmentmarkerlist, numberofsegments)
+ struct mesh *m;
+@@ -12451,7 +12515,7 @@
+       printf("Recovering segments in Delaunay triangulation.\n");
+     }
+ #ifdef TRILIBRARY
+-    strcpy(polyfilename, "input");
++    strcpy_s(polyfilename, 6, "input");
+     m->insegments = numberofsegments;
+     segmentmarkers = segmentmarkerlist != (int *) NULL;
+     index = 0;
+@@ -12540,7 +12604,10 @@
+                    b->firstnumber + i, polyfilename);
+           }
+         } else {
+-          insertsegment(m, b, endpoint1, endpoint2, boundmarker);
++          insertsegment(m, b, endpoint1, endpoint2, boundmarker, err);
++#ifdef TRILIBRARY
++          if (*err > 0) return;
++#endif
+         }
+       }
+     }
+@@ -13233,7 +13300,7 @@
+ #ifndef CDT_ONLY
+ 
+ #ifdef ANSI_DECLARATORS
+-void splitencsegs(struct mesh *m, struct behavior *b, int triflaws)
++void splitencsegs(struct mesh *m, struct behavior *b, int triflaws, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void splitencsegs(m, b, triflaws)
+ struct mesh *m;
+@@ -13403,6 +13470,7 @@
+         /* Check whether the new vertex lies on an endpoint. */
+         if (((newvertex[0] == eorg[0]) && (newvertex[1] == eorg[1])) ||
+             ((newvertex[0] == edest[0]) && (newvertex[1] == edest[1]))) {
++#ifndef TRILIBRARY
+           printf("Error:  Ran out of precision at (%.12g, %.12g).\n",
+                  newvertex[0], newvertex[1]);
+           printf("I attempted to split a segment to a smaller size than\n");
+@@ -13410,14 +13478,23 @@
+           printf("  floating point arithmetic.\n");
+           precisionerror();
+           triexit(1);
++#else
++          *err = ERR_SPLIT_ENC_SEGS;
++		  return;
++#endif
+         }
+         /* Insert the splitting vertex.  This should always succeed. */
+         success = insertvertex(m, b, newvertex, &enctri, &currentenc,
+                                1, triflaws);
+         if ((success != SUCCESSFULVERTEX) && (success != ENCROACHINGVERTEX)) {
++#ifndef TRILIBRARY
+           printf("Internal error in splitencsegs():\n");
+           printf("  Failure to split a segment.\n");
+           internalerror();
++#else
++          *err = ERR_SPLIT_ENC_SEGS;
++		  return;
++#endif
+         }
+         if (m->steinerleft > 0) {
+           m->steinerleft--;
+@@ -13610,7 +13687,7 @@
+ #ifndef CDT_ONLY
+ 
+ #ifdef ANSI_DECLARATORS
+-void enforcequality(struct mesh *m, struct behavior *b)
++void enforcequality(struct mesh *m, struct behavior *b, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void enforcequality(m, b)
+ struct mesh *m;
+@@ -13636,7 +13713,10 @@
+     printf("  Splitting encroached subsegments.\n");
+   }
+   /* Fix encroached subsegments without noting bad triangles. */
+-  splitencsegs(m, b, 0);
++  splitencsegs(m, b, 0, err);
++#ifdef TRILIBRARY
++  if (*err > 0) return;
++#endif
+   /* At this point, if we haven't run out of Steiner points, the */
+   /*   triangulation should be (conforming) Delaunay.            */
+ 
+@@ -13668,7 +13748,10 @@
+         enqueuebadtriang(m, b, badtri);
+         /* Fix any encroached subsegments that resulted. */
+         /*   Record any new bad triangles that result.   */
+-        splitencsegs(m, b, 1);
++        splitencsegs(m, b, 1, err);
++#ifdef TRILIBRARY
++        if (*err > 0) return;
++#endif
+       } else {
+         /* Return the bad triangle to the pool. */
+         pooldealloc(&m->badtriangles, (VOID *) badtri);
+@@ -15338,6 +15421,7 @@
+ /*                                                                           */
+ /*****************************************************************************/
+ 
++#ifndef TRILIBRARY
+ #ifdef ANSI_DECLARATORS
+ void quality_statistics(struct mesh *m, struct behavior *b)
+ #else /* not ANSI_DECLARATORS */
+@@ -15637,6 +15721,7 @@
+     printf("\n");
+   }
+ }
++#endif /* not TRILIBRARY */
+ 
+ /*****************************************************************************/
+ /*                                                                           */
+@@ -15693,6 +15778,7 @@
+   struct behavior b;
+   REAL *holearray;                                        /* Array of holes. */
+   REAL *regionarray;   /* Array of regional attributes and area constraints. */
++  int err;
+ #ifndef TRILIBRARY
+   FILE *polyfile;
+ #endif /* not TRILIBRARY */
+@@ -15706,10 +15792,14 @@
+ #ifndef NO_TIMER
+   gettimeofday(&tv0, &tz);
+ #endif /* not NO_TIMER */
+-
+   triangleinit(&m);
+ #ifdef TRILIBRARY
+-  parsecommandline(1, &triswitches, &b);
++  out->errorcode = err = 0;
++  parsecommandline(1, &triswitches, &b, &err);
++  if (err > 0) {
++    out->errorcode = err;
++    return;
++  }
+ #else /* not TRILIBRARY */
+   parsecommandline(argc, argv, &b);
+ #endif /* not TRILIBRARY */
+@@ -15775,7 +15865,12 @@
+       /* Insert PSLG segments and/or convex hull segments. */
+ #ifdef TRILIBRARY
+       formskeleton(&m, &b, in->segmentlist,
+-                   in->segmentmarkerlist, in->numberofsegments);
++                   in->segmentmarkerlist, in->numberofsegments, &err);
++      if (err > 0) {
++        triangledeinit(&m, &b); /* TODO: triangledeinit ok? */
++        out->errorcode = err;
++        return;
++      }
+ #else /* not TRILIBRARY */
+       formskeleton(&m, &b, polyfile, b.inpolyfilename);
+ #endif /* not TRILIBRARY */
+@@ -15827,7 +15922,14 @@
+ 
+ #ifndef CDT_ONLY
+   if (b.quality && (m.triangles.items > 0)) {
+-    enforcequality(&m, &b);           /* Enforce angle and area constraints. */
++    enforcequality(&m, &b, &err);           /* Enforce angle and area constraints. */
++#ifdef TRILIBRARY
++    if (err > 0) {
++      triangledeinit(&m, &b); /* TODO: triangledeinit ok? */
++      out->errorcode = err;
++      return;
++    }
++#endif
+   }
+ #endif /* not CDT_ONLY */
+ 
+@@ -15988,8 +16090,10 @@
+            1000l * (tv6.tv_sec - tv0.tv_sec) +
+            (tv6.tv_usec - tv0.tv_usec) / 1000l);
+ #endif /* not NO_TIMER */
+-
++	
++#ifndef TRILIBRARY
+     statistics(&m, &b);
++#endif /* not TRILIBRARY */
+   }
+ 
+ #ifndef REDUCED

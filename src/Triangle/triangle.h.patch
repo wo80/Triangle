@@ -1,0 +1,19 @@
+diff u3 D:/Projekte/Triangle/src/triangle.h D:/Projekte/Triangle/new/triangle.h
+--- D:/Projekte/Triangle/src/triangle.h	Thu Jul 28 11:33:42 2005
++++ D:/Projekte/Triangle/new/triangle.h	Thu Dec 05 12:48:22 2013
+@@ -277,12 +277,12 @@
+   int *edgemarkerlist;            /* Not used with Voronoi diagram; out only */
+   REAL *normlist;                /* Used only with Voronoi diagram; out only */
+   int numberofedges;                                             /* Out only */
++  int errorcode;                                                 /* Out only */
+ };
+ 
+ #ifdef ANSI_DECLARATORS
+-void triangulate(char *, struct triangulateio *, struct triangulateio *,
+-                 struct triangulateio *);
+-void trifree(VOID *memptr);
++__declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *, struct triangulateio *);
++__declspec(dllexport) void __cdecl trifree(VOID *memptr);
+ #else /* not ANSI_DECLARATORS */
+ void triangulate();
+ void trifree();
