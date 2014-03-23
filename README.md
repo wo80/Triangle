@@ -1,7 +1,10 @@
 Triangle
 ========
 
-Visual Studio project and patch files for Jonathan Shewchuk's Triangle mesh generator.
+From http://www.cs.cmu.edu/~quake/triangle.html:
+> Triangle generates exact Delaunay triangulations, constrained Delaunay triangulations, conforming Delaunay triangulations, Voronoi diagrams, and high-quality triangular meshes. The latter can be generated with no small or large angles, and are thus suitable for finite element analysis.
+
+The original code even allows for building DLLs by using the TRILIBRARY symbol. There is however a problem, since error handling is done by printing a message to console and then calling ```exit(1)```. The main goal of this project is to introduce error codes and return them to the calling code, so using the librray form a GUI is safe.
 
 ##Instructions.
 
@@ -16,11 +19,12 @@ Visual Studio project and patch files for Jonathan Shewchuk's Triangle mesh gene
 **Remarks.**
  - If you don't want to use the aCute extension, use the *triangle.c.patch-x* file in step 3 and ignore steps 4-6.
  - If you need a tool for applying the patch files, try http://wo80.bplaced.net/projects/patch/
+ - To compile the project, you can use [Microsoft Visual Studio Express 2013 for Windows Desktop](http://www.visualstudio.com/downloads/download-visual-studio-vs#d-express-windows-desktop).
 
 ##Patches.
 
 triangle.h.patch:
- - adds an integer 'errorcode' field to triangulateio struct
+ - adds an integer "errorcode" field to triangulateio struct
  - adds __declspec(dllexport) to exported methods
  
 triangle.c.patch:
@@ -35,3 +39,7 @@ newSPLocation.h
  - corrects some conditionals in doSmoothing
  - removes unused variables, initializes some pointers to NULL
  - removes statistic functions (using TRILIBRARY symbol)
+
+##License.
+
+The patch files are released to the public domain without any special license. Note, however, that the original code and produced binaries will stay under the license/copyright the orignal authors intended. Particularly, make sure to have a look at the README incuded in the Triangle archive.
