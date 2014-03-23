@@ -4,7 +4,7 @@ Triangle
 From http://www.cs.cmu.edu/~quake/triangle.html:
 > Triangle generates exact Delaunay triangulations, constrained Delaunay triangulations, conforming Delaunay triangulations, Voronoi diagrams, and high-quality triangular meshes. The latter can be generated with no small or large angles, and are thus suitable for finite element analysis.
 
-The original code even allows for building DLLs by using the TRILIBRARY symbol. There is however a problem, since error handling is done by printing a message to console and then calling ```exit(1)```. The main goal of this project is to introduce error codes and return them to the calling code, so using the library form a GUI should be safe.
+The original code even allows for building DLLs by using the TRILIBRARY symbol. There is however a problem, since error handling is done by printing a message to console and then calling ```exit(1)```. The main goal of this project is to introduce error codes and return them to the calling code, so using the library from a GUI should be safe.
 
 ##Instructions.
 
