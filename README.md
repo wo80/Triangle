@@ -42,4 +42,4 @@ newSPLocation.h
 
 ##License.
 
-The patch files are released to the public domain without any special license. Note, however, that the original code and produced binaries will stay under the license/copyright the orignal authors intended. Particularly, make sure to have a look at the README included in the Triangle archive.
+The patch files are released to the public domain without any special license. Note, however, that the original code and produced binaries will stay under the license/copyright the original authors intended. Particularly, make sure to have a look at the README included in the Triangle archive.
