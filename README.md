@@ -4,7 +4,7 @@ Triangle
 From http://www.cs.cmu.edu/~quake/triangle.html:
 > Triangle generates exact Delaunay triangulations, constrained Delaunay triangulations, conforming Delaunay triangulations, Voronoi diagrams, and high-quality triangular meshes. The latter can be generated with no small or large angles, and are thus suitable for finite element analysis.
 
-The original code even allows for building DLLs by using the TRILIBRARY symbol. There is however a problem, since error handling is done by printing a message to console and then calling ```exit(1)```. The main goal of this project is to introduce error codes and return them to the calling code, so using the library from a GUI should be safe.
+The original code already allows for building a DLL by using the TRILIBRARY symbol. There is however a problem, since error handling is done by printing a message to console and then calling ```exit(1)```. The main goal of this project is to introduce error codes and return them to the calling code, so using the library from a GUI should be safe.
 
 ##Instructions.
 
@@ -17,7 +17,7 @@ The original code even allows for building DLLs by using the TRILIBRARY symbol. 
 7. Build the DLL using the Visual Studio project.
 
 **Remarks.**
- - If you don't want to use the aCute extension, use the *triangle.c.patch-x* file in step 3 and ignore steps 4-6.
+ - If you don't want to use the aCute extension, use the *triangle.c.patch-x* file in step 3, ignore steps 4-6 and remove *acute.h* from the Visual Studio project.
  - If you need a tool for applying the patch files, try http://wo80.bplaced.net/projects/patch/
  - To compile the project, you can use [Microsoft Visual Studio Express 2013 for Windows Desktop](http://www.visualstudio.com/downloads/download-visual-studio-vs#d-express-windows-desktop).
 
