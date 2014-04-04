@@ -357,17 +357,17 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
 +		/* The edge opposite the apex is longest. */
 +		maxedge = apexlen;
 +		/* Find the cosine of the angle at the apex. */
-+		maxangle = (orglen + destlen - apexlen)/ (2*sqrt(orglen)*sqrt(destlen));	
++		maxangle = (orglen + destlen - apexlen)/ (2*sqrt(orglen*destlen));	
 +	} else if (orglen > destlen) {
 +		/* The edge opposite the origin is longest. */
 +		maxedge = orglen;
 +		/* Find the cosine of the angle at the origin. */
-+		maxangle = (apexlen + destlen - orglen)/(2*sqrt(apexlen)*sqrt(destlen));
++		maxangle = (apexlen + destlen - orglen)/(2*sqrt(apexlen*destlen));
 +	} else {
 +		/* The edge opposite the destination is longest. */
 +		maxedge = destlen;
 +		/* Find the cosine of the angle at the destination. */
-+		maxangle = (apexlen + orglen -destlen)/(2*sqrt(apexlen)*sqrt(orglen));
++		maxangle = (apexlen + orglen -destlen)/(2*sqrt(apexlen*orglen));
 +	}
 +
    /* Check whether the angle is smaller than permitted. */
