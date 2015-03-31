@@ -17,8 +17,8 @@ The Visual Studio project contains the patched files ready to build.
 
 
 **Remarks.**
- - If you don't want to use the aCute extension, you can use *triangle.c.patch-x* file, which will apply all patches that are not aCute specific..
- - To compile the project, you can use [Microsoft Visual Studio Express 2013 for Windows Desktop](http://www.visualstudio.com/downloads/download-visual-studio-vs#d-express-windows-desktop).
+ - If you don't want to use the aCute extension, you can use *triangle.c.patch-x* file, which will apply all patches that are not aCute specific.
+ - To compile the project, you can use [Microsoft Visual Studio Community 2013](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx).
 
 ##Patches.
 
@@ -33,7 +33,7 @@ triangle.c.patch:
  - removes statistic functions (using REDUCED symbol)
  - adds acute memory pool (acute.h)
  
-newSPLocation.h
+newSPLocation.h.patch
  - adds acute memory pool (acute.h)
  - corrects some conditionals in doSmoothing
  - removes unused variables, initializes some pointers to NULL
