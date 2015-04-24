@@ -2241,7 +2241,6 @@ int getWedgeIntersectionWithoutMaxAngle(struct mesh *m, struct behavior *b,
     //REAL compConst = 0.01; // for comparing real numbers
     
     REAL x01, y01;
-    
     REAL d01;
     
     REAL *petalx;
