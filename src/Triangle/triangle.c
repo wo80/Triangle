@@ -1336,7 +1336,9 @@ int minus1mod3[3] = {2, 0, 1};
 #define setvertex2tri(vx, value)                                              \
   ((triangle *) (vx))[m->vertex2triindex] = value
 
+#ifndef CDT_ONLY
 #include "newSPLocation.h"
+#endif
 
 /**                                                                         **/
 /**                                                                         **/
@@ -12528,7 +12530,7 @@ int numberofsegments;
 
 #ifdef ANSI_DECLARATORS
 void formskeleton(struct mesh *m, struct behavior *b,
-                  FILE *polyfile, char *polyfilename)
+                  FILE *polyfile, char *polyfilename, int *err)
 #else /* not ANSI_DECLARATORS */
 void formskeleton(m, b, polyfile, polyfilename)
 struct mesh *m;
@@ -15844,10 +15846,10 @@ char **argv;
     out->errorcode = err;
     return;
   }
-  acutepool_init(20, &b, &m.acute_mem);
 #else /* not TRILIBRARY */
-  parsecommandline(argc, argv, &b);
+  parsecommandline(argc, argv, &b, &err);
 #endif /* not TRILIBRARY */
+  acutepool_init(20, &b, &m.acute_mem);
   m.steinerleft = b.steiner;
 
 #ifdef TRILIBRARY
@@ -15917,7 +15919,7 @@ char **argv;
         return;
       }
 #else /* not TRILIBRARY */
-      formskeleton(&m, &b, polyfile, b.inpolyfilename);
+      formskeleton(&m, &b, polyfile, b.inpolyfilename, &err);
 #endif /* not TRILIBRARY */
     }
   }
