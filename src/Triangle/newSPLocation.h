@@ -61,11 +61,13 @@ void circleLineIntersection (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y
 int chooseCorrectPoint (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, int isObtuse );
 void pointBetweenPoints(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y, REAL *p);
 int testTriangleAngle(struct mesh *m, struct behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
-//void writeparts(struct mesh *m, struct behavior *b, int argc, char **argv);
-//REAL returnMinAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
-//REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
 REAL minDistanceToNeigbor(struct mesh *m, struct behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
-//void detailedHistogram(struct mesh *m, struct behavior *b);
+#ifndef TRILIBRARY
+void writeparts(struct mesh *m, struct behavior *b, int argc, char **argv);
+REAL returnMinAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
+REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
+void detailedHistogram(struct mesh *m, struct behavior *b);
+#endif
 
 /*=====================NEW STEINER POINT FUNCTION============================*/
 /*****************************************************************************/
@@ -3028,6 +3030,10 @@ int halfPlaneIntersection(int numvertices, REAL *convexPoly, REAL x1, REAL y1, R
 	int count = 0;
  	int intFound = 0;
 	int numpolys;
+
+	polys[0] = (REAL *)malloc(sizeof(REAL) * 100);
+	polys[1] = (REAL *)malloc(sizeof(REAL) * 100);
+
 	dx = x2 - x1;
 	dy = y2 - y1;
 	numpolys = splitConvexPolygon(numvertices,convexPoly, x1, y1, x2, y2, polys);	
@@ -3035,8 +3041,8 @@ int halfPlaneIntersection(int numvertices, REAL *convexPoly, REAL x1, REAL y1, R
 		count = numvertices;
 	}else{
 		for (i = 0; i < numpolys; i++) {
-			min = 99999999999999999.0;
-			max = -99999999999999999.0;
+			min = 1E+37;
+			max = -1E+37;
 			// compute the minimum and maximum of the
 			// third coordinate of the cross product		
 			for (j = 1; j <= 2*polys[i][0]-1; j = j+2) {				
@@ -3063,6 +3069,10 @@ int halfPlaneIntersection(int numvertices, REAL *convexPoly, REAL x1, REAL y1, R
 			}
 		}
 	}
+
+	free(polys[0]);
+	free(polys[1]);
+
 	// update convexPoly
 	return count;
 }// end of halfPlaneIntersection()
@@ -3083,10 +3093,10 @@ int splitConvexPolygon(int numvertices,REAL *convexPoly, REAL x1, REAL y1, REAL 
 	int state = 0;
 	REAL p[3];
 	// poly1 is constructed in states 0 and 2
-	REAL poly1[100];
+	REAL *poly1 = polys[0];
 	int poly1counter = 0;
 	// poly2 is constructed in state 1
-	REAL poly2[100];
+	REAL *poly2 = polys[1];
 	int poly2counter = 0;
 	int numpolys;
 	int i;
