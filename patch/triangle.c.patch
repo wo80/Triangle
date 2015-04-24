@@ -1,6 +1,6 @@
 diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
 --- D:/Projekte/Triangle/src/triangle.c	Thu Jul 28 15:11:32 2005
-+++ D:/Projekte/Triangle/new/triangle.c	Tue Dec 17 20:37:47 2013
++++ D:/Projekte/Triangle/new/triangle.c	Fri Apr 24 13:21:12 2015
 @@ -208,6 +208,14 @@
  /*   recommend double precision unless you want to generate a mesh for which */
  /*   you do not have enough memory.                                          */
@@ -222,16 +222,18 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  /*****************************************************************************/
  /*                                                                           */
  /*  Mesh manipulation primitives.  Each triangle contains three pointers to  */
-@@ -1323,6 +1336,8 @@
+@@ -1323,6 +1336,10 @@
  #define setvertex2tri(vx, value)                                              \
    ((triangle *) (vx))[m->vertex2triindex] = value
  
++#ifndef CDT_ONLY
 +#include "newSPLocation.h"
++#endif
 +
  /**                                                                         **/
  /**                                                                         **/
  /********* Mesh manipulation primitives end here                     *********/
-@@ -3280,7 +3295,7 @@
+@@ -3280,7 +3297,7 @@
  /*****************************************************************************/
  
  #ifdef ANSI_DECLARATORS
@@ -240,7 +242,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  void parsecommandline(argc, argv, b)
  int argc;
-@@ -3316,6 +3331,7 @@
+@@ -3316,6 +3333,7 @@
    b->steiner = -1;
    b->order = 1;
    b->minangle = 0.0;
@@ -248,7 +250,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    b->maxarea = -1.0;
    b->quiet = b->verbose = 0;
  #ifndef TRILIBRARY
-@@ -3351,6 +3367,23 @@
+@@ -3351,6 +3369,23 @@
              b->minangle = 20.0;
  	  }
  	}
@@ -272,7 +274,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
          if (argv[i][j] == 'a') {
            b->quality = 1;
            if (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
-@@ -3366,8 +3399,13 @@
+@@ -3366,8 +3401,13 @@
              workstring[k] = '\0';
              b->maxarea = (REAL) strtod(workstring, (char **) NULL);
              if (b->maxarea <= 0.0) {
@@ -286,7 +288,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  	    }
  	  } else {
              b->vararea = 1;
-@@ -3520,6 +3558,7 @@
+@@ -3520,6 +3560,7 @@
  #endif /* not TRILIBRARY */
    b->usesegments = b->poly || b->refine || b->quality || b->convex;
    b->goodangle = cos(b->minangle * PI / 180.0);
@@ -294,7 +296,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    if (b->goodangle == 1.0) {
      b->offconstant = 0.0;
    } else {
-@@ -3527,9 +3566,14 @@
+@@ -3527,9 +3568,14 @@
    }
    b->goodangle *= b->goodangle;
    if (b->refine && b->noiterationnum) {
@@ -309,7 +311,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    }
    /* Be careful not to allocate space for element area constraints that */
    /*   will never be assigned any value (other than the default -1.0).  */
-@@ -5161,10 +5205,10 @@
+@@ -5161,10 +5207,10 @@
    INEXACT REAL detleft, detright;
    REAL detlefttail, detrighttail;
    REAL det, errbound;
@@ -322,7 +324,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    INEXACT REAL u3;
    INEXACT REAL s1, t1;
    REAL s0, t0;
-@@ -5341,7 +5385,7 @@
+@@ -5341,7 +5387,7 @@
    INEXACT REAL aa3, bb3, cc3;
    INEXACT REAL ti1, tj1;
    REAL ti0, tj0;
@@ -331,7 +333,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    INEXACT REAL u3, v3;
    REAL temp8[8], temp16a[16], temp16b[16], temp16c[16];
    REAL temp32a[32], temp32b[32], temp48[48], temp64[64];
-@@ -6951,7 +6995,7 @@
+@@ -6951,7 +6997,7 @@
      length *= multiplier;
    }
    /* `length' is approximately squareroot(2.0) to what exponent? */
@@ -340,7 +342,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    /* `exponent' is now in the range 0...2047 for IEEE double precision.   */
    /*   Choose a queue in the range 0...4095.  The shortest edges have the */
    /*   highest priority (queue 4095).                                     */
-@@ -7230,6 +7274,7 @@
+@@ -7230,6 +7276,7 @@
    REAL angle;
    REAL area;
    REAL dist1, dist2;
@@ -348,7 +350,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    subseg sptr;                      /* Temporary variable used by tspivot(). */
    triangle ptr;           /* Temporary variable used by oprev() and dnext(). */
  
-@@ -7308,8 +7353,26 @@
+@@ -7308,8 +7355,26 @@
      }
    }
  
@@ -376,7 +378,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      /* Use the rules of Miller, Pav, and Walkington to decide that certain */
      /*   triangles should not be split, even if they have bad angles.      */
      /*   A skinny triangle is not split if its shortest edge subtends a    */
-@@ -11592,7 +11655,7 @@
+@@ -11592,7 +11657,7 @@
  #ifdef ANSI_DECLARATORS
  enum finddirectionresult finddirection(struct mesh *m, struct behavior *b,
                                         struct otri *searchtri,
@@ -385,7 +387,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  enum finddirectionresult finddirection(m, b, searchtri, searchpoint)
  struct mesh *m;
-@@ -11632,11 +11695,16 @@
+@@ -11632,11 +11697,16 @@
      /* Turn left until satisfied. */
      onextself(*searchtri);
      if (searchtri->tri == m->dummytri) {
@@ -402,7 +404,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      }
      apex(*searchtri, leftvertex);
      rightccw = leftccw;
-@@ -11647,11 +11715,16 @@
+@@ -11647,11 +11717,16 @@
      /* Turn right until satisfied. */
      oprevself(*searchtri);
      if (searchtri->tri == m->dummytri) {
@@ -419,7 +421,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      }
      dest(*searchtri, rightvertex);
      leftccw = rightccw;
-@@ -11687,7 +11760,7 @@
+@@ -11687,7 +11762,7 @@
  #ifdef ANSI_DECLARATORS
  void segmentintersection(struct mesh *m, struct behavior *b,
                           struct otri *splittri, struct osub *splitsubseg,
@@ -428,7 +430,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  void segmentintersection(m, b, splittri, splitsubseg, endpoint2)
  struct mesh *m;
-@@ -11726,9 +11799,14 @@
+@@ -11726,9 +11801,14 @@
    ety = torg[1] - endpoint2[1];
    denom = ty * ex - tx * ey;
    if (denom == 0.0) {
@@ -443,7 +445,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    }
    split = (ey * etx - ex * ety) / denom;
    /* Create the new vertex. */
-@@ -11747,9 +11825,14 @@
+@@ -11747,9 +11827,14 @@
    /* Insert the intersection vertex.  This should always succeed. */
    success = insertvertex(m, b, newvertex, splittri, splitsubseg, 0, 0);
    if (success != SUCCESSFULVERTEX) {
@@ -458,7 +460,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    }
    /* Record a triangle whose origin is the new vertex. */
    setvertex2tri(newvertex, encode(*splittri));
-@@ -11773,16 +11856,24 @@
+@@ -11773,16 +11858,24 @@
  
    /* Inserting the vertex may have caused edge flips.  We wish to rediscover */
    /*   the edge connecting endpoint1 to the new intersection vertex.         */
@@ -484,7 +486,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    }
    /* `splittri' should have destination endpoint1. */
  }
-@@ -11813,7 +11904,7 @@
+@@ -11813,7 +11906,7 @@
  
  #ifdef ANSI_DECLARATORS
  int scoutsegment(struct mesh *m, struct behavior *b, struct otri *searchtri,
@@ -493,7 +495,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  int scoutsegment(m, b, searchtri, endpoint2, newmark)
  struct mesh *m;
-@@ -11830,7 +11921,10 @@
+@@ -11830,7 +11923,10 @@
    enum finddirectionresult collinear;
    subseg sptr;                      /* Temporary variable used by tspivot(). */
  
@@ -505,7 +507,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    dest(*searchtri, rightvertex);
    apex(*searchtri, leftvertex);
    if (((leftvertex[0] == endpoint2[0]) && (leftvertex[1] == endpoint2[1])) ||
-@@ -11848,14 +11942,14 @@
+@@ -11848,14 +11944,14 @@
      lprevself(*searchtri);
      insertsubseg(m, b, searchtri, newmark);
      /* Insert the remainder of the segment. */
@@ -522,7 +524,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    } else {
      lnext(*searchtri, crosstri);
      tspivot(crosstri, crosssubseg);
-@@ -11864,11 +11958,14 @@
+@@ -11864,11 +11960,14 @@
        return 0;
      } else {
        /* Insert a vertex at the intersection. */
@@ -539,7 +541,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      }
    }
  }
-@@ -12147,7 +12244,7 @@
+@@ -12147,7 +12246,7 @@
  
  #ifdef ANSI_DECLARATORS
  void constrainededge(struct mesh *m, struct behavior *b,
@@ -548,7 +550,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  void constrainededge(m, b, starttri, endpoint2, newmark)
  struct mesh *m;
-@@ -12223,7 +12320,7 @@
+@@ -12223,7 +12322,7 @@
            /* We've collided with a segment between endpoint1 and endpoint2. */
            collision = 1;
            /* Insert a vertex at the intersection. */
@@ -557,7 +559,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
            done = 1;
          }
        }
-@@ -12235,8 +12332,8 @@
+@@ -12235,8 +12334,8 @@
    /*   segment connecting that vertex with endpoint2.                     */
    if (collision) {
      /* Insert the remainder of the segment. */
@@ -568,7 +570,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      }
    }
  }
-@@ -12249,7 +12346,7 @@
+@@ -12249,7 +12348,7 @@
  
  #ifdef ANSI_DECLARATORS
  void insertsegment(struct mesh *m, struct behavior *b,
@@ -577,7 +579,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  void insertsegment(m, b, endpoint1, endpoint2, newmark)
  struct mesh *m;
-@@ -12284,18 +12381,23 @@
+@@ -12284,18 +12383,23 @@
      symself(searchtri1);
      /* Search for the segment's first endpoint by point location. */
      if (locate(m, b, endpoint1, &searchtri1) != ONVERTEX) {
@@ -602,7 +604,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      /* The segment was easily inserted. */
      return;
    }
-@@ -12317,18 +12419,23 @@
+@@ -12317,18 +12421,23 @@
      symself(searchtri2);
      /* Search for the segment's second endpoint by point location. */
      if (locate(m, b, endpoint2, &searchtri2) != ONVERTEX) {
@@ -627,7 +629,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      /* The segment was easily inserted. */
      return;
    }
-@@ -12345,7 +12452,7 @@
+@@ -12345,7 +12454,7 @@
  #endif /* not CDT_ONLY */
  #endif /* not REDUCED */
      /* Insert the segment directly into the triangulation. */
@@ -636,7 +638,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #ifndef REDUCED
  #ifndef CDT_ONLY
    }
-@@ -12407,7 +12514,7 @@
+@@ -12407,7 +12516,7 @@
  
  #ifdef ANSI_DECLARATORS
  void formskeleton(struct mesh *m, struct behavior *b, int *segmentlist,
@@ -645,7 +647,16 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  void formskeleton(m, b, segmentlist, segmentmarkerlist, numberofsegments)
  struct mesh *m;
-@@ -12451,7 +12558,7 @@
+@@ -12421,7 +12530,7 @@
+ 
+ #ifdef ANSI_DECLARATORS
+ void formskeleton(struct mesh *m, struct behavior *b,
+-                  FILE *polyfile, char *polyfilename)
++                  FILE *polyfile, char *polyfilename, int *err)
+ #else /* not ANSI_DECLARATORS */
+ void formskeleton(m, b, polyfile, polyfilename)
+ struct mesh *m;
+@@ -12451,7 +12560,7 @@
        printf("Recovering segments in Delaunay triangulation.\n");
      }
  #ifdef TRILIBRARY
@@ -654,7 +665,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
      m->insegments = numberofsegments;
      segmentmarkers = segmentmarkerlist != (int *) NULL;
      index = 0;
-@@ -12540,7 +12647,10 @@
+@@ -12540,7 +12649,10 @@
                     b->firstnumber + i, polyfilename);
            }
          } else {
@@ -666,7 +677,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
          }
        }
      }
-@@ -13233,7 +13343,7 @@
+@@ -13233,7 +13345,7 @@
  #ifndef CDT_ONLY
  
  #ifdef ANSI_DECLARATORS
@@ -675,7 +686,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  void splitencsegs(m, b, triflaws)
  struct mesh *m;
-@@ -13403,6 +13513,7 @@
+@@ -13403,6 +13515,7 @@
          /* Check whether the new vertex lies on an endpoint. */
          if (((newvertex[0] == eorg[0]) && (newvertex[1] == eorg[1])) ||
              ((newvertex[0] == edest[0]) && (newvertex[1] == edest[1]))) {
@@ -683,7 +694,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
            printf("Error:  Ran out of precision at (%.12g, %.12g).\n",
                   newvertex[0], newvertex[1]);
            printf("I attempted to split a segment to a smaller size than\n");
-@@ -13410,14 +13521,23 @@
+@@ -13410,14 +13523,23 @@
            printf("  floating point arithmetic.\n");
            precisionerror();
            triexit(1);
@@ -707,7 +718,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
          }
          if (m->steinerleft > 0) {
            m->steinerleft--;
-@@ -13517,7 +13637,8 @@
+@@ -13517,7 +13639,8 @@
      errorflag = 0;
      /* Create a new vertex at the triangle's circumcenter. */
      newvertex = (vertex) poolalloc(&m->vertices);
@@ -717,7 +728,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  
      /* Check whether the new vertex lies on a triangle vertex. */
      if (((newvertex[0] == borg[0]) && (newvertex[1] == borg[1])) ||
-@@ -13610,7 +13731,7 @@
+@@ -13610,7 +13733,7 @@
  #ifndef CDT_ONLY
  
  #ifdef ANSI_DECLARATORS
@@ -726,7 +737,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #else /* not ANSI_DECLARATORS */
  void enforcequality(m, b)
  struct mesh *m;
-@@ -13636,7 +13757,10 @@
+@@ -13636,7 +13759,10 @@
      printf("  Splitting encroached subsegments.\n");
    }
    /* Fix encroached subsegments without noting bad triangles. */
@@ -738,7 +749,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    /* At this point, if we haven't run out of Steiner points, the */
    /*   triangulation should be (conforming) Delaunay.            */
  
-@@ -13668,7 +13792,10 @@
+@@ -13668,7 +13794,10 @@
          enqueuebadtriang(m, b, badtri);
          /* Fix any encroached subsegments that resulted. */
          /*   Record any new bad triangles that result.   */
@@ -750,7 +761,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
        } else {
          /* Return the bad triangle to the pool. */
          pooldealloc(&m->badtriangles, (VOID *) badtri);
-@@ -15338,6 +15465,7 @@
+@@ -15338,6 +15467,7 @@
  /*                                                                           */
  /*****************************************************************************/
  
@@ -758,7 +769,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #ifdef ANSI_DECLARATORS
  void quality_statistics(struct mesh *m, struct behavior *b)
  #else /* not ANSI_DECLARATORS */
-@@ -15637,6 +15765,7 @@
+@@ -15637,6 +15767,7 @@
      printf("\n");
    }
  }
@@ -766,7 +777,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  
  /*****************************************************************************/
  /*                                                                           */
-@@ -15693,6 +15822,7 @@
+@@ -15693,6 +15824,7 @@
    struct behavior b;
    REAL *holearray;                                        /* Array of holes. */
    REAL *regionarray;   /* Array of regional attributes and area constraints. */
@@ -774,7 +785,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
  #ifndef TRILIBRARY
    FILE *polyfile;
  #endif /* not TRILIBRARY */
-@@ -15706,10 +15836,15 @@
+@@ -15706,13 +15838,18 @@
  #ifndef NO_TIMER
    gettimeofday(&tv0, &tz);
  #endif /* not NO_TIMER */
@@ -788,11 +799,15 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
 +    out->errorcode = err;
 +    return;
 +  }
-+  acutepool_init(20, &b, &m.acute_mem);
  #else /* not TRILIBRARY */
-   parsecommandline(argc, argv, &b);
+-  parsecommandline(argc, argv, &b);
++  parsecommandline(argc, argv, &b, &err);
  #endif /* not TRILIBRARY */
-@@ -15775,7 +15910,12 @@
++  acutepool_init(20, &b, &m.acute_mem);
+   m.steinerleft = b.steiner;
+ 
+ #ifdef TRILIBRARY
+@@ -15775,9 +15912,14 @@
        /* Insert PSLG segments and/or convex hull segments. */
  #ifdef TRILIBRARY
        formskeleton(&m, &b, in->segmentlist,
@@ -804,9 +819,12 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
 +        return;
 +      }
  #else /* not TRILIBRARY */
-       formskeleton(&m, &b, polyfile, b.inpolyfilename);
+-      formskeleton(&m, &b, polyfile, b.inpolyfilename);
++      formskeleton(&m, &b, polyfile, b.inpolyfilename, &err);
  #endif /* not TRILIBRARY */
-@@ -15827,7 +15967,14 @@
+     }
+   }
+@@ -15827,7 +15969,14 @@
  
  #ifndef CDT_ONLY
    if (b.quality && (m.triangles.items > 0)) {
@@ -822,7 +840,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    }
  #endif /* not CDT_ONLY */
  
-@@ -15988,8 +16135,10 @@
+@@ -15988,8 +16137,10 @@
             1000l * (tv6.tv_sec - tv0.tv_sec) +
             (tv6.tv_usec - tv0.tv_usec) / 1000l);
  #endif /* not NO_TIMER */
@@ -834,7 +852,7 @@ diff u3 D:/Projekte/Triangle/src/triangle.c D:/Projekte/Triangle/new/triangle.c
    }
  
  #ifndef REDUCED
-@@ -15998,7 +16147,8 @@
+@@ -15998,7 +16149,8 @@
      checkdelaunay(&m, &b);
    }
  #endif /* not REDUCED */

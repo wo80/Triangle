@@ -1,6 +1,6 @@
 diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPLocation.h
---- D:/Projekte/Triangle/src/newSPLocation.h	Tue Jun 16 00:43:20 2009
-+++ D:/Projekte/Triangle/new/newSPLocation.h	Tue Dec 17 21:48:10 2013
+--- D:/Projekte/Triangle/src/newSPLocation.h	Tue Jun 16 01:43:20 2009
++++ D:/Projekte/Triangle/new/newSPLocation.h	Fri Apr 24 13:13:50 2015
 @@ -8,7 +8,7 @@
  // GENERATES PREMIUM QUALITY TRIANGULATIONS; LARGE MINIMUM ANGLE VALUE OR LARGE MINIMUM ANGLE VALUE WHILE HAVING SMALL MAXIMUM ANGLE VALUE.
  
@@ -10,24 +10,23 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
  /// FUNCTION PROTOTYPES
  // TRIANGLE FUNCTIONS
-@@ -61,11 +61,12 @@
+@@ -61,11 +61,14 @@
  int chooseCorrectPoint (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, int isObtuse );
  void pointBetweenPoints(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y, REAL *p);
  int testTriangleAngle(struct mesh *m, struct behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
--void writeparts(struct mesh *m, struct behavior *b, int argc, char **argv);
--REAL returnMinAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
--REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
-+//void writeparts(struct mesh *m, struct behavior *b, int argc, char **argv);
-+//REAL returnMinAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
-+//REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
- REAL minDistanceToNeigbor(struct mesh *m, struct behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
--void detailedHistogram(struct mesh *m, struct behavior *b);
-+//void detailedHistogram(struct mesh *m, struct behavior *b);
++REAL minDistanceToNeigbor(struct mesh *m, struct behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
++#ifndef TRILIBRARY
+ void writeparts(struct mesh *m, struct behavior *b, int argc, char **argv);
+ REAL returnMinAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
+ REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
+-REAL minDistanceToNeigbor(struct mesh *m, struct behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
+ void detailedHistogram(struct mesh *m, struct behavior *b);
++#endif
 +
  /*=====================NEW STEINER POINT FUNCTION============================*/
  /*****************************************************************************/
  /*  Steiner point insertion routine                                          */
-@@ -111,7 +112,7 @@
+@@ -111,7 +114,7 @@
  	REAL shortestEdgeDist, middleEdgeDist, longestEdgeDist;
  	
  	// keeps the vertices according to the angle incident to that vertex in a triangle
@@ -36,7 +35,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	
  	// keeps the type of orientation if the triangle
  	int orientation = 0;
-@@ -138,7 +139,6 @@
+@@ -138,7 +141,6 @@
  	vertex neighborvertex_3;
  	// dummy variables 
    	REAL xi_tmp, eta_tmp;
@@ -44,7 +43,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	// for petal intersection
  	REAL vector_x, vector_y, xMidOfLongestEdge, yMidOfLongestEdge, inter_x, inter_y, p[5], voronoiOrInter[4];
  	int isCorrect = -1; 
-@@ -721,7 +721,7 @@
+@@ -721,7 +723,7 @@
  	REAL shortestEdgeDist, middleEdgeDist, longestEdgeDist;
  	
  	// keeps the vertices according to the angle incident to that vertex in a triangle
@@ -53,7 +52,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	
  	// keeps the type of orientation if the triangle
  	int orientation = 0;
-@@ -748,7 +748,6 @@
+@@ -748,7 +750,6 @@
  	vertex neighborvertex_3;
  	// dummy variables 
    	REAL xi_tmp, eta_tmp;
@@ -61,7 +60,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	// for petal intersection
  	REAL vector_x, vector_y, xMidOfLongestEdge, yMidOfLongestEdge, inter_x, inter_y, p[5], voronoiOrInter[4];
  	int isCorrect = -1; 
-@@ -1153,9 +1152,11 @@
+@@ -1153,9 +1154,11 @@
  					line_inter_x = line_p[1];
  					line_inter_y = line_p[2];
  				}else{
@@ -76,7 +75,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  				}
  			
  				//---------------------------------------------------------------------//
-@@ -1420,9 +1421,11 @@
+@@ -1420,9 +1423,11 @@
  					line_inter_x = line_p[1];
  					line_inter_y = line_p[2];
  				}else{
@@ -91,7 +90,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  				}		
  				//---------------------------------------------------------------------//
  				/// check if there is a Voronoi vertex between before intersection ///
-@@ -1843,22 +1846,21 @@
+@@ -1843,22 +1848,21 @@
  		vertex tapex,
  		REAL *newloc){
  
@@ -122,7 +121,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
  	/*********************** TRY TO RELOCATE POINT "p" *************************/
  
-@@ -1883,7 +1885,7 @@
+@@ -1883,7 +1887,7 @@
  // 	m->counterclockcount--;
  	// INTERSECTION OF PETALS
  	// first check whether the star angles are appropriate for relocation
@@ -131,7 +130,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  		//newLocFound = getPetalIntersection(m, b, numpoints_p, points_p, newloc);
  		//newLocFound = getPetalIntersectionBruteForce(m, b,numpoints_p, points_p, newloc,torg[0],torg[1]);
  		if(b->maxangle == 0.0){
-@@ -1893,7 +1895,7 @@
+@@ -1893,7 +1897,7 @@
  		}
  		//printf("call petal intersection for p\n");
  		// make sure the relocated point is a free vertex	
@@ -140,7 +139,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  			possibilities[0] = newloc[0];// something found
  			possibilities[1] = newloc[1];
  			num_pos++;// increase the number of possibilities
-@@ -1923,7 +1925,7 @@
+@@ -1923,7 +1927,7 @@
  // 	m->counterclockcount--;
  	// INTERSECTION OF PETALS
  	// first check whether the star angles are appropriate for relocation
@@ -149,7 +148,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  		//newLocFound = getPetalIntersection(m, b,numpoints_q, points_q, newloc);
  		//newLocFound = getPetalIntersectionBruteForce(m, b,numpoints_q, points_q, newloc,tapex[0],tapex[1]);
  		if(b->maxangle == 0.0){
-@@ -1934,7 +1936,7 @@
+@@ -1934,7 +1938,7 @@
  		//printf("call petal intersection for q\n");	
  	
  		// make sure the relocated point is a free vertex	
@@ -158,7 +157,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  			possibilities[2] = newloc[0];// something found
  			possibilities[3] = newloc[1];
  			num_pos++;// increase the number of possibilities
-@@ -1964,7 +1966,7 @@
+@@ -1964,7 +1968,7 @@
  // 	m->counterclockcount--;
  	// INTERSECTION OF PETALS
  	// first check whether the star angles are appropriate for relocation
@@ -167,7 +166,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  		//newLocFound = getPetalIntersection(m, b,numpoints_r, points_r, newloc);
  		//newLocFound = getPetalIntersectionBruteForce(m, b,numpoints_r, points_r, newloc,tdest[0],tdest[1]);
  		if(b->maxangle == 0.0){
-@@ -1977,7 +1979,7 @@
+@@ -1977,7 +1981,7 @@
  	
  	
  		// make sure the relocated point is a free vertex	
@@ -176,7 +175,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  			possibilities[4] = newloc[0];// something found
  			possibilities[5] = newloc[1];
  			num_pos++;// increase the number of possibilities
-@@ -2011,7 +2013,7 @@
+@@ -2011,7 +2015,7 @@
  	else{
  		return 0;// could not find any good relocation
  	}
@@ -185,7 +184,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  }// end of function doSmoothing()
  //---------------------------------------------------------------------------------//
  // getStarPoints() 
-@@ -2109,14 +2111,13 @@
+@@ -2109,14 +2113,13 @@
  	int notFound = 0;	// boolean variable if we can find that neighbor or not
  	
  	// for keeping the vertices of the neighbor triangle
@@ -203,20 +202,20 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	/* find neighbors */
  	/* Check each of the triangle's three neighbors to find the correct one */
  	for (badotri.orient = 0; badotri.orient < 3; badotri.orient++) {			
-@@ -2238,34 +2239,34 @@
+@@ -2238,34 +2241,33 @@
      //REAL compConst = 0.01; // for comparing real numbers
      
      REAL x01, y01;
 -    REAL x12, y12;
 -    
 -    REAL ax, ay, bx, by; //two intersections of two petals disks
--    
--    REAL d01, d12;
-     
--    REAL petalx0, petaly0, petalr0, 
--	petalx1, petaly1, petalr1; 
 +    REAL d01;
      
+-    REAL d01, d12;
+-    
+-    REAL petalx0, petaly0, petalr0, 
+-	petalx1, petaly1, petalr1; 
+-    
 -    REAL p[5];
 -    
 -    REAL petalx[24];
@@ -254,7 +253,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
      x0 = points[2*numpoints-4];
      y0 = points[2*numpoints-3];
-@@ -2282,7 +2283,6 @@
+@@ -2282,7 +2284,6 @@
          petalcenterconstant = 0.5 / tan(b->minangle * PI /180.0);
          petalradiusconstant = 0.5 / sin(b->minangle * PI / 180.0);
      }
@@ -262,7 +261,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
      for(i = 0; i < numpoints*2; i= i+2){
  	x2 = points[i];
  	y2 = points[i+1];
-@@ -2406,11 +2406,11 @@
+@@ -2406,11 +2407,11 @@
      /// HALF PLANE INTERSECTION: START SPLITTING THE INITIAL POLYGON TO FIND FEASIBLE REGION    
      if(numpoints != 0){
  	// first intersect the opposite located ones
@@ -278,7 +277,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	for(j = 0; j < 32; j = j+4){
  			numpolypoints = halfPlaneIntersection(num, initialConvexPoly, wedges[32*s+j],wedges[32*s+1+j], wedges[32*s+2+j], wedges[32*s+3+j]);
  			if(numpolypoints == 0)
-@@ -2459,6 +2459,11 @@
+@@ -2459,6 +2460,11 @@
  	}
     }
     
@@ -290,20 +289,20 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
      return 0;
  }// end of getWedgeIntersectionWithoutMaxAngle()
-@@ -2477,36 +2482,39 @@
+@@ -2477,36 +2483,39 @@
      //REAL compConst = 0.01; // for comparing real numbers
      
      REAL x01, y01;
 -    REAL x12, y12;
 -    
 -    REAL ax, ay, bx, by; //two intersections of two petals disks
--    
+     
 -    REAL d01, d12;
++    REAL d01;
      
 -    REAL petalx0, petaly0, petalr0, 
 -	petalx1, petaly1, petalr1; 
-+    REAL d01;
-     
+-    
 -    REAL p[5];
 -    
 -    REAL petalx[100];
@@ -345,7 +344,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
      x0 = points[2*numpoints-4];
      y0 = points[2*numpoints-3];
-@@ -2523,7 +2531,6 @@
+@@ -2523,7 +2532,6 @@
          petalcenterconstant = 0.5 / tan(b->minangle * PI /180.0);
          petalradiusconstant = 0.5 / sin(b->minangle * PI / 180.0);
      }
@@ -353,7 +352,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
      for(i = 0; i < numpoints*2; i= i+2){
  	// minimum angle
      	alpha = b->minangle*PI/180.0;   
-@@ -2774,11 +2781,11 @@
+@@ -2774,11 +2782,11 @@
      /// HALF PLANE INTERSECTION: START SPLITTING THE INITIAL POLYGON TO FIND FEASIBLE REGION    
      if(numpoints != 0){
  	// first intersect the opposite located ones
@@ -369,7 +368,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	for(j = 0; j < 40; j = j+4){			
  			// in order to skip non-existent lines
  			if(howManyPoints == 4 && (j == 8 || j == 12 || j == 16 || j == 24 || j == 28 || j == 32)){
-@@ -2840,9 +2847,8 @@
+@@ -2840,9 +2848,8 @@
  			
  			return 1;
  		}
@@ -381,7 +380,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  		// try points other than centroid
  		for(k = 0; k < 2*numpoints; k = k+2){
  			for(e = 1; e < n; e = e + 1){				
-@@ -2884,7 +2890,12 @@
+@@ -2884,7 +2891,12 @@
  		return 1;
  	}
     }
@@ -395,7 +394,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
      return 0;
  }// end of getWedgeIntersectionWithMaxAngle()
-@@ -2894,7 +2905,7 @@
+@@ -2894,7 +2906,7 @@
  // Return 0 if the polygon has angles greater than 2*minangle
  //---------------------------------------------------------------------------------//
  int polygonAngles(struct mesh *m, struct behavior *b,int numpoints, REAL *points){
@@ -404,11 +403,15 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	for(i = 0; i < numpoints; i++){
  		if(i == numpoints-1){
  			if( testPolygonAngle(m,b, &points[i*2], &points[i*2+1], &points[0], &points[1], &points[2], &points[3]) ){
-@@ -3016,15 +3027,16 @@
+@@ -3016,15 +3028,20 @@
  	REAL *res = NULL;
  	int count = 0;
   	int intFound = 0;
 +	int numpolys;
++
++	polys[0] = (REAL *)malloc(sizeof(REAL) * 100);
++	polys[1] = (REAL *)malloc(sizeof(REAL) * 100);
++
  	dx = x2 - x1;
  	dy = y2 - y1;
 -	int numpolys = splitConvexPolygon(numvertices,convexPoly, x1, y1, x2, y2, polys);	
@@ -419,12 +422,12 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  		for (i = 0; i < numpolys; i++) {
 -			min = 99999999999999999;
 -			max = -99999999999999999;
-+			min = 99999999999999999.0;
-+			max = -99999999999999999.0;
++			min = 1E+37;
++			max = -1E+37;
  			// compute the minimum and maximum of the
  			// third coordinate of the cross product		
  			for (j = 1; j <= 2*polys[i][0]-1; j = j+2) {				
-@@ -3033,7 +3045,7 @@
+@@ -3033,7 +3050,7 @@
  				max = (z > max ? z : max);			
  			}
  			// ... and choose the (absolute) greater of both
@@ -433,7 +436,33 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  			// and if it is positive, the polygon polys[i]
  			// is on the left side of line
  			if (z > 0.0) {
-@@ -3222,6 +3234,7 @@
+@@ -3050,7 +3067,11 @@
+ 				
+ 			}
+ 		}
+-	}
++	}
++
++	free(polys[0]);
++	free(polys[1]);
++
+ 	// update convexPoly
+ 	return count;
+ }// end of halfPlaneIntersection()
+@@ -3071,10 +3092,10 @@
+ 	int state = 0;
+ 	REAL p[3];
+ 	// poly1 is constructed in states 0 and 2
+-	REAL poly1[100];
++	REAL *poly1 = polys[0];
+ 	int poly1counter = 0;
+ 	// poly2 is constructed in state 1
+-	REAL poly2[100];
++	REAL *poly2 = polys[1];
+ 	int poly2counter = 0;
+ 	int numpolys;
+ 	int i;
+@@ -3222,6 +3243,7 @@
  // www.mathematik.uni-ulm.de/stochastik/lehre/ws03_04/rt/Geometry2D.ps
  //---------------------------------------------------------------------------------//
  int linePointLocation(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y){
@@ -441,7 +470,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	if(atan((y2-y1)/(x2-x1))*180.0/PI == 90.0){
  		if(fabs(x1-x) <= 0.00000000001)
  			return 0;
-@@ -3230,7 +3243,7 @@
+@@ -3230,7 +3252,7 @@
  			return 0;
  	}
  	// third component of the 3 dimensional product
@@ -450,7 +479,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	if(fabs(z - 0.0) <= 0.00000000001){
  		return 0;
  	}else if(z > 0){
-@@ -3296,9 +3309,9 @@
+@@ -3296,9 +3318,9 @@
  // Returns the centroid of a given polygon 
  //---------------------------------------------------------------------------------//
  void findPolyCentroid(int numpoints, REAL *points, REAL *centroid){
@@ -462,7 +491,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
  	for(i = 0; i < 2*numpoints; i = i+2){
  		
-@@ -3309,8 +3322,6 @@
+@@ -3309,8 +3331,6 @@
  	centroid[0] = centroid[0]/numpoints;
  	centroid[1] = centroid[1]/numpoints;
  	
@@ -471,7 +500,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  }// end of findPolyCentroid()
  
  
-@@ -3335,7 +3346,6 @@
+@@ -3335,7 +3355,6 @@
  	// This function returns a pointer array which first index indicates
  	// the number of intersection points, followed by coordinate pairs.
  	
@@ -479,7 +508,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	REAL a, b, c, mu, i ;	
  	
  	a =  (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1);
-@@ -3555,12 +3565,13 @@
+@@ -3555,12 +3574,13 @@
  /*                                  that it is bad or good                   */
  /*                                                                           */
  /*****************************************************************************/
@@ -494,7 +523,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
    long elementnumber;
    int i;
    int bad; 
-@@ -3576,7 +3587,7 @@
+@@ -3576,7 +3596,7 @@
      printf("  Error:  Cannot create file %s.\n", partfilename);
      triexit(1);
    }
@@ -503,7 +532,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
    fprintf(outfile, "%ld  103\n", m->triangles.items);
  
    traversalinit(&m->triangles);
-@@ -3591,11 +3602,11 @@
+@@ -3591,11 +3611,11 @@
        // we need to check if this triangle is good or not
        //bad = testTriangleAngleArea(m, b, &p1[0], &p1[1],&p2[0], &p2[1],&p3[0], &p3[1]);
        bad = testTriangleAngle(m, b, &p1[0], &p1[1],&p2[0], &p2[1],&p3[0], &p3[1]);
@@ -518,7 +547,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	if(b->maxangle != 0.00000){
  		fprintf(outfile, "%4ld    %d ", elementnumber,(int)((180.0-maxAngleTri)*0.35+2.0));
  	}else{
-@@ -3662,6 +3673,7 @@
+@@ -3662,6 +3682,7 @@
  		return angle_p3;
  	}
  }// end of returnMaxAngle()
@@ -526,7 +555,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  
  //---------------------------------------------------------------------------------//
  // minDistanceToNeigbor()
-@@ -3684,12 +3696,12 @@
+@@ -3684,12 +3705,12 @@
  	/* Find a boundary triangle. */
  	/*horiz.tri = m->dummytri;
  	horiz.orient = 0;
@@ -541,7 +570,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  	/* Check the starting triangle's vertices. */
  	if ((torg[0] == newvertex[0]) && (torg[1] == newvertex[1])) {
  		intersect = ONVERTEX;
-@@ -3751,7 +3763,7 @@
+@@ -3751,7 +3772,7 @@
  /*  Similar to quality_statistics() function, prints a detailed histogram    */
  /*                                                                           */
  /*****************************************************************************/
@@ -550,7 +579,7 @@ diff u3 D:/Projekte/Triangle/src/newSPLocation.h D:/Projekte/Triangle/new/newSPL
  void detailedHistogram(struct mesh *m, struct behavior *b)
  {
  	struct otri triangleloop;
-@@ -3838,6 +3850,7 @@
+@@ -3838,6 +3859,7 @@
  	}
  	fclose(outfile);
  }
