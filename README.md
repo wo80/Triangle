@@ -18,22 +18,22 @@ The Visual Studio project contains the patched files ready to build.
 
 **Remarks.**
  - If you don't want to use the aCute extension, you can use *triangle.c.patch-x* file, which will apply all patches that are not aCute specific.
- - To compile the project, you can use [Microsoft Visual Studio Community 2013](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx).
+ - To compile the project, you can use [Microsoft Visual Studio Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) edition.
 
-##Patches.
+##Changes.
 
-triangle.h.patch:
+triangle.h:
  - adds an integer "errorcode" field to triangulateio struct
  - adds __declspec(dllexport) to exported methods
  
-triangle.c.patch:
+triangle.c:
  - applies all changes defined in aCute's "instructions" file
  - activates some preprocessor definitions (ANSI_DECLARATORS, NO_TIMER, TRILIBRARY, REDUCED)
  - adds error codes to critical functions (so no exit(1) will be called by these functions)
  - removes statistic functions (using REDUCED symbol)
  - adds acute memory pool (acute.h)
  
-newSPLocation.h.patch
+newSPLocation.h
  - adds acute memory pool (acute.h)
  - corrects some conditionals in doSmoothing
  - removes unused variables, initializes some pointers to NULL
