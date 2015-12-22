@@ -17,7 +17,7 @@ The Visual Studio project contains the patched files ready to build.
 
 
 **Remarks.**
- - If you don't want to use the aCute extension, you can use *triangle.c.patch-x* file, which will apply all patches that are not aCute specific.
+ - Patch files are no longer included. If you don't want to use the aCute extension, you can make a ```diff``` with the original ```triangle.c``` and remove the aCute specific changes.
  - To compile the project, you can use [Microsoft Visual Studio Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) edition.
 
 ##Changes.
@@ -27,10 +27,12 @@ triangle.h:
  - adds __declspec(dllexport) to exported methods
  
 triangle.c:
- - applies all changes defined in aCute's "instructions" file
  - activates some preprocessor definitions (ANSI_DECLARATORS, NO_TIMER, TRILIBRARY, REDUCED)
  - adds error codes to critical functions (so no exit(1) will be called by these functions)
  - removes statistic functions (using REDUCED symbol)
+ - adds support for x64 compilation
+ - fixes an issue with vertex attributes interpolation
+ - applies all changes defined in aCute's "instructions" file
  - adds acute memory pool (acute.h)
  
 newSPLocation.h
