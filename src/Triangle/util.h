@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /*                                                                           */
-/*  interpolate()   Interpolate the attibutes of 'newvertex' in the triangle */
-/*                  given by 'org', 'dest' and 'apex'.                       */
+/*  interpolate()  Interpolate the attributes of 'newvertex' in the triangle */
+/*                 given by 'org', 'dest' and 'apex'.                        */
 /*                                                                           */
 /*****************************************************************************/
 
