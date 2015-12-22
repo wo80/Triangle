@@ -43,4 +43,4 @@ newSPLocation.h
 
 ##License.
 
-The patch files are released to the public domain without any special license. Note, however, that the original code and produced binaries will stay under the license/copyright the original authors intended. Particularly, make sure to have a look at the README included in the Triangle source dir.
+Please make sure to take a look at the original [README](https://github.com/wo80/Triangle/tree/master/src/Triangle) included in the Triangle source dir.
