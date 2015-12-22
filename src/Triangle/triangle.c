@@ -746,6 +746,9 @@ struct behavior {
 
 #include "acute.h"
 
+/* Include functions not available in original triangle code                 */
+#include "util.h"
+
 /* Mesh data structure.  Triangle operates on only one mesh, but the mesh    */
 /*   structure is used (instead of global variables) to allow reentrancy.    */
 
@@ -8268,10 +8271,11 @@ struct otri *flipedge;                    /* Handle for the triangle abc. */
 enum insertvertexresult insertvertex(struct mesh *m, struct behavior *b,
                                      vertex newvertex, struct otri *searchtri,
                                      struct osub *splitseg,
-                                     int segmentflaws, int triflaws)
+                                     int segmentflaws, int triflaws,
+                                     int attribs)
 #else /* not ANSI_DECLARATORS */
 enum insertvertexresult insertvertex(m, b, newvertex, searchtri, splitseg,
-                                     segmentflaws, triflaws)
+                                     segmentflaws, triflaws, attribs)
 struct mesh *m;
 struct behavior *b;
 vertex newvertex;
@@ -8279,6 +8283,7 @@ struct otri *searchtri;
 struct osub *splitseg;
 int segmentflaws;
 int triflaws;
+int attribs;
 #endif /* not ANSI_DECLARATORS */
 
 {
@@ -8553,6 +8558,12 @@ int triflaws;
     org(horiz, rightvertex);
     dest(horiz, leftvertex);
     apex(horiz, botvertex);
+
+    /* Interpolate attributes of new vertex. */
+    if (attribs > 0 && m->nextras > 0) {
+      interpolate(newvertex, rightvertex, leftvertex, botvertex, m->nextras);
+    }
+
     setorg(newbotleft, leftvertex);
     setdest(newbotleft, botvertex);
     setapex(newbotleft, newvertex);
@@ -10313,7 +10324,7 @@ struct behavior *b;
   vertexloop = vertextraverse(m);
   while (vertexloop != (vertex) NULL) {
     starttri.tri = m->dummytri;
-    if (insertvertex(m, b, vertexloop, &starttri, (struct osub *) NULL, 0, 0)
+    if (insertvertex(m, b, vertexloop, &starttri, (struct osub *) NULL, 0, 0, 0)
         == DUPLICATEVERTEX) {
       if (!b->quiet) {
         printf(
@@ -11832,7 +11843,7 @@ vertex endpoint2;
            torg[0], torg[1], tdest[0], tdest[1], newvertex[0], newvertex[1]);
   }
   /* Insert the intersection vertex.  This should always succeed. */
-  success = insertvertex(m, b, newvertex, splittri, splitsubseg, 0, 0);
+  success = insertvertex(m, b, newvertex, splittri, splitsubseg, 0, 0, 0);
   if (success != SUCCESSFULVERTEX) {
 #ifndef TRILIBRARY
     printf("Internal error in segmentintersection():\n");
@@ -12039,7 +12050,7 @@ int newmark;
   searchtri1.tri = m->dummytri;
   /* Attempt to insert the new vertex. */
   success = insertvertex(m, b, newvertex, &searchtri1, (struct osub *) NULL,
-                         0, 0);
+                         0, 0, 0);
   if (success == DUPLICATEVERTEX) {
     if (b->verbose > 2) {
       printf("  Segment intersects existing vertex (%.12g, %.12g).\n",
@@ -12057,7 +12068,7 @@ int newmark;
       /* By fluke, we've landed right on another segment.  Split it. */
       tspivot(searchtri1, brokensubseg);
       success = insertvertex(m, b, newvertex, &searchtri1, &brokensubseg,
-                             0, 0);
+                             0, 0, 0);
       if (success != SUCCESSFULVERTEX) {
         printf("Internal error in conformingedge():\n");
         printf("  Failure to split a segment.\n");
@@ -13537,7 +13548,7 @@ int triflaws;
         }
         /* Insert the splitting vertex.  This should always succeed. */
         success = insertvertex(m, b, newvertex, &enctri, &currentenc,
-                               1, triflaws);
+                               1, triflaws, 0);
         if ((success != SUCCESSFULVERTEX) && (success != ENCROACHINGVERTEX)) {
 #ifndef TRILIBRARY
           printf("Internal error in splitencsegs():\n");
@@ -13626,7 +13637,7 @@ struct badtriang *badtri;
   REAL xi, eta;
   enum insertvertexresult success;
   int errorflag;
-  int i;
+  //int i;
 
   decode(badtri->poortri, badotri);
   org(badotri, borg);
@@ -13661,11 +13672,12 @@ struct badtriang *badtri;
       }
       vertexdealloc(m, newvertex);
     } else {
-      for (i = 2; i < 2 + m->nextras; i++) {
-        /* Interpolate the vertex attributes at the circumcenter. */
-        newvertex[i] = borg[i] + xi * (bdest[i] - borg[i])
-                              + eta * (bapex[i] - borg[i]);
-      }
+      /* Interpolation of vertex attributes is done in insertvertex method. */
+      //for (i = 2; i < 2 + m->nextras; i++) {
+      ///* Interpolate the vertex attributes at the circumcenter. */
+      //  newvertex[i] = borg[i] + xi * (bdest[i] - borg[i])
+      //                        + eta * (bapex[i] - borg[i]);
+      //}
       /* The new vertex must be in the interior, and therefore is a */
       /*   free vertex with a marker of zero.                       */
       setvertexmark(newvertex, 0);
@@ -13685,7 +13697,7 @@ struct badtriang *badtri;
       /* Insert the circumcenter, searching from the edge of the triangle, */
       /*   and maintain the Delaunay property of the triangulation.        */
       success = insertvertex(m, b, newvertex, &badotri, (struct osub *) NULL,
-                             1, 1);
+                             1, 1, 1);
       if (success == SUCCESSFULVERTEX) {
         if (m->steinerleft > 0) {
           m->steinerleft--;
