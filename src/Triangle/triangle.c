@@ -232,6 +232,7 @@
 #endif /* not SINGLE */
 
 #define ANSI_DECLARATORS
+#define NO_ACUTE
 
 /* If yours is not a Unix system, define the NO_TIMER compiler switch to     */
 /*   remove the Unix-specific timing code.                                   */
@@ -723,7 +724,9 @@ struct behavior {
   int steiner;
   REAL minangle, goodangle, offconstant;
   REAL maxarea;
+#ifndef NO_ACUTE
   REAL maxangle, maxgoodangle;
+#endif
 
 /* Variables for file names.                                                 */
 
@@ -744,7 +747,9 @@ struct behavior {
 
 };                                              /* End of `struct behavior'. */
 
+#ifndef NO_ACUTE
 #include "acute.h"
+#endif
 
 /* Include functions not available in original triangle code                 */
 #include "util.h"
@@ -767,7 +772,9 @@ struct mesh {
   struct memorypool flipstackers;
   struct memorypool splaynodes;
 
+#ifndef NO_ACUTE
   struct acutepool acute_mem;
+#endif
 
 /* Variables that maintain the bad triangle queues.  The queues are          */
 /*   ordered from 4095 (highest priority) to 0 (lowest priority).            */
@@ -1346,8 +1353,10 @@ int minus1mod3[3] = {2, 0, 1};
 #define setvertex2tri(vx, value)                                              \
   ((triangle *) (vx))[m->vertex2triindex] = value
 
+#ifndef NO_ACUTE
 #ifndef CDT_ONLY
 #include "newSPLocation.h"
+#endif
 #endif
 
 /**                                                                         **/
@@ -3343,7 +3352,9 @@ struct behavior *b;
   b->steiner = -1;
   b->order = 1;
   b->minangle = 0.0;
+#ifndef NO_ACUTE
   b->maxangle = 0.0;
+#endif
   b->maxarea = -1.0;
   b->quiet = b->verbose = 0;
 #ifndef TRILIBRARY
@@ -3379,6 +3390,7 @@ struct behavior *b;
             b->minangle = 20.0;
 	  }
 	}
+#ifndef NO_ACUTE
 	if (argv[i][j] == 'U') {
 		b->quality = 1;
 		if (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
@@ -3396,6 +3408,7 @@ struct behavior *b;
 			b->maxangle = 140.0;
 		}
 	}
+#endif
         if (argv[i][j] == 'a') {
           b->quality = 1;
           if (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
@@ -3570,7 +3583,9 @@ struct behavior *b;
 #endif /* not TRILIBRARY */
   b->usesegments = b->poly || b->refine || b->quality || b->convex;
   b->goodangle = cos(b->minangle * PI / 180.0);
+#ifndef NO_ACUTE
   b->maxgoodangle = cos(b->maxangle * PI / 180.0);
+#endif
   if (b->goodangle == 1.0) {
     b->offconstant = 0.0;
   } else {
@@ -7286,7 +7301,9 @@ struct otri *testtri;
   REAL angle;
   REAL area;
   REAL dist1, dist2;
+#ifndef NO_ACUTE
   REAL maxedge, maxangle;
+#endif
   subseg sptr;                      /* Temporary variable used by tspivot(). */
   triangle ptr;           /* Temporary variable used by oprev() and dnext(). */
 
@@ -7365,6 +7382,7 @@ struct otri *testtri;
     }
   }
 
+#ifndef NO_ACUTE
 	// find the maximum edge and accordingly the pqr orientation
 	if ((apexlen > orglen) && (apexlen > destlen)) {
 		/* The edge opposite the apex is longest. */
@@ -7382,9 +7400,14 @@ struct otri *testtri;
 		/* Find the cosine of the angle at the destination. */
 		maxangle = (apexlen + orglen -destlen)/(2*sqrt(apexlen*orglen));
 	}
+#endif
 
   /* Check whether the angle is smaller than permitted. */
+#ifndef NO_ACUTE
   if ((angle > b->goodangle)  ||  (maxangle < b->maxgoodangle && b->maxangle != 0.0)) {
+#else
+  if (angle > b->goodangle) {
+#endif
     /* Use the rules of Miller, Pav, and Walkington to decide that certain */
     /*   triangles should not be split, even if they have bad angles.      */
     /*   A skinny triangle is not split if its shortest edge subtends a    */
@@ -13637,7 +13660,6 @@ struct badtriang *badtri;
   REAL xi, eta;
   enum insertvertexresult success;
   int errorflag;
-  //int i;
 
   decode(badtri->poortri, badotri);
   org(badotri, borg);
@@ -13657,8 +13679,11 @@ struct badtriang *badtri;
     errorflag = 0;
     /* Create a new vertex at the triangle's circumcenter. */
     newvertex = (vertex) poolalloc(&m->vertices);
-    //findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
+#ifndef NO_ACUTE
     findNewSPLocation(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1, badotri);
+#else
+    findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
+#endif
 
     /* Check whether the new vertex lies on a triangle vertex. */
     if (((newvertex[0] == borg[0]) && (newvertex[1] == borg[1])) ||
@@ -13673,11 +13698,7 @@ struct badtriang *badtri;
       vertexdealloc(m, newvertex);
     } else {
       /* Interpolation of vertex attributes is done in insertvertex method. */
-      //for (i = 2; i < 2 + m->nextras; i++) {
-      ///* Interpolate the vertex attributes at the circumcenter. */
-      //  newvertex[i] = borg[i] + xi * (bdest[i] - borg[i])
-      //                        + eta * (bapex[i] - borg[i]);
-      //}
+
       /* The new vertex must be in the interior, and therefore is a */
       /*   free vertex with a marker of zero.                       */
       setvertexmark(newvertex, 0);
@@ -15868,7 +15889,9 @@ char **argv;
 #else /* not TRILIBRARY */
   parsecommandline(argc, argv, &b, &err);
 #endif /* not TRILIBRARY */
+#ifndef NO_ACUTE
   acutepool_init(20, &b, &m.acute_mem);
+#endif
   m.steinerleft = b.steiner;
 
 #ifdef TRILIBRARY
@@ -16168,8 +16191,10 @@ char **argv;
     checkdelaunay(&m, &b);
   }
 #endif /* not REDUCED */
-  
+
+#ifndef NO_ACUTE
   acutepool_deinit(&m.acute_mem);
+#endif
   triangledeinit(&m, &b);
 #ifndef TRILIBRARY
   return 0;
