@@ -17,8 +17,8 @@ The Visual Studio project contains the patched files ready to build.
 
 
 **Remarks.**
- - If you don't want to use the aCute extension, add a ```NO_ACUTE``` preprocessor definition.
  - To compile the project, you can use [Microsoft Visual Studio Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) edition.
+ - If you don't want to use the aCute extension, add ```NO_ACUTE``` to preprocessor definitions.
 
 ##Changes.
 
