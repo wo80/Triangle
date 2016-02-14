@@ -8429,6 +8429,14 @@ int attribs;
     setdest(newbotright, rightvertex);
     setapex(newbotright, newvertex);
     setorg(horiz, newvertex);
+	
+    /* Interpolate attributes of new vertex. */
+    if (attribs > 0 && m->nextras > 0) {
+	  /* TODO: the new vertex lies on the segment (rightvertex, leftvertex), */
+	  /*       so we should use line interpolation. */
+      interpolate(newvertex, rightvertex, leftvertex, botvertex, m->nextras);
+    }
+
     for (i = 0; i < m->eextras; i++) {
       /* Set the element attributes of a new triangle. */
       setelemattribute(newbotright, i, elemattribute(botright, i));
