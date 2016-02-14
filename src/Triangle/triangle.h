@@ -19,19 +19,12 @@
 
 #define ANSI_DECLARATORS
 
-/* #define SINGLE */
-
-#ifdef SINGLE
-#define REAL float
-#else /* not SINGLE */
+/* Define as "float" for single precision. */
 #define REAL double
-#endif /* not SINGLE */
-
 
 /* The next line is used to outsmart some very stupid compilers.  If your    */
 /*   compiler is smarter, feel free to replace the "int" with "void".        */
 /*   Not that it matters.                                                    */
-
 #define VOID void
 
 /*****************************************************************************/

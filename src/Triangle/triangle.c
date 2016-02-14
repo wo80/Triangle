@@ -223,16 +223,6 @@
   #define ULONG_PTR unsigned long
 #endif
 
-/* #define SINGLE */
-
-#ifdef SINGLE
-#define REAL float
-#else /* not SINGLE */
-#define REAL double
-#endif /* not SINGLE */
-
-#define ANSI_DECLARATORS
-
 /* If yours is not a Unix system, define the NO_TIMER compiler switch to     */
 /*   remove the Unix-specific timing code.                                   */
 
@@ -367,20 +357,14 @@
 #ifdef TRILIBRARY
 #include "triangle.h"
 #else
-/* #define SINGLE */
-
-#ifdef SINGLE
-#define REAL float
-#else /* not SINGLE */
-#define REAL double
-#endif /* not SINGLE */
-
 #define ANSI_DECLARATORS
+
+/* Define as "float" for single precision. */
+#define REAL double
 
 /* The next line is used to outsmart some very stupid compilers.  If your    */
 /*   compiler is smarter, feel free to replace the "int" with "void".        */
 /*   Not that it matters.                                                    */
-
 #define VOID void
 #endif /* TRILIBRARY */
 
