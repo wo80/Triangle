@@ -14,6 +14,25 @@
 /*  jrs@cs.berkeley.edu                                                      */
 /*                                                                           */
 /*****************************************************************************/
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
+
+#define ANSI_DECLARATORS
+
+/* #define SINGLE */
+
+#ifdef SINGLE
+#define REAL float
+#else /* not SINGLE */
+#define REAL double
+#endif /* not SINGLE */
+
+
+/* The next line is used to outsmart some very stupid compilers.  If your    */
+/*   compiler is smarter, feel free to replace the "int" with "void".        */
+/*   Not that it matters.                                                    */
+
+#define VOID void
 
 /*****************************************************************************/
 /*                                                                           */
@@ -280,10 +299,20 @@ struct triangulateio {
   int errorcode;                                                 /* Out only */
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef ANSI_DECLARATORS
-__declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *, struct triangulateio *);
-__declspec(dllexport) void __cdecl trifree(VOID *memptr);
+	__declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *, struct triangulateio *);
+	__declspec(dllexport) void __cdecl trifree(VOID *memptr);
 #else /* not ANSI_DECLARATORS */
-void triangulate();
-void trifree();
+	void triangulate();
+	void trifree();
 #endif /* not ANSI_DECLARATORS */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* TRIANGLE_H */

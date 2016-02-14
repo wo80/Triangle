@@ -325,12 +325,6 @@
 #define DEADVERTEX -32768
 #define UNDEADVERTEX -32767
 
-/* The next line is used to outsmart some very stupid compilers.  If your    */
-/*   compiler is smarter, feel free to replace the "int" with "void".        */
-/*   Not that it matters.                                                    */
-
-#define VOID int
-
 /* Two constants for algorithms based on random sampling.  Both constants    */
 /*   have been chosen empirically to optimize their respective algorithms.   */
 
@@ -372,6 +366,22 @@
 #endif /* LINUX */
 #ifdef TRILIBRARY
 #include "triangle.h"
+#else
+/* #define SINGLE */
+
+#ifdef SINGLE
+#define REAL float
+#else /* not SINGLE */
+#define REAL double
+#endif /* not SINGLE */
+
+#define ANSI_DECLARATORS
+
+/* The next line is used to outsmart some very stupid compilers.  If your    */
+/*   compiler is smarter, feel free to replace the "int" with "void".        */
+/*   Not that it matters.                                                    */
+
+#define VOID void
 #endif /* TRILIBRARY */
 
 /* A few forward declarations.                                               */
