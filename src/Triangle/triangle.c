@@ -11345,26 +11345,14 @@ void transfernodes(struct mesh *m, struct behavior *b, REAL *pointlist,
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef TRILIBRARY
-
 void writenodes(struct mesh *m, struct behavior *b, REAL **pointlist,
                 REAL **pointattriblist, int **pointmarkerlist)
-#else /* not TRILIBRARY */
-
-void writenodes(struct mesh *m, struct behavior *b, char *nodefilename,
-                int argc, char **argv)
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   REAL *plist;
   REAL *palist;
   int *pmlist;
   int coordindex;
   int attribindex;
-#else /* not TRILIBRARY */
-  FILE *outfile;
-#endif /* not TRILIBRARY */
   vertex vertexloop;
   long outvertices;
   int vertexnumber;
@@ -11376,7 +11364,6 @@ void writenodes(struct mesh *m, struct behavior *b, char *nodefilename,
     outvertices = m->vertices.items;
   }
 
-#ifdef TRILIBRARY
   if (!b->quiet) {
     printf("Writing vertices.\n");
   }
@@ -11398,27 +11385,12 @@ void writenodes(struct mesh *m, struct behavior *b, char *nodefilename,
   pmlist = *pointmarkerlist;
   coordindex = 0;
   attribindex = 0;
-#else /* not TRILIBRARY */
-  if (!b->quiet) {
-    printf("Writing %s.\n", nodefilename);
-  }
-  outfile = fopen(nodefilename, "w");
-  if (outfile == (FILE *) NULL) {
-    printf("  Error:  Cannot create file %s.\n", nodefilename);
-    triexit(1);
-  }
-  /* Number of vertices, number of dimensions, number of vertex attributes, */
-  /*   and number of boundary markers (zero or one).                        */
-  fprintf(outfile, "%ld  %d  %d  %d\n", outvertices, m->mesh_dim,
-          m->nextras, 1 - b->nobound);
-#endif /* not TRILIBRARY */
 
   traversalinit(&m->vertices);
   vertexnumber = b->firstnumber;
   vertexloop = vertextraverse(m);
   while (vertexloop != (vertex) NULL) {
     if (!b->jettison || (vertextype(vertexloop) != UNDEADVERTEX)) {
-#ifdef TRILIBRARY
       /* X and y coordinates. */
       plist[coordindex++] = vertexloop[0];
       plist[coordindex++] = vertexloop[1];
@@ -11430,31 +11402,12 @@ void writenodes(struct mesh *m, struct behavior *b, char *nodefilename,
         /* Copy the boundary marker. */
         pmlist[vertexnumber - b->firstnumber] = vertexmark(vertexloop);
       }
-#else /* not TRILIBRARY */
-      /* Vertex number, x and y coordinates. */
-      fprintf(outfile, "%4d    %.17g  %.17g", vertexnumber, vertexloop[0],
-              vertexloop[1]);
-      for (i = 0; i < m->nextras; i++) {
-        /* Write an attribute. */
-        fprintf(outfile, "  %.17g", vertexloop[i + 2]);
-      }
-      if (b->nobound) {
-        fprintf(outfile, "\n");
-      } else {
-        /* Write the boundary marker. */
-        fprintf(outfile, "    %d\n", vertexmark(vertexloop));
-      }
-#endif /* not TRILIBRARY */
 
       setvertexmark(vertexloop, vertexnumber);
       vertexnumber++;
     }
     vertexloop = vertextraverse(m);
   }
-
-#ifndef TRILIBRARY
-  finishfile(outfile, argc, argv);
-#endif /* not TRILIBRARY */
 }
 
 /*****************************************************************************/
@@ -11490,32 +11443,19 @@ void numbernodes(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef TRILIBRARY
-
 void writeelements(struct mesh *m, struct behavior *b,
                    int **trianglelist, REAL **triangleattriblist)
-#else /* not TRILIBRARY */
-
-void writeelements(struct mesh *m, struct behavior *b, char *elefilename,
-                   int argc, char **argv)
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   int *tlist;
   REAL *talist;
   int vertexindex;
   int attribindex;
-#else /* not TRILIBRARY */
-  FILE *outfile;
-#endif /* not TRILIBRARY */
   struct otri triangleloop;
   vertex p1, p2, p3;
   vertex mid1, mid2, mid3;
   long elementnumber;
   int i;
 
-#ifdef TRILIBRARY
   if (!b->quiet) {
     printf("Writing triangles.\n");
   }
@@ -11535,19 +11475,6 @@ void writeelements(struct mesh *m, struct behavior *b, char *elefilename,
   talist = *triangleattriblist;
   vertexindex = 0;
   attribindex = 0;
-#else /* not TRILIBRARY */
-  if (!b->quiet) {
-    printf("Writing %s.\n", elefilename);
-  }
-  outfile = fopen(elefilename, "w");
-  if (outfile == (FILE *) NULL) {
-    printf("  Error:  Cannot create file %s.\n", elefilename);
-    triexit(1);
-  }
-  /* Number of triangles, vertices per triangle, attributes per triangle. */
-  fprintf(outfile, "%ld  %d  %d\n", m->triangles.items,
-          (b->order + 1) * (b->order + 2) / 2, m->eextras);
-#endif /* not TRILIBRARY */
 
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
@@ -11558,52 +11485,29 @@ void writeelements(struct mesh *m, struct behavior *b, char *elefilename,
     dest(triangleloop, p2);
     apex(triangleloop, p3);
     if (b->order == 1) {
-#ifdef TRILIBRARY
       tlist[vertexindex++] = vertexmark(p1);
       tlist[vertexindex++] = vertexmark(p2);
       tlist[vertexindex++] = vertexmark(p3);
-#else /* not TRILIBRARY */
-      /* Triangle number, indices for three vertices. */
-      fprintf(outfile, "%4ld    %4d  %4d  %4d", elementnumber,
-              vertexmark(p1), vertexmark(p2), vertexmark(p3));
-#endif /* not TRILIBRARY */
     } else {
       mid1 = (vertex) triangleloop.tri[m->highorderindex + 1];
       mid2 = (vertex) triangleloop.tri[m->highorderindex + 2];
       mid3 = (vertex) triangleloop.tri[m->highorderindex];
-#ifdef TRILIBRARY
+
       tlist[vertexindex++] = vertexmark(p1);
       tlist[vertexindex++] = vertexmark(p2);
       tlist[vertexindex++] = vertexmark(p3);
       tlist[vertexindex++] = vertexmark(mid1);
       tlist[vertexindex++] = vertexmark(mid2);
       tlist[vertexindex++] = vertexmark(mid3);
-#else /* not TRILIBRARY */
-      /* Triangle number, indices for six vertices. */
-      fprintf(outfile, "%4ld    %4d  %4d  %4d  %4d  %4d  %4d", elementnumber,
-              vertexmark(p1), vertexmark(p2), vertexmark(p3), vertexmark(mid1),
-              vertexmark(mid2), vertexmark(mid3));
-#endif /* not TRILIBRARY */
     }
 
-#ifdef TRILIBRARY
     for (i = 0; i < m->eextras; i++) {
       talist[attribindex++] = elemattribute(triangleloop, i);
     }
-#else /* not TRILIBRARY */
-    for (i = 0; i < m->eextras; i++) {
-      fprintf(outfile, "  %.17g", elemattribute(triangleloop, i));
-    }
-    fprintf(outfile, "\n");
-#endif /* not TRILIBRARY */
 
     triangleloop.tri = triangletraverse(m);
     elementnumber++;
   }
-
-#ifndef TRILIBRARY
-  finishfile(outfile, argc, argv);
-#endif /* not TRILIBRARY */
 }
 
 /*****************************************************************************/
@@ -11612,31 +11516,16 @@ void writeelements(struct mesh *m, struct behavior *b, char *elefilename,
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef TRILIBRARY
-
 void writepoly(struct mesh *m, struct behavior *b,
                int **segmentlist, int **segmentmarkerlist)
-#else /* not TRILIBRARY */
-
-void writepoly(struct mesh *m, struct behavior *b, char *polyfilename,
-               REAL *holelist, int holes, REAL *regionlist, int regions,
-               int argc, char **argv)
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   int *slist;
   int *smlist;
   int index;
-#else /* not TRILIBRARY */
-  FILE *outfile;
-  long holenumber, regionnumber;
-#endif /* not TRILIBRARY */
   struct osub subsegloop;
   vertex endpoint1, endpoint2;
   long subsegnumber;
 
-#ifdef TRILIBRARY
   if (!b->quiet) {
     printf("Writing segments.\n");
   }
@@ -11653,23 +11542,6 @@ void writepoly(struct mesh *m, struct behavior *b, char *polyfilename,
   slist = *segmentlist;
   smlist = *segmentmarkerlist;
   index = 0;
-#else /* not TRILIBRARY */
-  if (!b->quiet) {
-    printf("Writing %s.\n", polyfilename);
-  }
-  outfile = fopen(polyfilename, "w");
-  if (outfile == (FILE *) NULL) {
-    printf("  Error:  Cannot create file %s.\n", polyfilename);
-    triexit(1);
-  }
-  /* The zero indicates that the vertices are in a separate .node file. */
-  /*   Followed by number of dimensions, number of vertex attributes,   */
-  /*   and number of boundary markers (zero or one).                    */
-  fprintf(outfile, "%d  %d  %d  %d\n", 0, m->mesh_dim, m->nextras,
-          1 - b->nobound);
-  /* Number of segments, number of boundary markers (zero or one). */
-  fprintf(outfile, "%ld  %d\n", m->subsegs.items, 1 - b->nobound);
-#endif /* not TRILIBRARY */
 
   traversalinit(&m->subsegs);
   subsegloop.ss = subsegtraverse(m);
@@ -11678,7 +11550,6 @@ void writepoly(struct mesh *m, struct behavior *b, char *polyfilename,
   while (subsegloop.ss != (subseg *) NULL) {
     sorg(subsegloop, endpoint1);
     sdest(subsegloop, endpoint2);
-#ifdef TRILIBRARY
     /* Copy indices of the segment's two endpoints. */
     slist[index++] = vertexmark(endpoint1);
     slist[index++] = vertexmark(endpoint2);
@@ -11686,46 +11557,10 @@ void writepoly(struct mesh *m, struct behavior *b, char *polyfilename,
       /* Copy the boundary marker. */
       smlist[subsegnumber - b->firstnumber] = mark(subsegloop);
     }
-#else /* not TRILIBRARY */
-    /* Segment number, indices of its two endpoints, and possibly a marker. */
-    if (b->nobound) {
-      fprintf(outfile, "%4ld    %4d  %4d\n", subsegnumber,
-              vertexmark(endpoint1), vertexmark(endpoint2));
-    } else {
-      fprintf(outfile, "%4ld    %4d  %4d    %4d\n", subsegnumber,
-              vertexmark(endpoint1), vertexmark(endpoint2), mark(subsegloop));
-    }
-#endif /* not TRILIBRARY */
 
     subsegloop.ss = subsegtraverse(m);
     subsegnumber++;
   }
-
-#ifndef TRILIBRARY
-#ifndef CDT_ONLY
-  fprintf(outfile, "%d\n", holes);
-  if (holes > 0) {
-    for (holenumber = 0; holenumber < holes; holenumber++) {
-      /* Hole number, x and y coordinates. */
-      fprintf(outfile, "%4ld   %.17g  %.17g\n", b->firstnumber + holenumber,
-              holelist[2 * holenumber], holelist[2 * holenumber + 1]);
-    }
-  }
-  if (regions > 0) {
-    fprintf(outfile, "%d\n", regions);
-    for (regionnumber = 0; regionnumber < regions; regionnumber++) {
-      /* Region number, x and y coordinates, attribute, maximum area. */
-      fprintf(outfile, "%4ld   %.17g  %.17g  %.17g  %.17g\n",
-              b->firstnumber + regionnumber,
-              regionlist[4 * regionnumber], regionlist[4 * regionnumber + 1],
-              regionlist[4 * regionnumber + 2],
-              regionlist[4 * regionnumber + 3]);
-    }
-  }
-#endif /* not CDT_ONLY */
-
-  finishfile(outfile, argc, argv);
-#endif /* not TRILIBRARY */
 }
 
 /*****************************************************************************/
@@ -11734,24 +11569,12 @@ void writepoly(struct mesh *m, struct behavior *b, char *polyfilename,
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef TRILIBRARY
-
 void writeedges(struct mesh *m, struct behavior *b,
                 int **edgelist, int **edgemarkerlist)
-#else /* not TRILIBRARY */
-
-void writeedges(struct mesh *m, struct behavior *b, char *edgefilename,
-                int argc, char **argv)
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   int *elist;
   int *emlist;
   int index;
-#else /* not TRILIBRARY */
-  FILE *outfile;
-#endif /* not TRILIBRARY */
   struct otri triangleloop, trisym;
   struct osub checkmark;
   vertex p1, p2;
@@ -11759,7 +11582,6 @@ void writeedges(struct mesh *m, struct behavior *b, char *edgefilename,
   triangle ptr;                         /* Temporary variable used by sym(). */
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-#ifdef TRILIBRARY
   if (!b->quiet) {
     printf("Writing edges.\n");
   }
@@ -11774,18 +11596,6 @@ void writeedges(struct mesh *m, struct behavior *b, char *edgefilename,
   elist = *edgelist;
   emlist = *edgemarkerlist;
   index = 0;
-#else /* not TRILIBRARY */
-  if (!b->quiet) {
-    printf("Writing %s.\n", edgefilename);
-  }
-  outfile = fopen(edgefilename, "w");
-  if (outfile == (FILE *) NULL) {
-    printf("  Error:  Cannot create file %s.\n", edgefilename);
-    triexit(1);
-  }
-  /* Number of edges, number of boundary markers (zero or one). */
-  fprintf(outfile, "%ld  %d\n", m->edges, 1 - b->nobound);
-#endif /* not TRILIBRARY */
 
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
@@ -11803,43 +11613,21 @@ void writeedges(struct mesh *m, struct behavior *b, char *edgefilename,
       if ((triangleloop.tri < trisym.tri) || (trisym.tri == m->dummytri)) {
         org(triangleloop, p1);
         dest(triangleloop, p2);
-#ifdef TRILIBRARY
         elist[index++] = vertexmark(p1);
         elist[index++] = vertexmark(p2);
-#endif /* TRILIBRARY */
         if (b->nobound) {
-#ifndef TRILIBRARY
-          /* Edge number, indices of two endpoints. */
-          fprintf(outfile, "%4ld   %d  %d\n", edgenumber,
-                  vertexmark(p1), vertexmark(p2));
-#endif /* not TRILIBRARY */
         } else {
           /* Edge number, indices of two endpoints, and a boundary marker. */
           /*   If there's no subsegment, the boundary marker is zero.      */
           if (b->usesegments) {
             tspivot(triangleloop, checkmark);
             if (checkmark.ss == m->dummysub) {
-#ifdef TRILIBRARY
               emlist[edgenumber - b->firstnumber] = 0;
-#else /* not TRILIBRARY */
-              fprintf(outfile, "%4ld   %d  %d  %d\n", edgenumber,
-                      vertexmark(p1), vertexmark(p2), 0);
-#endif /* not TRILIBRARY */
             } else {
-#ifdef TRILIBRARY
               emlist[edgenumber - b->firstnumber] = mark(checkmark);
-#else /* not TRILIBRARY */
-              fprintf(outfile, "%4ld   %d  %d  %d\n", edgenumber,
-                      vertexmark(p1), vertexmark(p2), mark(checkmark));
-#endif /* not TRILIBRARY */
             }
           } else {
-#ifdef TRILIBRARY
             emlist[edgenumber - b->firstnumber] = trisym.tri == m->dummytri;
-#else /* not TRILIBRARY */
-            fprintf(outfile, "%4ld   %d  %d  %d\n", edgenumber,
-                    vertexmark(p1), vertexmark(p2), trisym.tri == m->dummytri);
-#endif /* not TRILIBRARY */
           }
         }
         edgenumber++;
@@ -11847,10 +11635,6 @@ void writeedges(struct mesh *m, struct behavior *b, char *edgefilename,
     }
     triangleloop.tri = triangletraverse(m);
   }
-
-#ifndef TRILIBRARY
-  finishfile(outfile, argc, argv);
-#endif /* not TRILIBRARY */
 }
 
 /*****************************************************************************/
@@ -11869,28 +11653,16 @@ void writeedges(struct mesh *m, struct behavior *b, char *edgefilename,
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef TRILIBRARY
-
 void writevoronoi(struct mesh *m, struct behavior *b, REAL **vpointlist,
                   REAL **vpointattriblist, int **vpointmarkerlist,
                   int **vedgelist, int **vedgemarkerlist, REAL **vnormlist)
-#else /* not TRILIBRARY */
-
-void writevoronoi(struct mesh *m, struct behavior *b, char *vnodefilename,
-                  char *vedgefilename, int argc, char **argv)
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   REAL *plist;
   REAL *palist;
   int *elist;
   REAL *normlist;
   int coordindex;
   int attribindex;
-#else /* not TRILIBRARY */
-  FILE *outfile;
-#endif /* not TRILIBRARY */
   struct otri triangleloop, trisym;
   vertex torg, tdest, tapex;
   REAL circumcenter[2];
@@ -11900,7 +11672,6 @@ void writevoronoi(struct mesh *m, struct behavior *b, char *vnodefilename,
   int i;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-#ifdef TRILIBRARY
   if (!b->quiet) {
     printf("Writing Voronoi vertices.\n");
   }
@@ -11919,19 +11690,6 @@ void writevoronoi(struct mesh *m, struct behavior *b, char *vnodefilename,
   palist = *vpointattriblist;
   coordindex = 0;
   attribindex = 0;
-#else /* not TRILIBRARY */
-  if (!b->quiet) {
-    printf("Writing %s.\n", vnodefilename);
-  }
-  outfile = fopen(vnodefilename, "w");
-  if (outfile == (FILE *) NULL) {
-    printf("  Error:  Cannot create file %s.\n", vnodefilename);
-    triexit(1);
-  }
-  /* Number of triangles, two dimensions, number of vertex attributes, */
-  /*   no markers.                                                     */
-  fprintf(outfile, "%ld  %d  %d  %d\n", m->triangles.items, 2, m->nextras, 0);
-#endif /* not TRILIBRARY */
 
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
@@ -11942,7 +11700,6 @@ void writevoronoi(struct mesh *m, struct behavior *b, char *vnodefilename,
     dest(triangleloop, tdest);
     apex(triangleloop, tapex);
     findcircumcenter(m, b, torg, tdest, tapex, circumcenter, &xi, &eta, 0);
-#ifdef TRILIBRARY
     /* X and y coordinates. */
     plist[coordindex++] = circumcenter[0];
     plist[coordindex++] = circumcenter[1];
@@ -11951,28 +11708,12 @@ void writevoronoi(struct mesh *m, struct behavior *b, char *vnodefilename,
       palist[attribindex++] = torg[i] + xi * (tdest[i] - torg[i])
                                      + eta * (tapex[i] - torg[i]);
     }
-#else /* not TRILIBRARY */
-    /* Voronoi vertex number, x and y coordinates. */
-    fprintf(outfile, "%4ld    %.17g  %.17g", vnodenumber, circumcenter[0],
-            circumcenter[1]);
-    for (i = 2; i < 2 + m->nextras; i++) {
-      /* Interpolate the vertex attributes at the circumcenter. */
-      fprintf(outfile, "  %.17g", torg[i] + xi * (tdest[i] - torg[i])
-                                         + eta * (tapex[i] - torg[i]));
-    }
-    fprintf(outfile, "\n");
-#endif /* not TRILIBRARY */
 
     * (int *) (triangleloop.tri + 6) = (int) vnodenumber;
     triangleloop.tri = triangletraverse(m);
     vnodenumber++;
   }
 
-#ifndef TRILIBRARY
-  finishfile(outfile, argc, argv);
-#endif /* not TRILIBRARY */
-
-#ifdef TRILIBRARY
   if (!b->quiet) {
     printf("Writing Voronoi edges.\n");
   }
@@ -11988,18 +11729,6 @@ void writevoronoi(struct mesh *m, struct behavior *b, char *vnodefilename,
   elist = *vedgelist;
   normlist = *vnormlist;
   coordindex = 0;
-#else /* not TRILIBRARY */
-  if (!b->quiet) {
-    printf("Writing %s.\n", vedgefilename);
-  }
-  outfile = fopen(vedgefilename, "w");
-  if (outfile == (FILE *) NULL) {
-    printf("  Error:  Cannot create file %s.\n", vedgefilename);
-    triexit(1);
-  }
-  /* Number of edges, zero boundary markers. */
-  fprintf(outfile, "%ld  %d\n", m->edges, 0);
-#endif /* not TRILIBRARY */
 
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
@@ -12020,65 +11749,36 @@ void writevoronoi(struct mesh *m, struct behavior *b, char *vnodefilename,
         if (trisym.tri == m->dummytri) {
           org(triangleloop, torg);
           dest(triangleloop, tdest);
-#ifdef TRILIBRARY
           /* Copy an infinite ray.  Index of one endpoint, and -1. */
           elist[coordindex] = p1;
           normlist[coordindex++] = tdest[1] - torg[1];
           elist[coordindex] = -1;
           normlist[coordindex++] = torg[0] - tdest[0];
-#else /* not TRILIBRARY */
-          /* Write an infinite ray.  Edge number, index of one endpoint, -1, */
-          /*   and x and y coordinates of a vector representing the          */
-          /*   direction of the ray.                                         */
-          fprintf(outfile, "%4ld   %d  %d   %.17g  %.17g\n", vedgenumber,
-                  p1, -1, tdest[1] - torg[1], torg[0] - tdest[0]);
-#endif /* not TRILIBRARY */
         } else {
           /* Find the number of the adjacent triangle (and Voronoi vertex). */
           p2 = * (int *) (trisym.tri + 6);
           /* Finite edge.  Write indices of two endpoints. */
-#ifdef TRILIBRARY
           elist[coordindex] = p1;
           normlist[coordindex++] = 0.0;
           elist[coordindex] = p2;
           normlist[coordindex++] = 0.0;
-#else /* not TRILIBRARY */
-          fprintf(outfile, "%4ld   %d  %d\n", vedgenumber, p1, p2);
-#endif /* not TRILIBRARY */
         }
         vedgenumber++;
       }
     }
     triangleloop.tri = triangletraverse(m);
   }
-
-#ifndef TRILIBRARY
-  finishfile(outfile, argc, argv);
-#endif /* not TRILIBRARY */
 }
 
-#ifdef TRILIBRARY
-
 void writeneighbors(struct mesh *m, struct behavior *b, int **neighborlist)
-#else /* not TRILIBRARY */
-
-void writeneighbors(struct mesh *m, struct behavior *b, char *neighborfilename,
-                    int argc, char **argv)
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   int *nlist;
   int index;
-#else /* not TRILIBRARY */
-  FILE *outfile;
-#endif /* not TRILIBRARY */
   struct otri triangleloop, trisym;
   long elementnumber;
   int neighbor1, neighbor2, neighbor3;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-#ifdef TRILIBRARY
   if (!b->quiet) {
     printf("Writing neighbors.\n");
   }
@@ -12089,18 +11789,6 @@ void writeneighbors(struct mesh *m, struct behavior *b, char *neighborfilename,
   }
   nlist = *neighborlist;
   index = 0;
-#else /* not TRILIBRARY */
-  if (!b->quiet) {
-    printf("Writing %s.\n", neighborfilename);
-  }
-  outfile = fopen(neighborfilename, "w");
-  if (outfile == (FILE *) NULL) {
-    printf("  Error:  Cannot create file %s.\n", neighborfilename);
-    triexit(1);
-  }
-  /* Number of triangles, three neighbors per triangle. */
-  fprintf(outfile, "%ld  %d\n", m->triangles.items, 3);
-#endif /* not TRILIBRARY */
 
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
@@ -12126,23 +11814,14 @@ void writeneighbors(struct mesh *m, struct behavior *b, char *neighborfilename,
     triangleloop.orient = 0;
     sym(triangleloop, trisym);
     neighbor3 = * (int *) (trisym.tri + 6);
-#ifdef TRILIBRARY
+
     nlist[index++] = neighbor1;
     nlist[index++] = neighbor2;
     nlist[index++] = neighbor3;
-#else /* not TRILIBRARY */
-    /* Triangle number, neighboring triangle numbers. */
-    fprintf(outfile, "%4ld    %d  %d  %d\n", elementnumber,
-            neighbor1, neighbor2, neighbor3);
-#endif /* not TRILIBRARY */
 
     triangleloop.tri = triangletraverse(m);
     elementnumber++;
   }
-
-#ifndef TRILIBRARY
-  finishfile(outfile, argc, argv);
-#endif /* not TRILIBRARY */
 }
 
 /**                                                                         **/
