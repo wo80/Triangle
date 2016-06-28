@@ -8699,30 +8699,13 @@ long delaunay(struct mesh *m, struct behavior *b)
 
 #ifndef CDT_ONLY
 
-#ifdef TRILIBRARY
-
 int reconstruct(struct mesh *m, struct behavior *b, int *trianglelist,
                 REAL *triangleattriblist, REAL *trianglearealist,
                 int elements, int corners, int attribs,
                 int *segmentlist,int *segmentmarkerlist, int numberofsegments)
-#else /* not TRILIBRARY */
-
-long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
-                 char *areafilename, char *polyfilename, FILE *polyfile)
-
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   int vertexindex;
   int attribindex;
-#else /* not TRILIBRARY */
-  FILE *elefile;
-  FILE *areafile;
-  char inputline[INPUTLINESIZE];
-  char *stringptr;
-  int areaelements;
-#endif /* not TRILIBRARY */
   struct otri triangleloop;
   struct otri triangleleft;
   struct otri checktri;
@@ -8751,7 +8734,6 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
   int i, j;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-#ifdef TRILIBRARY
   m->inelements = elements;
   incorners = corners;
   if (incorners < 3) {
@@ -8759,38 +8741,6 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
     triexit(1);
   }
   m->eextras = attribs;
-#else /* not TRILIBRARY */
-  /* Read the triangles from an .ele file. */
-  if (!b->quiet) {
-    printf("Opening %s.\n", elefilename);
-  }
-  elefile = fopen(elefilename, "r");
-  if (elefile == (FILE *) NULL) {
-    printf("  Error:  Cannot access file %s.\n", elefilename);
-    triexit(1);
-  }
-  /* Read number of triangles, number of vertices per triangle, and */
-  /*   number of triangle attributes from .ele file.                */
-  stringptr = readline(inputline, elefile, elefilename);
-  m->inelements = (int) strtol(stringptr, &stringptr, 0);
-  stringptr = findfield(stringptr);
-  if (*stringptr == '\0') {
-    incorners = 3;
-  } else {
-    incorners = (int) strtol(stringptr, &stringptr, 0);
-    if (incorners < 3) {
-      printf("Error:  Triangles in %s must have at least 3 vertices.\n",
-             elefilename);
-      triexit(1);
-    }
-  }
-  stringptr = findfield(stringptr);
-  if (*stringptr == '\0') {
-    m->eextras = 0;
-  } else {
-    m->eextras = (int) strtol(stringptr, &stringptr, 0);
-  }
-#endif /* not TRILIBRARY */
 
   initializetrisubpools(m, b);
 
@@ -8803,19 +8753,8 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
 
   segmentmarkers = 0;
   if (b->poly) {
-#ifdef TRILIBRARY
     m->insegments = numberofsegments;
     segmentmarkers = segmentmarkerlist != (int *) NULL;
-#else /* not TRILIBRARY */
-    /* Read number of segments and number of segment */
-    /*   boundary markers from .poly file.           */
-    stringptr = readline(inputline, polyfile, b->inpolyfilename);
-    m->insegments = (int) strtol(stringptr, &stringptr, 0);
-    stringptr = findfield(stringptr);
-    if (*stringptr != '\0') {
-      segmentmarkers = (int) strtol(stringptr, &stringptr, 0);
-    }
-#endif /* not TRILIBRARY */
 
     /* Create the subsegments. */
     for (segmentnumber = 1; segmentnumber <= m->insegments; segmentnumber++) {
@@ -8825,29 +8764,8 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
     }
   }
 
-#ifdef TRILIBRARY
   vertexindex = 0;
   attribindex = 0;
-#else /* not TRILIBRARY */
-  if (b->vararea) {
-    /* Open an .area file, check for consistency with the .ele file. */
-    if (!b->quiet) {
-      printf("Opening %s.\n", areafilename);
-    }
-    areafile = fopen(areafilename, "r");
-    if (areafile == (FILE *) NULL) {
-      printf("  Error:  Cannot access file %s.\n", areafilename);
-      triexit(1);
-    }
-    stringptr = readline(inputline, areafile, areafilename);
-    areaelements = (int) strtol(stringptr, &stringptr, 0);
-    if (areaelements != m->inelements) {
-      printf("Error:  %s and %s disagree on number of triangles.\n",
-             elefilename, areafilename);
-      triexit(1);
-    }
-  }
-#endif /* not TRILIBRARY */
 
   if (!b->quiet) {
     printf("Reconstructing mesh.\n");
@@ -8871,7 +8789,6 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
   triangleloop.tri = triangletraverse(m);
   elementnumber = b->firstnumber;
   while (triangleloop.tri != (triangle *) NULL) {
-#ifdef TRILIBRARY
     /* Copy the triangle's three corners. */
     for (j = 0; j < 3; j++) {
       corner[j] = trianglelist[vertexindex++];
@@ -8882,36 +8799,10 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
         triexit(1);
       }
     }
-#else /* not TRILIBRARY */
-    /* Read triangle number and the triangle's three corners. */
-    stringptr = readline(inputline, elefile, elefilename);
-    for (j = 0; j < 3; j++) {
-      stringptr = findfield(stringptr);
-      if (*stringptr == '\0') {
-        printf("Error:  Triangle %ld is missing vertex %d in %s.\n",
-               elementnumber, j + 1, elefilename);
-        triexit(1);
-      } else {
-        corner[j] = (int) strtol(stringptr, &stringptr, 0);
-        if ((corner[j] < b->firstnumber) ||
-            (corner[j] >= b->firstnumber + m->invertices)) {
-          printf("Error:  Triangle %ld has an invalid vertex index.\n",
-                 elementnumber);
-          triexit(1);
-        }
-      }
-    }
-#endif /* not TRILIBRARY */
 
     /* Find out about (and throw away) extra nodes. */
     for (j = 3; j < incorners; j++) {
-#ifdef TRILIBRARY
       killvertexindex = trianglelist[vertexindex++];
-#else /* not TRILIBRARY */
-      stringptr = findfield(stringptr);
-      if (*stringptr != '\0') {
-        killvertexindex = (int) strtol(stringptr, &stringptr, 0);
-#endif /* not TRILIBRARY */
         if ((killvertexindex >= b->firstnumber) &&
             (killvertexindex < b->firstnumber + m->invertices)) {
           /* Delete the non-corner vertex if it's not already deleted. */
@@ -8920,39 +8811,15 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
             vertexdealloc(m, killvertex);
           }
         }
-#ifndef TRILIBRARY
-      }
-#endif /* not TRILIBRARY */
     }
 
     /* Read the triangle's attributes. */
     for (j = 0; j < m->eextras; j++) {
-#ifdef TRILIBRARY
       setelemattribute(triangleloop, j, triangleattriblist[attribindex++]);
-#else /* not TRILIBRARY */
-      stringptr = findfield(stringptr);
-      if (*stringptr == '\0') {
-        setelemattribute(triangleloop, j, 0);
-      } else {
-        setelemattribute(triangleloop, j,
-                         (REAL) strtod(stringptr, &stringptr));
-      }
-#endif /* not TRILIBRARY */
     }
 
     if (b->vararea) {
-#ifdef TRILIBRARY
       area = trianglearealist[elementnumber - b->firstnumber];
-#else /* not TRILIBRARY */
-      /* Read an area constraint from the .area file. */
-      stringptr = readline(inputline, areafile, areafilename);
-      stringptr = findfield(stringptr);
-      if (*stringptr == '\0') {
-        area = -1.0;                      /* No constraint on this triangle. */
-      } else {
-        area = (REAL) strtod(stringptr, &stringptr);
-      }
-#endif /* not TRILIBRARY */
       setareabound(triangleloop, area);
     }
 
@@ -9000,15 +8867,7 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
     elementnumber++;
   }
 
-#ifdef TRILIBRARY
   vertexindex = 0;
-#else /* not TRILIBRARY */
-  fclose(elefile);
-  if (b->vararea) {
-    fclose(areafile);
-  }
-#endif /* not TRILIBRARY */
-
   hullsize = 0;                      /* Prepare to count the boundary edges. */
   if (b->poly) {
     if (b->verbose) {
@@ -9021,41 +8880,12 @@ long reconstruct(struct mesh *m, struct behavior *b, char *elefilename,
     subsegloop.ss = subsegtraverse(m);
     segmentnumber = b->firstnumber;
     while (subsegloop.ss != (subseg *) NULL) {
-#ifdef TRILIBRARY
       end[0] = segmentlist[vertexindex++];
       end[1] = segmentlist[vertexindex++];
       if (segmentmarkers) {
         boundmarker = segmentmarkerlist[segmentnumber - b->firstnumber];
       }
-#else /* not TRILIBRARY */
-      /* Read the endpoints of each segment, and possibly a boundary marker. */
-      stringptr = readline(inputline, polyfile, b->inpolyfilename);
-      /* Skip the first (segment number) field. */
-      stringptr = findfield(stringptr);
-      if (*stringptr == '\0') {
-        printf("Error:  Segment %ld has no endpoints in %s.\n", segmentnumber,
-               polyfilename);
-        triexit(1);
-      } else {
-        end[0] = (int) strtol(stringptr, &stringptr, 0);
-      }
-      stringptr = findfield(stringptr);
-      if (*stringptr == '\0') {
-        printf("Error:  Segment %ld is missing its second endpoint in %s.\n",
-               segmentnumber, polyfilename);
-        triexit(1);
-      } else {
-        end[1] = (int) strtol(stringptr, &stringptr, 0);
-      }
-      if (segmentmarkers) {
-        stringptr = findfield(stringptr);
-        if (*stringptr == '\0') {
-          boundmarker = 0;
-        } else {
-          boundmarker = (int) strtol(stringptr, &stringptr, 0);
-        }
-      }
-#endif /* not TRILIBRARY */
+
       for (j = 0; j < 2; j++) {
         if ((end[j] < b->firstnumber) ||
             (end[j] >= b->firstnumber + m->invertices)) {
@@ -9956,26 +9786,11 @@ void markhull(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef TRILIBRARY
-
 void formskeleton(struct mesh *m, struct behavior *b, int *segmentlist,
                   int *segmentmarkerlist, int numberofsegments, int *err)
-
-#else /* not TRILIBRARY */
-
-void formskeleton(struct mesh *m, struct behavior *b,
-                  FILE *polyfile, char *polyfilename, int *err)
-
-#endif /* not TRILIBRARY */
-
 {
-#ifdef TRILIBRARY
   char polyfilename[6];
   int index;
-#else /* not TRILIBRARY */
-  char inputline[INPUTLINESIZE];
-  char *stringptr;
-#endif /* not TRILIBRARY */
   vertex endpoint1, endpoint2;
   int segmentmarkers;
   int end1, end2;
@@ -9986,23 +9801,12 @@ void formskeleton(struct mesh *m, struct behavior *b,
     if (!b->quiet) {
       printf("Recovering segments in Delaunay triangulation.\n");
     }
-#ifdef TRILIBRARY
+
     strcpy_s(polyfilename, 6, "input");
     m->insegments = numberofsegments;
     segmentmarkers = segmentmarkerlist != (int *) NULL;
     index = 0;
-#else /* not TRILIBRARY */
-    /* Read the segments from a .poly file. */
-    /* Read number of segments and number of boundary markers. */
-    stringptr = readline(inputline, polyfile, polyfilename);
-    m->insegments = (int) strtol(stringptr, &stringptr, 0);
-    stringptr = findfield(stringptr);
-    if (*stringptr == '\0') {
-      segmentmarkers = 0;
-    } else {
-      segmentmarkers = (int) strtol(stringptr, &stringptr, 0);
-    }
-#endif /* not TRILIBRARY */
+
     /* If the input vertices are collinear, there is no triangulation, */
     /*   so don't try to insert segments.                              */
     if (m->triangles.items == 0) {
@@ -10021,39 +9825,12 @@ void formskeleton(struct mesh *m, struct behavior *b,
     boundmarker = 0;
     /* Read and insert the segments. */
     for (i = 0; i < m->insegments; i++) {
-#ifdef TRILIBRARY
       end1 = segmentlist[index++];
       end2 = segmentlist[index++];
       if (segmentmarkers) {
         boundmarker = segmentmarkerlist[i];
       }
-#else /* not TRILIBRARY */
-      stringptr = readline(inputline, polyfile, b->inpolyfilename);
-      stringptr = findfield(stringptr);
-      if (*stringptr == '\0') {
-        printf("Error:  Segment %d has no endpoints in %s.\n",
-               b->firstnumber + i, polyfilename);
-        triexit(1);
-      } else {
-        end1 = (int) strtol(stringptr, &stringptr, 0);
-      }
-      stringptr = findfield(stringptr);
-      if (*stringptr == '\0') {
-        printf("Error:  Segment %d is missing its second endpoint in %s.\n",
-               b->firstnumber + i, polyfilename);
-        triexit(1);
-      } else {
-        end2 = (int) strtol(stringptr, &stringptr, 0);
-      }
-      if (segmentmarkers) {
-        stringptr = findfield(stringptr);
-        if (*stringptr == '\0') {
-          boundmarker = 0;
-        } else {
-          boundmarker = (int) strtol(stringptr, &stringptr, 0);
-        }
-      }
-#endif /* not TRILIBRARY */
+
       if ((end1 < b->firstnumber) ||
           (end1 >= b->firstnumber + m->invertices)) {
         if (!b->quiet) {
