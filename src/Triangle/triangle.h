@@ -282,8 +282,7 @@ struct triangulateio {
   int numberofregions;                                    /* In / copied out */
 
   int *edgelist;                                                 /* Out only */
-  int *edgemarkerlist;            /* Not used with Voronoi diagram; out only */
-  REAL *normlist;                /* Used only with Voronoi diagram; out only */
+  int *edgemarkerlist;                                           /* Out only */
   int numberofedges;                                             /* Out only */
   int errorcode;                                                 /* Out only */
 };
@@ -292,7 +291,7 @@ struct triangulateio {
 extern "C" {
 #endif
 
-  __declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *, struct triangulateio *);
+  __declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *);
   __declspec(dllexport) void __cdecl trifree(VOID *memptr);
 
 #ifdef __cplusplus

@@ -295,7 +295,7 @@ struct behavior {
 /*   weighted: 1 for -w switch, 2 for -W switch.  jettison: -j switch        */
 /*   firstnumber: inverse of -z switch.  All items are numbered starting     */
 /*     from `firstnumber'.                                                   */
-/*   edgesout: -e switch.  voronoi: -v switch.                               */
+/*   edgesout: -e switch.                                                    */
 /*   neighbors: -n switch.  geomview: -g switch.                             */
 /*   nobound: -B switch.  nopolywritten: -P switch.                          */
 /*   nonodewritten: -N switch.  noelewritten: -E switch.                     */
@@ -317,7 +317,7 @@ struct behavior {
   int poly, refine, quality, vararea, fixedarea, usertest;
   int regionattrib, convex, weighted, jettison;
   int firstnumber;
-  int edgesout, voronoi, neighbors, geomview;
+  int edgesout, neighbors, geomview;
   int nobound, nopolywritten, nonodewritten, noelewritten, noiterationnum;
   int noholes, noexact, conformdel;
   int incremental, sweepline, dwyer;
