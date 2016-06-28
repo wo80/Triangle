@@ -19,13 +19,9 @@
 
 #define NO_ACUTE
 
-/* Define as "float" for single precision. */
-#define REAL double
+#include "triangle_config.h"
 
-/* The next line is used to outsmart some very stupid compilers.  If your    */
-/*   compiler is smarter, feel free to replace the "int" with "void".        */
-/*   Not that it matters.                                                    */
-#define VOID void
+#include "triangle_core.h"
 
 /*****************************************************************************/
 /*                                                                           */

@@ -29,5 +29,11 @@
     <ClInclude Include="acute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="triangle_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="triangle_core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

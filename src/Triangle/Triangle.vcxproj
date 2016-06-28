@@ -44,6 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>TRILIBRARY;NO_TIMER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -70,6 +71,8 @@
     <ClInclude Include="acute.h" />
     <ClInclude Include="newSPLocation.h" />
     <ClInclude Include="triangle.h" />
+    <ClInclude Include="triangle_config.h" />
+    <ClInclude Include="triangle_core.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
