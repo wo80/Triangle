@@ -292,13 +292,8 @@ struct triangulateio {
 extern "C" {
 #endif
 
-#ifdef ANSI_DECLARATORS
-	__declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *, struct triangulateio *);
-	__declspec(dllexport) void __cdecl trifree(VOID *memptr);
-#else /* not ANSI_DECLARATORS */
-	void triangulate();
-	void trifree();
-#endif /* not ANSI_DECLARATORS */
+  __declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *, struct triangulateio *);
+  __declspec(dllexport) void __cdecl trifree(VOID *memptr);
 
 #ifdef __cplusplus
 }
