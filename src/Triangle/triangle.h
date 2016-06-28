@@ -17,7 +17,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#define ANSI_DECLARATORS
+#define NO_ACUTE
 
 /* Define as "float" for single precision. */
 #define REAL double
