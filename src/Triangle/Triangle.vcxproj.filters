@@ -18,6 +18,9 @@
     <ClCompile Include="triangle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="predicates.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="triangle.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="triangle_core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="predicates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

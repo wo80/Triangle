@@ -65,11 +65,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="predicates.c" />
     <ClCompile Include="triangle.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="acute.h" />
     <ClInclude Include="newSPLocation.h" />
+    <ClInclude Include="predicates.h" />
     <ClInclude Include="triangle.h" />
     <ClInclude Include="triangle_config.h" />
     <ClInclude Include="triangle_core.h" />
