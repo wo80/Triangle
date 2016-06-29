@@ -26,9 +26,6 @@
     <ClInclude Include="triangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="newSPLocation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="acute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -40,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="predicates.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="acute.c">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="acute.h" />
-    <ClInclude Include="newSPLocation.h" />
+    <ClInclude Include="acute.c" />
     <ClInclude Include="predicates.h" />
     <ClInclude Include="triangle.h" />
     <ClInclude Include="triangle_config.h" />
