@@ -478,7 +478,7 @@ REAL counterclockwiseadapt(vertex pa, vertex pb, vertex pc, REAL detsum)
   return(D[Dlength - 1]);
 }
 
-REAL counterclockwise(struct mesh *m, struct behavior *b,
+REAL counterclockwise(mesh *m, behavior *b,
                       vertex pa, vertex pb, vertex pc)
 {
   REAL detleft, detright, det;
@@ -1106,7 +1106,7 @@ REAL incircleadapt(vertex pa, vertex pb, vertex pc, vertex pd, REAL permanent)
   return finnow[finlength - 1];
 }
 
-REAL incircle(struct mesh *m, struct behavior *b,
+REAL incircle(mesh *m, behavior *b,
               vertex pa, vertex pb, vertex pc, vertex pd)
 {
   REAL adx, bdx, cdx, ady, bdy, cdy;
@@ -1587,7 +1587,7 @@ REAL orient3dadapt(vertex pa, vertex pb, vertex pc, vertex pd,
   return finnow[finlength - 1];
 }
 
-REAL orient3d(struct mesh *m, struct behavior *b,
+REAL orient3d(mesh *m, behavior *b,
               vertex pa, vertex pb, vertex pc, vertex pd,
               REAL aheight, REAL bheight, REAL cheight, REAL dheight)
 {
@@ -1655,7 +1655,7 @@ REAL orient3d(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-REAL nonregular(struct mesh *m, struct behavior *b,
+REAL nonregular(mesh *m, behavior *b,
                 vertex pa, vertex pb, vertex pc, vertex pd)
 {
   if (b->weighted == 0) {
@@ -1685,7 +1685,7 @@ REAL nonregular(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void findcircumcenter(struct mesh *m, struct behavior *b,
+void findcircumcenter(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter)
 {

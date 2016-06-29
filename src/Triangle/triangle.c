@@ -366,7 +366,7 @@ void internalerror()
 /*                                                                           */
 /*****************************************************************************/
 
-void parsecommandline(int argc, char **argv, struct behavior *b, int *err)
+void parsecommandline(int argc, char **argv, behavior *b, int *err)
 {
 #ifdef TRILIBRARY
 #define STARTINDEX 0
@@ -769,7 +769,7 @@ void parsecommandline(int argc, char **argv, struct behavior *b, int *err)
 /*                                                                           */
 /*****************************************************************************/
 
-void printtriangle(struct mesh *m, struct behavior *b, struct otri *t)
+void printtriangle(mesh *m, behavior *b, struct otri *t)
 {
   struct otri printtri;
   struct osub printsh;
@@ -855,7 +855,7 @@ void printtriangle(struct mesh *m, struct behavior *b, struct otri *t)
 /*                                                                           */
 /*****************************************************************************/
 
-void printsubseg(struct mesh *m, struct behavior *b, struct osub *s)
+void printsubseg(mesh *m, behavior *b, struct osub *s)
 {
   struct osub printsh;
   struct otri printtri;
@@ -1224,7 +1224,7 @@ VOID *traverse(struct memorypool *pool)
 /*                                                                           */
 /*****************************************************************************/
 
-void dummyinit(struct mesh *m, struct behavior *b, int trianglebytes,
+void dummyinit(mesh *m, behavior *b, int trianglebytes,
                int subsegbytes)
 {
   ULONG_PTR alignptr;
@@ -1295,7 +1295,7 @@ void dummyinit(struct mesh *m, struct behavior *b, int trianglebytes,
 /*                                                                           */
 /*****************************************************************************/
 
-void initializevertexpool(struct mesh *m, struct behavior *b)
+void initializevertexpool(mesh *m, behavior *b)
 {
   int vertexsize;
 
@@ -1331,7 +1331,7 @@ void initializevertexpool(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void initializetrisubpools(struct mesh *m, struct behavior *b)
+void initializetrisubpools(mesh *m, behavior *b)
 {
   int trisize;
 
@@ -1391,7 +1391,7 @@ void initializetrisubpools(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void triangledealloc(struct mesh *m, triangle *dyingtriangle)
+void triangledealloc(mesh *m, triangle *dyingtriangle)
 {
   /* Mark the triangle as dead.  This makes it possible to detect dead */
   /*   triangles when traversing the list of all triangles.            */
@@ -1405,7 +1405,7 @@ void triangledealloc(struct mesh *m, triangle *dyingtriangle)
 /*                                                                           */
 /*****************************************************************************/
 
-triangle *triangletraverse(struct mesh *m)
+triangle *triangletraverse(mesh *m)
 {
   triangle *newtriangle;
 
@@ -1424,7 +1424,7 @@ triangle *triangletraverse(struct mesh *m)
 /*                                                                           */
 /*****************************************************************************/
 
-void subsegdealloc(struct mesh *m, subseg *dyingsubseg)
+void subsegdealloc(mesh *m, subseg *dyingsubseg)
 {
   /* Mark the subsegment as dead.  This makes it possible to detect dead */
   /*   subsegments when traversing the list of all subsegments.          */
@@ -1438,7 +1438,7 @@ void subsegdealloc(struct mesh *m, subseg *dyingsubseg)
 /*                                                                           */
 /*****************************************************************************/
 
-subseg *subsegtraverse(struct mesh *m)
+subseg *subsegtraverse(mesh *m)
 {
   subseg *newsubseg;
 
@@ -1457,7 +1457,7 @@ subseg *subsegtraverse(struct mesh *m)
 /*                                                                           */
 /*****************************************************************************/
 
-void vertexdealloc(struct mesh *m, vertex dyingvertex)
+void vertexdealloc(mesh *m, vertex dyingvertex)
 {
   /* Mark the vertex as dead.  This makes it possible to detect dead */
   /*   vertices when traversing the list of all vertices.            */
@@ -1471,7 +1471,7 @@ void vertexdealloc(struct mesh *m, vertex dyingvertex)
 /*                                                                           */
 /*****************************************************************************/
 
-vertex vertextraverse(struct mesh *m)
+vertex vertextraverse(mesh *m)
 {
   vertex newvertex;
 
@@ -1493,7 +1493,7 @@ vertex vertextraverse(struct mesh *m)
 
 #ifndef CDT_ONLY
 
-void badsubsegdealloc(struct mesh *m, struct badsubseg *dyingseg)
+void badsubsegdealloc(mesh *m, struct badsubseg *dyingseg)
 {
   /* Set subsegment's origin to NULL.  This makes it possible to detect dead */
   /*   badsubsegs when traversing the list of all badsubsegs             .   */
@@ -1511,7 +1511,7 @@ void badsubsegdealloc(struct mesh *m, struct badsubseg *dyingseg)
 
 #ifndef CDT_ONLY
 
-struct badsubseg *badsubsegtraverse(struct mesh *m)
+struct badsubseg *badsubsegtraverse(mesh *m)
 {
   struct badsubseg *newseg;
 
@@ -1538,7 +1538,7 @@ struct badsubseg *badsubsegtraverse(struct mesh *m)
 /*                                                                           */
 /*****************************************************************************/
 
-vertex getvertex(struct mesh *m, struct behavior *b, int number)
+vertex getvertex(mesh *m, behavior *b, int number)
 {
   VOID **getblock;
   char *foundvertex;
@@ -1571,7 +1571,7 @@ vertex getvertex(struct mesh *m, struct behavior *b, int number)
 /*                                                                           */
 /*****************************************************************************/
 
-void triangledeinit(struct mesh *m, struct behavior *b)
+void triangledeinit(mesh *m, behavior *b)
 {
   pooldeinit(&m->triangles);
   trifree((VOID *) m->dummytribase);
@@ -1605,7 +1605,7 @@ void triangledeinit(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void maketriangle(struct mesh *m, struct behavior *b, struct otri *newotri)
+void maketriangle(mesh *m, behavior *b, struct otri *newotri)
 {
   int i;
 
@@ -1641,7 +1641,7 @@ void maketriangle(struct mesh *m, struct behavior *b, struct otri *newotri)
 /*                                                                           */
 /*****************************************************************************/
 
-void makesubseg(struct mesh *m, struct osub *newsubseg)
+void makesubseg(mesh *m, struct osub *newsubseg)
 {
   newsubseg->ss = (subseg *) poolalloc(&m->subsegs);
   /* Initialize the two adjoining subsegments to be the omnipresent */
@@ -1673,7 +1673,7 @@ void makesubseg(struct mesh *m, struct osub *newsubseg)
 /*                                                                           */
 /*****************************************************************************/
 
-void triangleinit(struct mesh *m)
+void triangleinit(mesh *m)
 {
   poolzero(&m->vertices);
   poolzero(&m->triangles);
@@ -1724,7 +1724,7 @@ unsigned long randomnation(unsigned int choices)
 
 #ifndef REDUCED
 
-void checkmesh(struct mesh *m, struct behavior *b)
+void checkmesh(mesh *m, behavior *b)
 {
   struct otri triangleloop;
   struct otri oppotri, oppooppotri;
@@ -1816,7 +1816,7 @@ void checkmesh(struct mesh *m, struct behavior *b)
 
 #ifndef REDUCED
 
-void checkdelaunay(struct mesh *m, struct behavior *b)
+void checkdelaunay(mesh *m, behavior *b)
 {
   struct otri triangleloop;
   struct otri oppotri;
@@ -1919,7 +1919,7 @@ void checkdelaunay(struct mesh *m, struct behavior *b)
 
 #ifndef CDT_ONLY
 
-void enqueuebadtriang(struct mesh *m, struct behavior *b,
+void enqueuebadtriang(mesh *m, behavior *b,
                       struct badtriang *badtri)
 {
   REAL length, multiplier;
@@ -2017,7 +2017,7 @@ void enqueuebadtriang(struct mesh *m, struct behavior *b,
 
 #ifndef CDT_ONLY
 
-void enqueuebadtri(struct mesh *m, struct behavior *b, struct otri *enqtri,
+void enqueuebadtri(mesh *m, behavior *b, struct otri *enqtri,
                    REAL minedge, vertex enqapex, vertex enqorg, vertex enqdest)
 {
   struct badtriang *newbad;
@@ -2042,7 +2042,7 @@ void enqueuebadtri(struct mesh *m, struct behavior *b, struct otri *enqtri,
 
 #ifndef CDT_ONLY
 
-struct badtriang *dequeuebadtriang(struct mesh *m)
+struct badtriang *dequeuebadtriang(mesh *m)
 {
   struct badtriang *result;
 
@@ -2089,7 +2089,7 @@ struct badtriang *dequeuebadtriang(struct mesh *m)
 
 #ifndef CDT_ONLY
 
-int checkseg4encroach(struct mesh *m, struct behavior *b,
+int checkseg4encroach(mesh *m, behavior *b,
                       struct osub *testsubseg)
 {
   struct otri neighbortri;
@@ -2194,7 +2194,7 @@ int checkseg4encroach(struct mesh *m, struct behavior *b,
 
 #ifndef CDT_ONLY
 
-void testtriangle(struct mesh *m, struct behavior *b, struct otri *testtri)
+void testtriangle(mesh *m, behavior *b, struct otri *testtri)
 {
   struct otri tri1, tri2;
   struct osub testsub;
@@ -2399,7 +2399,7 @@ void testtriangle(struct mesh *m, struct behavior *b, struct otri *testtri)
 /*                                                                           */
 /*****************************************************************************/
 
-void makevertexmap(struct mesh *m, struct behavior *b)
+void makevertexmap(mesh *m, behavior *b)
 {
   struct otri triangleloop;
   vertex triorg;
@@ -2487,7 +2487,7 @@ void makevertexmap(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-enum locateresult preciselocate(struct mesh *m, struct behavior *b,
+enum locateresult preciselocate(mesh *m, behavior *b,
                                 vertex searchpoint, struct otri *searchtri,
                                 int stopatsubsegment)
 {
@@ -2621,7 +2621,7 @@ enum locateresult preciselocate(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-enum locateresult locate(struct mesh *m, struct behavior *b,
+enum locateresult locate(mesh *m, behavior *b,
                          vertex searchpoint, struct otri *searchtri)
 {
   VOID **sampleblock;
@@ -2783,7 +2783,7 @@ enum locateresult locate(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void insertsubseg(struct mesh *m, struct behavior *b, struct otri *tri,
+void insertsubseg(mesh *m, behavior *b, struct otri *tri,
                   int subsegmark)
 {
   struct otri oppotri;
@@ -2878,7 +2878,7 @@ void insertsubseg(struct mesh *m, struct behavior *b, struct otri *tri,
 /*                                                                           */
 /*****************************************************************************/
 
-void flip(struct mesh *m, struct behavior *b, struct otri *flipedge)
+void flip(mesh *m, behavior *b, struct otri *flipedge)
 {
   struct otri botleft, botright;
   struct otri topleft, topright;
@@ -3005,7 +3005,7 @@ void flip(struct mesh *m, struct behavior *b, struct otri *flipedge)
 /*                                                                           */
 /*****************************************************************************/
 
-void unflip(struct mesh *m, struct behavior *b, struct otri *flipedge)
+void unflip(mesh *m, behavior *b, struct otri *flipedge)
 {
   struct otri botleft, botright;
   struct otri topleft, topright;
@@ -3146,7 +3146,7 @@ void unflip(struct mesh *m, struct behavior *b, struct otri *flipedge)
 /*                                                                           */
 /*****************************************************************************/
 
-enum insertvertexresult insertvertex(struct mesh *m, struct behavior *b,
+enum insertvertexresult insertvertex(mesh *m, behavior *b,
                                      vertex newvertex, struct otri *searchtri,
                                      struct osub *splitseg,
                                      int segmentflaws, int triflaws,
@@ -3805,7 +3805,7 @@ enum insertvertexresult insertvertex(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void triangulatepolygon(struct mesh *m, struct behavior *b,
+void triangulatepolygon(mesh *m, behavior *b,
                         struct otri *firstedge, struct otri *lastedge,
                         int edgecount, int doflip, int triflaws)
 {
@@ -3892,7 +3892,7 @@ void triangulatepolygon(struct mesh *m, struct behavior *b,
 
 #ifndef CDT_ONLY
 
-void deletevertex(struct mesh *m, struct behavior *b, struct otri *deltri)
+void deletevertex(mesh *m, behavior *b, struct otri *deltri)
 {
   struct otri countingtri;
   struct otri firstedge, lastedge;
@@ -3987,7 +3987,7 @@ void deletevertex(struct mesh *m, struct behavior *b, struct otri *deltri)
 
 #ifndef CDT_ONLY
 
-void undovertex(struct mesh *m, struct behavior *b)
+void undovertex(mesh *m, behavior *b)
 {
   struct otri fliptri;
   struct otri botleft, botright, topright;
@@ -4319,7 +4319,7 @@ void alternateaxes(vertex *sortarray, int arraysize, int axis)
 /*                                                                           */
 /*****************************************************************************/
 
-void mergehulls(struct mesh *m, struct behavior *b, struct otri *farleft,
+void mergehulls(mesh *m, behavior *b, struct otri *farleft,
                 struct otri *innerleft, struct otri *innerright,
                 struct otri *farright, int axis)
 {
@@ -4634,7 +4634,7 @@ void mergehulls(struct mesh *m, struct behavior *b, struct otri *farleft,
 /*                                                                           */
 /*****************************************************************************/
 
-void divconqrecurse(struct mesh *m, struct behavior *b, vertex *sortarray,
+void divconqrecurse(mesh *m, behavior *b, vertex *sortarray,
                     int vertices, int axis,
                     struct otri *farleft, struct otri *farright)
 {
@@ -4786,7 +4786,7 @@ void divconqrecurse(struct mesh *m, struct behavior *b, vertex *sortarray,
   }
 }
 
-long removeghosts(struct mesh *m, struct behavior *b, struct otri *startghost)
+long removeghosts(mesh *m, behavior *b, struct otri *startghost)
 {
   struct otri searchedge;
   struct otri dissolveedge;
@@ -4841,7 +4841,7 @@ long removeghosts(struct mesh *m, struct behavior *b, struct otri *startghost)
 /*                                                                           */
 /*****************************************************************************/
 
-long divconqdelaunay(struct mesh *m, struct behavior *b)
+long divconqdelaunay(mesh *m, behavior *b)
 {
   vertex *sortarray;
   struct otri hullleft, hullright;
@@ -4921,7 +4921,7 @@ long divconqdelaunay(struct mesh *m, struct behavior *b)
 
 #ifndef REDUCED
 
-void boundingbox(struct mesh *m, struct behavior *b)
+void boundingbox(mesh *m, behavior *b)
 {
   struct otri inftri;          /* Handle for the triangular bounding box. */
   REAL width;
@@ -4980,7 +4980,7 @@ void boundingbox(struct mesh *m, struct behavior *b)
 
 #ifndef REDUCED
 
-long removebox(struct mesh *m, struct behavior *b)
+long removebox(mesh *m, behavior *b)
 {
   struct otri deadtriangle;
   struct otri searchedge;
@@ -5072,7 +5072,7 @@ long removebox(struct mesh *m, struct behavior *b)
 
 #ifndef REDUCED
 
-long incrementaldelaunay(struct mesh *m, struct behavior *b)
+long incrementaldelaunay(mesh *m, behavior *b)
 {
   struct otri starttri;
   vertex vertexloop;
@@ -5230,7 +5230,7 @@ void eventheapdelete(struct event **heap, int heapsize, int eventnum)
 
 #ifndef REDUCED
 
-void createeventheap(struct mesh *m, struct event ***eventheap,
+void createeventheap(mesh *m, struct event ***eventheap,
                      struct event **events, struct event **freeevents)
 {
   vertex thisvertex;
@@ -5260,7 +5260,7 @@ void createeventheap(struct mesh *m, struct event ***eventheap,
 
 #ifndef REDUCED
 
-int rightofhyperbola(struct mesh *m, struct otri *fronttri, vertex newsite)
+int rightofhyperbola(mesh *m, struct otri *fronttri, vertex newsite)
 {
   vertex leftvertex, rightvertex;
   REAL dxa, dya, dxb, dyb;
@@ -5291,7 +5291,7 @@ int rightofhyperbola(struct mesh *m, struct otri *fronttri, vertex newsite)
 
 #ifndef REDUCED
 
-REAL circletop(struct mesh *m, vertex pa, vertex pb, vertex pc, REAL ccwabc)
+REAL circletop(mesh *m, vertex pa, vertex pb, vertex pc, REAL ccwabc)
 {
   REAL xac, yac, xbc, ybc, xab, yab;
   REAL aclen2, bclen2, ablen2;
@@ -5338,7 +5338,7 @@ void check4deadevent(struct otri *checktri, struct event **freeevents,
 
 #ifndef REDUCED
 
-struct splaynode *splay(struct mesh *m, struct splaynode *splaytree,
+struct splaynode *splay(mesh *m, struct splaynode *splaytree,
                         vertex searchpoint, struct otri *searchtri)
 {
   struct splaynode *child, *grandchild;
@@ -5448,7 +5448,7 @@ struct splaynode *splay(struct mesh *m, struct splaynode *splaytree,
 
 #ifndef REDUCED
 
-struct splaynode *splayinsert(struct mesh *m, struct splaynode *splayroot,
+struct splaynode *splayinsert(mesh *m, struct splaynode *splayroot,
                               struct otri *newkey, vertex searchpoint)
 {
   struct splaynode *newsplaynode;
@@ -5475,7 +5475,7 @@ struct splaynode *splayinsert(struct mesh *m, struct splaynode *splayroot,
 
 #ifndef REDUCED
 
-struct splaynode *circletopinsert(struct mesh *m, struct behavior *b,
+struct splaynode *circletopinsert(mesh *m, behavior *b,
                                   struct splaynode *splayroot,
                                   struct otri *newkey,
                                   vertex pa, vertex pb, vertex pc, REAL topy)
@@ -5503,7 +5503,7 @@ struct splaynode *circletopinsert(struct mesh *m, struct behavior *b,
 
 #ifndef REDUCED
 
-struct splaynode *frontlocate(struct mesh *m, struct splaynode *splayroot,
+struct splaynode *frontlocate(mesh *m, struct splaynode *splayroot,
                               struct otri *bottommost, vertex searchvertex,
                               struct otri *searchtri, int *farright)
 {
@@ -5526,7 +5526,7 @@ struct splaynode *frontlocate(struct mesh *m, struct splaynode *splayroot,
 
 #ifndef REDUCED
 
-long sweeplinedelaunay(struct mesh *m, struct behavior *b)
+long sweeplinedelaunay(mesh *m, behavior *b)
 {
   struct event **eventheap;
   struct event *events;
@@ -5747,7 +5747,7 @@ long sweeplinedelaunay(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-long delaunay(struct mesh *m, struct behavior *b)
+long delaunay(mesh *m, behavior *b)
 {
   long hulledges;
 
@@ -5815,7 +5815,7 @@ long delaunay(struct mesh *m, struct behavior *b)
 
 #ifndef CDT_ONLY
 
-int reconstruct(struct mesh *m, struct behavior *b, int *trianglelist,
+int reconstruct(mesh *m, behavior *b, int *trianglelist,
                 REAL *triangleattriblist, REAL *trianglearealist,
                 int elements, int corners, int attribs,
                 int *segmentlist,int *segmentmarkerlist, int numberofsegments)
@@ -6119,7 +6119,7 @@ int reconstruct(struct mesh *m, struct behavior *b, int *trianglelist,
 /*                                                                           */
 /*****************************************************************************/
 
-enum finddirectionresult finddirection(struct mesh *m, struct behavior *b,
+enum finddirectionresult finddirection(mesh *m, behavior *b,
                                        struct otri *searchtri,
                                        vertex searchpoint, int *err)
 {
@@ -6215,7 +6215,7 @@ enum finddirectionresult finddirection(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void segmentintersection(struct mesh *m, struct behavior *b,
+void segmentintersection(mesh *m, behavior *b,
                          struct otri *splittri, struct osub *splitsubseg,
                          vertex endpoint2, int *err)
 {
@@ -6350,7 +6350,7 @@ void segmentintersection(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-int scoutsegment(struct mesh *m, struct behavior *b, struct otri *searchtri,
+int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
                  vertex endpoint2, int newmark, int *err)
 {
   struct otri crosstri;
@@ -6430,7 +6430,7 @@ int scoutsegment(struct mesh *m, struct behavior *b, struct otri *searchtri,
 #ifndef REDUCED
 #ifndef CDT_ONLY
 
-void conformingedge(struct mesh *m, struct behavior *b,
+void conformingedge(mesh *m, behavior *b,
                     vertex endpoint1, vertex endpoint2, int newmark)
 {
   struct otri searchtri1, searchtri2;
@@ -6550,7 +6550,7 @@ void conformingedge(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void delaunayfixup(struct mesh *m, struct behavior *b,
+void delaunayfixup(mesh *m, behavior *b,
                    struct otri *fixuptri, int leftside)
 {
   struct otri neartri;
@@ -6661,7 +6661,7 @@ void delaunayfixup(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void constrainededge(struct mesh *m, struct behavior *b,
+void constrainededge(mesh *m, behavior *b,
                      struct otri *starttri, vertex endpoint2, int newmark, int *err)
 {
   struct otri fixuptri, fixuptri2;
@@ -6753,7 +6753,7 @@ void constrainededge(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void insertsegment(struct mesh *m, struct behavior *b,
+void insertsegment(mesh *m, behavior *b,
                    vertex endpoint1, vertex endpoint2, int newmark, int *err)
 {
   struct otri searchtri1, searchtri2;
@@ -6865,7 +6865,7 @@ void insertsegment(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void markhull(struct mesh *m, struct behavior *b)
+void markhull(mesh *m, behavior *b)
 {
   struct otri hulltri;
   struct otri nexttri;
@@ -6902,7 +6902,7 @@ void markhull(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void formskeleton(struct mesh *m, struct behavior *b, int *segmentlist,
+void formskeleton(mesh *m, behavior *b, int *segmentlist,
                   int *segmentmarkerlist, int numberofsegments, int *err)
 {
   char polyfilename[6];
@@ -7004,7 +7004,7 @@ void formskeleton(struct mesh *m, struct behavior *b, int *segmentlist,
 /*                                                                           */
 /*****************************************************************************/
 
-void infecthull(struct mesh *m, struct behavior *b)
+void infecthull(mesh *m, behavior *b)
 {
   struct otri hulltri;
   struct otri nexttri;
@@ -7079,7 +7079,7 @@ void infecthull(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void plague(struct mesh *m, struct behavior *b)
+void plague(mesh *m, behavior *b)
 {
   struct otri testtri;
   struct otri neighbor;
@@ -7282,7 +7282,7 @@ void plague(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void regionplague(struct mesh *m, struct behavior *b,
+void regionplague(mesh *m, behavior *b,
                   REAL attribute, REAL area)
 {
   struct otri testtri;
@@ -7386,7 +7386,7 @@ void regionplague(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void carveholes(struct mesh *m, struct behavior *b, REAL *holelist, int holes,
+void carveholes(mesh *m, behavior *b, REAL *holelist, int holes,
                 REAL *regionlist, int regions)
 {
   struct otri searchtri;
@@ -7569,7 +7569,7 @@ void carveholes(struct mesh *m, struct behavior *b, REAL *holelist, int holes,
 
 #ifndef CDT_ONLY
 
-void tallyencs(struct mesh *m, struct behavior *b)
+void tallyencs(mesh *m, behavior *b)
 {
   struct osub subsegloop;
   int dummy;
@@ -7623,7 +7623,7 @@ void precisionerror()
 
 #ifndef CDT_ONLY
 
-void splitencsegs(struct mesh *m, struct behavior *b, int triflaws, int *err)
+void splitencsegs(mesh *m, behavior *b, int triflaws, int *err)
 {
   struct otri enctri;
   struct otri testtri;
@@ -7837,7 +7837,7 @@ void splitencsegs(struct mesh *m, struct behavior *b, int triflaws, int *err)
 
 #ifndef CDT_ONLY
 
-void tallyfaces(struct mesh *m, struct behavior *b)
+void tallyfaces(mesh *m, behavior *b)
 {
   struct otri triangleloop;
 
@@ -7866,7 +7866,7 @@ void tallyfaces(struct mesh *m, struct behavior *b)
 
 #ifndef CDT_ONLY
 
-void splittriangle(struct mesh *m, struct behavior *b,
+void splittriangle(mesh *m, behavior *b,
                    struct badtriang *badtri)
 {
   struct otri badotri;
@@ -7987,7 +7987,7 @@ void splittriangle(struct mesh *m, struct behavior *b,
 
 #ifndef CDT_ONLY
 
-void enforcequality(struct mesh *m, struct behavior *b, int *err)
+void enforcequality(mesh *m, behavior *b, int *err)
 {
   struct badtriang *badtri;
   int i;
@@ -8085,7 +8085,7 @@ void enforcequality(struct mesh *m, struct behavior *b, int *err)
 /*                                                                           */
 /*****************************************************************************/
 
-void highorder(struct mesh *m, struct behavior *b)
+void highorder(mesh *m, behavior *b)
 {
   struct otri triangleloop, trisym;
   struct osub checkmark;
@@ -8166,7 +8166,7 @@ void highorder(struct mesh *m, struct behavior *b)
 
 #ifdef TRILIBRARY
 
-void transfernodes(struct mesh *m, struct behavior *b, REAL *pointlist,
+void transfernodes(mesh *m, behavior *b, REAL *pointlist,
                    REAL *pointattriblist, int *pointmarkerlist,
                    int numberofpoints, int numberofpointattribs)
 {
@@ -8238,7 +8238,7 @@ void transfernodes(struct mesh *m, struct behavior *b, REAL *pointlist,
 /*                                                                           */
 /*****************************************************************************/
 
-void writenodes(struct mesh *m, struct behavior *b, REAL **pointlist,
+void writenodes(mesh *m, behavior *b, REAL **pointlist,
                 REAL **pointattriblist, int **pointmarkerlist)
 {
   REAL *plist;
@@ -8313,7 +8313,7 @@ void writenodes(struct mesh *m, struct behavior *b, REAL **pointlist,
 /*                                                                           */
 /*****************************************************************************/
 
-void numbernodes(struct mesh *m, struct behavior *b)
+void numbernodes(mesh *m, behavior *b)
 {
   vertex vertexloop;
   int vertexnumber;
@@ -8336,7 +8336,7 @@ void numbernodes(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void writeelements(struct mesh *m, struct behavior *b,
+void writeelements(mesh *m, behavior *b,
                    int **trianglelist, REAL **triangleattriblist)
 {
   int *tlist;
@@ -8409,7 +8409,7 @@ void writeelements(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void writepoly(struct mesh *m, struct behavior *b,
+void writepoly(mesh *m, behavior *b,
                int **segmentlist, int **segmentmarkerlist)
 {
   int *slist;
@@ -8462,7 +8462,7 @@ void writepoly(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 
-void writeedges(struct mesh *m, struct behavior *b,
+void writeedges(mesh *m, behavior *b,
                 int **edgelist, int **edgemarkerlist)
 {
   int *elist;
@@ -8530,7 +8530,7 @@ void writeedges(struct mesh *m, struct behavior *b,
   }
 }
 
-void writeneighbors(struct mesh *m, struct behavior *b, int **neighborlist)
+void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 {
   int *nlist;
   int index;
@@ -8595,7 +8595,7 @@ void writeneighbors(struct mesh *m, struct behavior *b, int **neighborlist)
 /*****************************************************************************/
 
 #ifndef TRILIBRARY
-void quality_statistics(struct mesh *m, struct behavior *b)
+void quality_statistics(mesh *m, behavior *b)
 {
   struct otri triangleloop;
   vertex p[3];
@@ -8795,7 +8795,7 @@ void quality_statistics(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void statistics(struct mesh *m, struct behavior *b)
+void statistics(mesh *m, behavior *b)
 {
   printf("\nStatistics:\n\n");
   printf("  Input vertices: %d\n", m->invertices);
@@ -8917,8 +8917,8 @@ int main(int argc, char **argv)
 #endif /* not TRILIBRARY */
 
 {
-  struct mesh m;
-  struct behavior b;
+  mesh m;
+  behavior b;
   REAL *holearray;                                        /* Array of holes. */
   REAL *regionarray;   /* Array of regional attributes and area constraints. */
   int err;

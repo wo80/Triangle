@@ -279,7 +279,7 @@ struct memorypool {
 /* Data structure for command line switches and file names.  This structure  */
 /*   is used (instead of global variables) to allow reentrancy.              */
 
-struct behavior {
+typedef struct {
 
 /* Switches for the triangulator.                                            */
 /*   poly: -p switch.  refine: -r switch.                                    */
@@ -351,13 +351,13 @@ struct behavior {
   char offfilename[FILENAMESIZE];
 #endif /* not TRILIBRARY */
 
-};                                              /* End of `struct behavior'. */
+} behavior;                                              /* End of `struct behavior'. */
 
 
 /* Mesh data structure.  Triangle operates on only one mesh, but the mesh    */
 /*   structure is used (instead of global variables) to allow reentrancy.    */
 
-struct mesh {
+typedef struct {
 
 /* Variables used to allocate memory for triangles, subsegments, vertices,   */
 /*   viri (triangles being eaten), encroached segments, bad (skinny or too   */
@@ -442,7 +442,7 @@ struct mesh {
 
   struct otri recenttri;
 
-};                                                  /* End of `struct mesh'. */
+} mesh;                                                  /* End of `struct mesh'. */
 
 
 /*****************************************************************************/

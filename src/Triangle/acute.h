@@ -15,7 +15,7 @@ struct acutepool {
     REAL *points_r;
 };
 
-void acutepool_init(int n, struct behavior *b, struct acutepool *p) {
+void acutepool_init(int n, behavior *b, struct acutepool *p) {
     p->size = n;
     
     p->initialpoly = (REAL *)malloc(sizeof(REAL)* 500);
@@ -33,7 +33,7 @@ void acutepool_init(int n, struct behavior *b, struct acutepool *p) {
     p->points_r = (REAL *)malloc(sizeof(REAL)* 500);
 }
 
-void acutepool_resize(int n, struct behavior *b, struct acutepool *p) {
+void acutepool_resize(int n, behavior *b, struct acutepool *p) {
     if (p->size < n) {
         p->size = n;
 

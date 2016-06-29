@@ -5,16 +5,16 @@
 
 void exactinit();
 
-REAL counterclockwise(struct mesh *m, struct behavior *b,
+REAL counterclockwise(mesh *m, behavior *b,
                       vertex pa, vertex pb, vertex pc);
 
-REAL incircle(struct mesh *m, struct behavior *b,
+REAL incircle(mesh *m, behavior *b,
               vertex pa, vertex pb, vertex pc, vertex pd);
 
-REAL nonregular(struct mesh *m, struct behavior *b,
+REAL nonregular(mesh *m, behavior *b,
                 vertex pa, vertex pb, vertex pc, vertex pd);
 
-void findcircumcenter(struct mesh *m, struct behavior *b,
+void findcircumcenter(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter);
 

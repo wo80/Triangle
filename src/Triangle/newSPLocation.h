@@ -12,44 +12,44 @@ const double compConst = 1.0e-80;
 
 /// FUNCTION PROTOTYPES
 // TRIANGLE FUNCTIONS
-REAL counterclockwise(struct mesh *m, struct behavior *b,
+REAL counterclockwise(mesh *m, behavior *b,
                       vertex pa, vertex pb, vertex pc);
-void deletevertex(struct mesh *m, struct behavior *b, struct otri *deltri);
-void findcircumcenter(struct mesh *m, struct behavior *b,
+void deletevertex(mesh *m, behavior *b, struct otri *deltri);
+void findcircumcenter(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter);
 void finishfile(FILE *outfile, int argc, char **argv);
-triangle *triangletraverse(struct mesh *m);
+triangle *triangletraverse(mesh *m);
 void triexit(int status);
 void traversalinit(struct memorypool *pool);
 VOID *poolalloc(struct memorypool *pool);
-void vertexdealloc(struct mesh *m, vertex dyingvertex);
-enum locateresult preciselocate(struct mesh *m, struct behavior *b,
+void vertexdealloc(mesh *m, vertex dyingvertex);
+enum locateresult preciselocate(mesh *m, behavior *b,
                                 vertex searchpoint, struct otri *searchtri, int stopatsubsegment);
 // NEW FUNCTIONS
-void findNewSPLocation(struct mesh *m, struct behavior *b,
+void findNewSPLocation(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri);
-void findNewSPLocationWithoutMaxAngle(struct mesh *m, struct behavior *b,
+void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri);
-void findNewSPLocationWithMaxAngle(struct mesh *m, struct behavior *b,
+void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri);
 int longestShortestEdge(REAL aodist, REAL dadist, REAL dodist);
-int doSmoothing(struct mesh *m, struct behavior *b, struct otri badotri,
+int doSmoothing(mesh *m, behavior *b, struct otri badotri,
 		vertex torg, vertex tdest, vertex tapex, REAL *newloc);
-int getStarPoints(struct mesh *m, struct otri badotri,
+int getStarPoints(mesh *m, struct otri badotri,
 			vertex p, vertex q, vertex r, int whichPoint, REAL *points);
-int getNeighborsVertex(struct mesh *m, struct otri badotri,
+int getNeighborsVertex(mesh *m, struct otri badotri,
 				REAL first_x, REAL first_y, REAL second_x, REAL second_y, 
 				REAL *thirdpoint, struct otri *neighotri);
-int getWedgeIntersectionWithoutMaxAngle(struct mesh *m, struct behavior *b, 
+int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b, 
 			                int numpoints, REAL *points, REAL *newloc);
-int getWedgeIntersectionWithMaxAngle(struct mesh *m, struct behavior *b, 
+int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b, 
 			             int numpoints, REAL *points, REAL *newloc);
-int polygonAngles(struct mesh *m, struct behavior *b,int numpoints, REAL *points);
-int testPolygonAngle(struct mesh *m, struct behavior *b, 
+int polygonAngles(mesh *m, behavior *b,int numpoints, REAL *points);
+int testPolygonAngle(mesh *m, behavior *b, 
 				REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
 void lineLineIntersection(REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, REAL x4, REAL y4 , REAL *p);
 int halfPlaneIntersection(int numvertices, REAL *convexPoly, REAL x1, REAL y1, REAL x2, REAL y2);
@@ -60,13 +60,13 @@ void findPolyCentroid(int numpoints, REAL *points, REAL *centroid);
 void circleLineIntersection (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, REAL r , REAL *p);
 int chooseCorrectPoint (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, int isObtuse );
 void pointBetweenPoints(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y, REAL *p);
-int testTriangleAngle(struct mesh *m, struct behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
-REAL minDistanceToNeigbor(struct mesh *m, struct behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
+int testTriangleAngle(mesh *m, behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
+REAL minDistanceToNeigbor(mesh *m, behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
 #ifndef TRILIBRARY
-void writeparts(struct mesh *m, struct behavior *b, int argc, char **argv);
+void writeparts(mesh *m, behavior *b, int argc, char **argv);
 REAL returnMinAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
 REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
-void detailedHistogram(struct mesh *m, struct behavior *b);
+void detailedHistogram(mesh *m, behavior *b);
 #endif
 
 /*=====================NEW STEINER POINT FUNCTION============================*/
@@ -77,7 +77,7 @@ void detailedHistogram(struct mesh *m, struct behavior *b);
 /*                                                                           */
 /*****************************************************************************/
 
-void findNewSPLocation(struct mesh *m, struct behavior *b,
+void findNewSPLocation(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri){
 	// Based on using -U switch, call the corresponding function
@@ -95,7 +95,7 @@ void findNewSPLocation(struct mesh *m, struct behavior *b,
 /*                                                                               */
 /*                                                                               */
 /*********************************************************************************/
-void findNewSPLocationWithoutMaxAngle(struct mesh *m, struct behavior *b,
+void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri){
 
@@ -704,7 +704,7 @@ void findNewSPLocationWithoutMaxAngle(struct mesh *m, struct behavior *b,
 /*                                                                               */
 /*                                                                               */
 /*********************************************************************************/
-void findNewSPLocationWithMaxAngle(struct mesh *m, struct behavior *b,
+void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri){
 
@@ -1841,7 +1841,7 @@ int longestShortestEdge(REAL aodist, REAL dadist, REAL dodist){
 // returns 1,2 or 3 if smoothing will work, 0 otherwise
 // also returns the new location for the point, if somothing is possible
 //---------------------------------------------------------------------------------//
-int doSmoothing(struct mesh *m, struct behavior *b, 
+int doSmoothing(mesh *m, behavior *b, 
 		struct otri badotri,
 		vertex torg,
 		vertex tdest,
@@ -2023,7 +2023,7 @@ int doSmoothing(struct mesh *m, struct behavior *b,
 // and a specific point choice 
 // returns list of points and the number of points on the star of the given point
 //---------------------------------------------------------------------------------//
-int getStarPoints(struct mesh *m, struct otri badotri,
+int getStarPoints(mesh *m, struct otri badotri,
 			vertex p,
 			vertex q,
 			vertex r,
@@ -2104,7 +2104,7 @@ int getStarPoints(struct mesh *m, struct otri badotri,
 // also returns the pointer for this neighbor triangle
 // returns 1, if not found, 0 otherwise
 //---------------------------------------------------------------------------------//
-int getNeighborsVertex(struct mesh *m, struct otri badotri,
+int getNeighborsVertex(mesh *m, struct otri badotri,
 				REAL first_x, REAL first_y,
 				REAL second_x, REAL second_y, 
 				REAL *thirdpoint, struct otri *neighotri){
@@ -2233,7 +2233,7 @@ int getNeighborsVertex(struct mesh *m, struct otri badotri,
 // returns 1 if new location found, 0 otherwise
 // this version uses intersection of wedges to find the new location
 //---------------------------------------------------------------------------------//
-int getWedgeIntersectionWithoutMaxAngle(struct mesh *m, struct behavior *b, 
+int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b, 
 			    int numpoints, REAL *points, REAL *newloc){
     REAL total_x = 0;
     REAL total_y = 0;
@@ -2475,7 +2475,7 @@ int getWedgeIntersectionWithoutMaxAngle(struct mesh *m, struct behavior *b,
 // returns 1 if new location found, 0 otherwise
 // this version uses intersection of wedges to find the new location
 //---------------------------------------------------------------------------------//
-int getWedgeIntersectionWithMaxAngle(struct mesh *m, struct behavior *b, 
+int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b, 
 			    int numpoints, REAL *points, REAL *newloc){
     REAL total_x = 0;
     REAL total_y = 0;
@@ -2905,7 +2905,7 @@ int getWedgeIntersectionWithMaxAngle(struct mesh *m, struct behavior *b,
 // polygonAngles()
 // Return 0 if the polygon has angles greater than 2*minangle
 //---------------------------------------------------------------------------------//
-int polygonAngles(struct mesh *m, struct behavior *b,int numpoints, REAL *points){
+int polygonAngles(mesh *m, behavior *b,int numpoints, REAL *points){
 	int i;
 	for(i = 0; i < numpoints; i++){
 		if(i == numpoints-1){
@@ -2931,7 +2931,7 @@ int polygonAngles(struct mesh *m, struct behavior *b,int numpoints, REAL *points
 // tests to see if it satisfies the minimum angle condition for relocation 
 // Returns 1, if it is a BAD polygon corner, returns 0 if it is a GOOD polygon corner
 //---------------------------------------------------------------------------------//
-int testPolygonAngle(struct mesh *m, struct behavior *b, 
+int testPolygonAngle(mesh *m, behavior *b, 
 				REAL *x1, REAL *y1,
 				REAL *x2, REAL *y2,
 				REAL *x3, REAL *y3 ){
@@ -3481,7 +3481,7 @@ void pointBetweenPoints(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y, REAL
 // tests a triangle to see if it satisfies the minimum and/or maximum angle condition 
 // Returns 1, if it is a BAD triangle, returns 0 if it is a GOOD triangle
 //---------------------------------------------------------------------------------//
-int testTriangleAngle(struct mesh *m, struct behavior *b, 
+int testTriangleAngle(mesh *m, behavior *b, 
 				REAL *x1, REAL *y1,
 				REAL *x2, REAL *y2,
 				REAL *x3, REAL *y3 )
@@ -3575,7 +3575,7 @@ int testTriangleAngle(struct mesh *m, struct behavior *b,
 /*                                                                           */
 /*****************************************************************************/
 #ifndef TRILIBRARY
-void writeparts(struct mesh *m, struct behavior *b, int argc, char **argv)
+void writeparts(mesh *m, behavior *b, int argc, char **argv)
 {
   FILE *outfile;
   struct otri triangleloop;
@@ -3689,7 +3689,7 @@ REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y){
 // Given the triangulation, and a vertex
 // returns the minimum distance to the vertices of the triangle where the given vertex located
 //---------------------------------------------------------------------------------//
-REAL minDistanceToNeigbor(struct mesh *m, struct behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri){
+REAL minDistanceToNeigbor(mesh *m, behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri){
 	struct otri horiz;	// for search operation
 	enum locateresult intersect;
 	vertex v1, v2, v3, newvertex, torg, tdest;
@@ -3773,7 +3773,7 @@ REAL minDistanceToNeigbor(struct mesh *m, struct behavior *b, REAL newlocX, REAL
 /*                                                                           */
 /*****************************************************************************/
 #ifndef TRILIBRARY
-void detailedHistogram(struct mesh *m, struct behavior *b)
+void detailedHistogram(mesh *m, behavior *b)
 {
 	struct otri triangleloop;
 	vertex p[3];
