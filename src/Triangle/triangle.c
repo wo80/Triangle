@@ -382,7 +382,7 @@ void parsecommandline(int argc, char **argv, struct behavior *b, int *err)
   b->vararea = b->fixedarea = b->usertest = 0;
   b->regionattrib = b->convex = b->weighted = b->jettison = 0;
   b->firstnumber = 1;
-  b->edgesout = b->neighbors = b->geomview = 0;
+  b->edgesout = b->neighbors = 0;
   b->nobound = b->nopolywritten = b->nonodewritten = b->noelewritten = 0;
   b->noiterationnum = 0;
   b->noholes = b->noexact = 0;
@@ -507,9 +507,6 @@ void parsecommandline(int argc, char **argv, struct behavior *b, int *err)
 	}
         if (argv[i][j] == 'n') {
           b->neighbors = 1;
-	}
-        if (argv[i][j] == 'g') {
-          b->geomview = 1;
 	}
         if (argv[i][j] == 'B') {
           b->nobound = 1;

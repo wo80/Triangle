@@ -317,7 +317,7 @@ struct behavior {
   int poly, refine, quality, vararea, fixedarea, usertest;
   int regionattrib, convex, weighted, jettison;
   int firstnumber;
-  int edgesout, neighbors, geomview;
+  int edgesout, neighbors;
   int nobound, nopolywritten, nonodewritten, noelewritten, noiterationnum;
   int noholes, noexact, conformdel;
   int incremental, sweepline, dwyer;
