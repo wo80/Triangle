@@ -36,11 +36,5 @@ int chooseCorrectPoint (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, in
 void pointBetweenPoints(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y, REAL *p);
 int testTriangleAngle(mesh *m, behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
 REAL minDistanceToNeigbor(mesh *m, behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
-#ifndef TRILIBRARY
-void writeparts(mesh *m, behavior *b, int argc, char **argv);
-REAL returnMinAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
-REAL returnMaxAngle(REAL p1x, REAL p1y,REAL p2x, REAL p2y, REAL p3x, REAL p3y);
-void detailedHistogram(mesh *m, behavior *b);
-#endif
 
 #endif /* ACUTE_INTERNAL_H */

@@ -17,10 +17,9 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#define NO_ACUTE_
+/* #define NO_ACUTE */
 
 #include "triangle_config.h"
-
 #include "triangle_core.h"
 
 /*****************************************************************************/
