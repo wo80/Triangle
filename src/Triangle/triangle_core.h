@@ -279,7 +279,7 @@ struct memorypool {
 /* Data structure for command line switches and file names.  This structure  */
 /*   is used (instead of global variables) to allow reentrancy.              */
 
-typedef struct {
+typedef struct behavior_t {
 
 /* Switches for the triangulator.                                            */
 /*   poly: -p switch.  refine: -r switch.                                    */
@@ -353,28 +353,15 @@ typedef struct {
 
 } behavior;                                              /* End of `struct behavior'. */
 
-
+/* Forward definition of acutepool struct */
 #ifndef NO_ACUTE
-typedef struct acutepool {
-    int size;
-    // getWedgeIntersection (fixed size)
-    REAL *initialpoly;
-    // getWedgeIntersection (dynamic size)
-    REAL *petalx;
-    REAL *petaly;
-    REAL *petalr;
-    REAL *wedges;
-    // doSmoothing (fixed size [500])
-    REAL *points_p;
-    REAL *points_q;
-    REAL *points_r;
-};
+typedef struct acutepool_t acutepool;
 #endif
 
 /* Mesh data structure.  Triangle operates on only one mesh, but the mesh    */
 /*   structure is used (instead of global variables) to allow reentrancy.    */
 
-typedef struct {
+typedef struct mesh_t {
 
 /* Variables used to allocate memory for triangles, subsegments, vertices,   */
 /*   viri (triangles being eaten), encroached segments, bad (skinny or too   */
@@ -390,7 +377,7 @@ typedef struct {
   struct memorypool splaynodes;
 
 #ifndef NO_ACUTE
-  struct acutepool acute_mem;
+  acutepool *acute_mem;
 #endif
 
 /* Variables that maintain the bad triangle queues.  The queues are          */

@@ -5,17 +5,21 @@
 // DATE: 06/15/2009
 // GENERATES PREMIUM QUALITY TRIANGULATIONS; LARGE MINIMUM ANGLE VALUE OR LARGE MINIMUM ANGLE VALUE WHILE HAVING SMALL MAXIMUM ANGLE VALUE.
 
-#include "triangle.h";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "triangle.h"
+#include "triangle_internal.h"
+#include "predicates.h"
+#include "acute.h"
+#include "acute_internal.h"
 
 #ifndef NO_ACUTE
 
 // ACUTE MEMORY POOL
 
-void acutepool_init(int n, behavior *b, struct acutepool *p) {
+void acutepool_init(int n, behavior *b, acutepool *p) {
     p->size = n;
     
     p->initialpoly = (REAL *)malloc(sizeof(REAL)* 500);
@@ -33,7 +37,7 @@ void acutepool_init(int n, behavior *b, struct acutepool *p) {
     p->points_r = (REAL *)malloc(sizeof(REAL)* 500);
 }
 
-void acutepool_resize(int n, behavior *b, struct acutepool *p) {
+void acutepool_resize(int n, behavior *b, acutepool *p) {
     if (p->size < n) {
         p->size = n;
 
@@ -55,7 +59,7 @@ void acutepool_resize(int n, behavior *b, struct acutepool *p) {
     }
 }
 
-void acutepool_deinit(struct acutepool *p) {
+void acutepool_deinit(acutepool *p) {
   free(p->initialpoly);
   free(p->petalx);
   free(p->petaly);
@@ -85,7 +89,7 @@ extern int minus1mod3[3];
 
 void findNewSPLocation(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
-                      vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri){
+                      vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri) {
 	// Based on using -U switch, call the corresponding function
 	if(b->maxangle == 0.00000){
 		 findNewSPLocationWithoutMaxAngle(m, b, torg, tdest, tapex, circumcenter, xi, eta, 1, badotri);
@@ -1866,9 +1870,9 @@ int doSmoothing(mesh *m, behavior *b,
 	REAL *points_q;
 	REAL *points_r;
 
-	points_p = m->acute_mem.points_p;
-	points_q = m->acute_mem.points_q;
-	points_r = m->acute_mem.points_r;
+	points_p = m->acute_mem->points_p;
+	points_q = m->acute_mem->points_q;
+	points_r = m->acute_mem->points_r;
 
 	/*********************** TRY TO RELOCATE POINT "p" *************************/
 
@@ -2267,13 +2271,13 @@ int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b,
 
     REAL petalcenterconstant, petalradiusconstant;
 	
-	acutepool_resize(numpoints, b, &m->acute_mem);
+	acutepool_resize(numpoints, b, m->acute_mem);
     
-	petalx = m->acute_mem.petalx;
-    petaly = m->acute_mem.petaly;
-    petalr = m->acute_mem.petalr;
-    wedges = m->acute_mem.wedges;
-	initialConvexPoly = m->acute_mem.initialpoly;
+	petalx = m->acute_mem->petalx;
+    petaly = m->acute_mem->petaly;
+    petalr = m->acute_mem->petalr;
+    wedges = m->acute_mem->wedges;
+	initialConvexPoly = m->acute_mem->initialpoly;
 
     x0 = points[2*numpoints-4];
     y0 = points[2*numpoints-3];
@@ -2515,13 +2519,13 @@ int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b,
 
     REAL petalcenterconstant, petalradiusconstant;
 	
-	acutepool_resize(numpoints, b, &m->acute_mem);
+	acutepool_resize(numpoints, b, m->acute_mem);
     
-	petalx = m->acute_mem.petalx;
-    petaly = m->acute_mem.petaly;
-    petalr = m->acute_mem.petalr;
-    wedges = m->acute_mem.wedges;
-	initialConvexPoly = m->acute_mem.initialpoly;
+	petalx = m->acute_mem->petalx;
+    petaly = m->acute_mem->petaly;
+    petalr = m->acute_mem->petalr;
+    wedges = m->acute_mem->wedges;
+	initialConvexPoly = m->acute_mem->initialpoly;
 
     x0 = points[2*numpoints-4];
     y0 = points[2*numpoints-3];

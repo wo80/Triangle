@@ -213,6 +213,10 @@
 
 #include "predicates.h"
 
+#ifndef NO_ACUTE
+#include "acute.h"
+#endif
+
 /* A few forward declarations.                                               */
 
 #ifndef TRILIBRARY
@@ -228,17 +232,10 @@ unsigned long randomseed;                     /* Current random number seed. */
 /* Include functions not available in original triangle code                 */
 #include "util.h"
 
-
 /* Fast lookup arrays to speed some of the mesh manipulation primitives.     */
 
 int plus1mod3[3] = {1, 2, 0};
 int minus1mod3[3] = {2, 0, 1};
-
-#ifndef NO_ACUTE
-#ifndef CDT_ONLY
-#include "acute.h"
-#endif
-#endif
 
 /********* User-defined triangle evaluation routine begins here      *********/
 /**                                                                         **/
@@ -8943,7 +8940,7 @@ int main(int argc, char **argv)
   parsecommandline(argc, argv, &b, &err);
 #endif /* not TRILIBRARY */
 #ifndef NO_ACUTE
-  acutepool_init(20, &b, &m.acute_mem);
+  acutepool_init(20, &b, m.acute_mem);
 #endif
   m.steinerleft = b.steiner;
 
@@ -9232,7 +9229,7 @@ int main(int argc, char **argv)
 #endif /* not REDUCED */
 
 #ifndef NO_ACUTE
-  acutepool_deinit(&m.acute_mem);
+  acutepool_deinit(m.acute_mem);
 #endif
   triangledeinit(&m, &b);
 #ifndef TRILIBRARY

@@ -41,5 +41,11 @@
     <ClInclude Include="acute.c">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="triangle_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="acute_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

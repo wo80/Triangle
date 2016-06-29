@@ -67,14 +67,16 @@
   <ItemGroup>
     <ClCompile Include="predicates.c" />
     <ClCompile Include="triangle.c" />
+    <ClCompile Include="acute.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="acute.h" />
-    <ClInclude Include="acute.c" />
+    <ClInclude Include="acute_internal.h" />
     <ClInclude Include="predicates.h" />
     <ClInclude Include="triangle.h" />
     <ClInclude Include="triangle_config.h" />
     <ClInclude Include="triangle_core.h" />
+    <ClInclude Include="triangle_internal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
