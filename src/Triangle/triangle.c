@@ -225,10 +225,6 @@ char *findfield();
 
 unsigned long randomseed;                     /* Current random number seed. */
 
-#ifndef NO_ACUTE
-#include "acute.h"
-#endif
-
 /* Include functions not available in original triangle code                 */
 #include "util.h"
 
@@ -240,7 +236,7 @@ int minus1mod3[3] = {2, 0, 1};
 
 #ifndef NO_ACUTE
 #ifndef CDT_ONLY
-#include "newSPLocation.h"
+#include "acute.h"
 #endif
 #endif
 

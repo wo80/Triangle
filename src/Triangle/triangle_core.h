@@ -354,6 +354,23 @@ typedef struct {
 } behavior;                                              /* End of `struct behavior'. */
 
 
+#ifndef NO_ACUTE
+typedef struct acutepool {
+    int size;
+    // getWedgeIntersection (fixed size)
+    REAL *initialpoly;
+    // getWedgeIntersection (dynamic size)
+    REAL *petalx;
+    REAL *petaly;
+    REAL *petalr;
+    REAL *wedges;
+    // doSmoothing (fixed size [500])
+    REAL *points_p;
+    REAL *points_q;
+    REAL *points_r;
+};
+#endif
+
 /* Mesh data structure.  Triangle operates on only one mesh, but the mesh    */
 /*   structure is used (instead of global variables) to allow reentrancy.    */
 
@@ -443,7 +460,6 @@ typedef struct {
   struct otri recenttri;
 
 } mesh;                                                  /* End of `struct mesh'. */
-
 
 /*****************************************************************************/
 /*                                                                           */
