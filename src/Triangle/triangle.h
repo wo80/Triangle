@@ -256,42 +256,67 @@
 /*****************************************************************************/
 
 struct triangulateio {
-  REAL *pointlist;                                               /* In / out */
-  REAL *pointattributelist;                                      /* In / out */
-  int *pointmarkerlist;                                          /* In / out */
-  int numberofpoints;                                            /* In / out */
-  int numberofpointattributes;                                   /* In / out */
+	REAL *pointlist;                                               /* In / out */
+	REAL *pointattributelist;                                      /* In / out */
+	int *pointmarkerlist;                                          /* In / out */
+	int numberofpoints;                                            /* In / out */
+	int numberofpointattributes;                                   /* In / out */
 
-  int *trianglelist;                                             /* In / out */
-  REAL *triangleattributelist;                                   /* In / out */
-  REAL *trianglearealist;                                         /* In only */
-  int *neighborlist;                                             /* Out only */
-  int numberoftriangles;                                         /* In / out */
-  int numberofcorners;                                           /* In / out */
-  int numberoftriangleattributes;                                /* In / out */
+	int *trianglelist;                                             /* In / out */
+	REAL *triangleattributelist;                                   /* In / out */
+	REAL *trianglearealist;                                         /* In only */
+	int *neighborlist;                                             /* Out only */
+	int numberoftriangles;                                         /* In / out */
+	int numberofcorners;                                           /* In / out */
+	int numberoftriangleattributes;                                /* In / out */
 
-  int *segmentlist;                                              /* In / out */
-  int *segmentmarkerlist;                                        /* In / out */
-  int numberofsegments;                                          /* In / out */
+	int *segmentlist;                                              /* In / out */
+	int *segmentmarkerlist;                                        /* In / out */
+	int numberofsegments;                                          /* In / out */
 
-  REAL *holelist;                        /* In / pointer to array copied out */
-  int numberofholes;                                      /* In / copied out */
+	REAL *holelist;                        /* In / pointer to array copied out */
+	int numberofholes;                                      /* In / copied out */
 
-  REAL *regionlist;                      /* In / pointer to array copied out */
-  int numberofregions;                                    /* In / copied out */
+	REAL *regionlist;                      /* In / pointer to array copied out */
+	int numberofregions;                                    /* In / copied out */
 
-  int *edgelist;                                                 /* Out only */
-  int *edgemarkerlist;                                           /* Out only */
-  int numberofedges;                                             /* Out only */
-  int errorcode;                                                 /* Out only */
+	int *edgelist;                                                 /* Out only */
+	int *edgemarkerlist;                                           /* Out only */
+	int numberofedges;                                             /* Out only */
+	int errorcode;                                                 /* Out only */
 };
+
+typedef struct context_t {
+	mesh *m;
+	behavior *b;
+} context;
+
+#define EXPORT __declspec(dllexport)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  __declspec(dllexport) void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *);
-  __declspec(dllexport) void __cdecl trifree(VOID *memptr);
+	/*****************************************************************************/
+	/* NEW API */
+
+	EXPORT context* triangle_context_create();
+
+	EXPORT VOID triangle_context_destory(context* ctx);
+
+	EXPORT int triangle_options(context* ctx, char *options);
+
+	EXPORT int triangle_mesh(context* ctx, struct triangulateio *in);
+
+	EXPORT int triangle_refine(context* ctx);
+
+	EXPORT int triangle_output(context* ctx, struct triangulateio *out);
+
+	/* NEW API end */
+	/*****************************************************************************/
+
+	EXPORT void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *);
+	EXPORT void __cdecl trifree(VOID *memptr);
 
 #ifdef __cplusplus
 }

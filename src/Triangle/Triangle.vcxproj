@@ -65,9 +65,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="acute.c" />
     <ClCompile Include="predicates.c" />
     <ClCompile Include="triangle.c" />
-    <ClCompile Include="acute.c" />
+    <ClCompile Include="triangle_api.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="acute.h" />

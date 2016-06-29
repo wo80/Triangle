@@ -21,6 +21,12 @@
     <ClCompile Include="predicates.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="triangle_api.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acute.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="triangle.h">
@@ -37,9 +43,6 @@
     </ClInclude>
     <ClInclude Include="predicates.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="acute.c">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="triangle_internal.h">
       <Filter>Header Files</Filter>

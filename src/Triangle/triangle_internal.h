@@ -445,7 +445,4 @@ void statistics(mesh *m, behavior *b);
 
 #endif /* not TRILIBRARY */
 
-void triangulate(char *triswitches, struct triangulateio *in,
-                 struct triangulateio *out, struct triangulateio *vorout);
-
 #endif /* TRIANGLE_INTERNAL_H */
