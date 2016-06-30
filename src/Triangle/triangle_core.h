@@ -333,24 +333,6 @@ typedef struct behavior_t {
 #ifndef NO_ACUTE
   REAL maxangle, maxgoodangle;
 #endif
-
-/* Variables for file names.                                                 */
-
-#ifndef TRILIBRARY
-  char innodefilename[FILENAMESIZE];
-  char inelefilename[FILENAMESIZE];
-  char inpolyfilename[FILENAMESIZE];
-  char areafilename[FILENAMESIZE];
-  char outnodefilename[FILENAMESIZE];
-  char outelefilename[FILENAMESIZE];
-  char outpolyfilename[FILENAMESIZE];
-  char edgefilename[FILENAMESIZE];
-  char vnodefilename[FILENAMESIZE];
-  char vedgefilename[FILENAMESIZE];
-  char neighborfilename[FILENAMESIZE];
-  char offfilename[FILENAMESIZE];
-#endif /* not TRILIBRARY */
-
 } behavior;                                              /* End of `struct behavior'. */
 
 /* Forward definition of acutepool struct */

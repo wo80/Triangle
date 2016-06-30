@@ -361,13 +361,6 @@ void internalerror()
 
 void parsecommandline(int argc, char **argv, behavior *b, int *err)
 {
-#ifdef TRILIBRARY
-#define STARTINDEX 0
-#else /* not TRILIBRARY */
-#define STARTINDEX 1
-  int increment;
-  int meshnumber;
-#endif /* not TRILIBRARY */
   int i, j, k;
   char workstring[FILENAMESIZE];
 
@@ -393,15 +386,9 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
 #endif
   b->maxarea = -1.0;
   b->quiet = b->verbose = 0;
-#ifndef TRILIBRARY
-  b->innodefilename[0] = '\0';
-#endif /* not TRILIBRARY */
 
-  for (i = STARTINDEX; i < argc; i++) {
-#ifndef TRILIBRARY
-    if (argv[i][0] == '-') {
-#endif /* not TRILIBRARY */
-      for (j = STARTINDEX; argv[i][j] != '\0'; j++) {
+  for (i = 0; i < argc; i++) {
+      for (j = 0; argv[i][j] != '\0'; j++) {
         if (argv[i][j] == 'p') {
           b->poly = 1;
 	}
@@ -513,11 +500,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
         if (argv[i][j] == 'E') {
           b->noelewritten = 1;
 	}
-#ifndef TRILIBRARY
-        if (argv[i][j] == 'I') {
-          b->noiterationnum = 1;
-	}
-#endif /* not TRILIBRARY */
         if (argv[i][j] == 'O') {
           b->noholes = 1;
 	}
@@ -573,44 +555,8 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
         if (argv[i][j] == 'V') {
           b->verbose++;
         }
-#ifndef TRILIBRARY
-        if ((argv[i][j] == 'h') || (argv[i][j] == 'H') ||
-            (argv[i][j] == '?')) {
-          info();
-	}
-#endif /* not TRILIBRARY */
       }
-#ifndef TRILIBRARY
-    } else {
-      strncpy(b->innodefilename, argv[i], FILENAMESIZE - 1);
-      b->innodefilename[FILENAMESIZE - 1] = '\0';
-    }
-#endif /* not TRILIBRARY */
   }
-#ifndef TRILIBRARY
-  if (b->innodefilename[0] == '\0') {
-    syntax();
-  }
-  if (!strcmp(&b->innodefilename[strlen(b->innodefilename) - 5], ".node")) {
-    b->innodefilename[strlen(b->innodefilename) - 5] = '\0';
-  }
-  if (!strcmp(&b->innodefilename[strlen(b->innodefilename) - 5], ".poly")) {
-    b->innodefilename[strlen(b->innodefilename) - 5] = '\0';
-    b->poly = 1;
-  }
-#ifndef CDT_ONLY
-  if (!strcmp(&b->innodefilename[strlen(b->innodefilename) - 4], ".ele")) {
-    b->innodefilename[strlen(b->innodefilename) - 4] = '\0';
-    b->refine = 1;
-  }
-  if (!strcmp(&b->innodefilename[strlen(b->innodefilename) - 5], ".area")) {
-    b->innodefilename[strlen(b->innodefilename) - 5] = '\0';
-    b->refine = 1;
-    b->quality = 1;
-    b->vararea = 1;
-  }
-#endif /* not CDT_ONLY */
-#endif /* not TRILIBRARY */
   b->usesegments = b->poly || b->refine || b->quality || b->convex;
   b->goodangle = cos(b->minangle * PI / 180.0);
 #ifndef NO_ACUTE
@@ -657,90 +603,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
     printf("  If any vertices are jettisoned, you will need the output\n");
     printf("  .node file to reconstruct the new node indices.");
   }
-
-#ifndef TRILIBRARY
-  strcpy(b->inpolyfilename, b->innodefilename);
-  strcpy(b->inelefilename, b->innodefilename);
-  strcpy(b->areafilename, b->innodefilename);
-  increment = 0;
-  strcpy(workstring, b->innodefilename);
-  j = 1;
-  while (workstring[j] != '\0') {
-    if ((workstring[j] == '.') && (workstring[j + 1] != '\0')) {
-      increment = j + 1;
-    }
-    j++;
-  }
-  meshnumber = 0;
-  if (increment > 0) {
-    j = increment;
-    do {
-      if ((workstring[j] >= '0') && (workstring[j] <= '9')) {
-        meshnumber = meshnumber * 10 + (int) (workstring[j] - '0');
-      } else {
-        increment = 0;
-      }
-      j++;
-    } while (workstring[j] != '\0');
-  }
-  if (b->noiterationnum) {
-    strcpy(b->outnodefilename, b->innodefilename);
-    strcpy(b->outelefilename, b->innodefilename);
-    strcpy(b->edgefilename, b->innodefilename);
-    strcpy(b->vnodefilename, b->innodefilename);
-    strcpy(b->vedgefilename, b->innodefilename);
-    strcpy(b->neighborfilename, b->innodefilename);
-    strcpy(b->offfilename, b->innodefilename);
-    strcat(b->outnodefilename, ".node");
-    strcat(b->outelefilename, ".ele");
-    strcat(b->edgefilename, ".edge");
-    strcat(b->vnodefilename, ".v.node");
-    strcat(b->vedgefilename, ".v.edge");
-    strcat(b->neighborfilename, ".neigh");
-    strcat(b->offfilename, ".off");
-  } else if (increment == 0) {
-    strcpy(b->outnodefilename, b->innodefilename);
-    strcpy(b->outpolyfilename, b->innodefilename);
-    strcpy(b->outelefilename, b->innodefilename);
-    strcpy(b->edgefilename, b->innodefilename);
-    strcpy(b->vnodefilename, b->innodefilename);
-    strcpy(b->vedgefilename, b->innodefilename);
-    strcpy(b->neighborfilename, b->innodefilename);
-    strcpy(b->offfilename, b->innodefilename);
-    strcat(b->outnodefilename, ".1.node");
-    strcat(b->outpolyfilename, ".1.poly");
-    strcat(b->outelefilename, ".1.ele");
-    strcat(b->edgefilename, ".1.edge");
-    strcat(b->vnodefilename, ".1.v.node");
-    strcat(b->vedgefilename, ".1.v.edge");
-    strcat(b->neighborfilename, ".1.neigh");
-    strcat(b->offfilename, ".1.off");
-  } else {
-    workstring[increment] = '%';
-    workstring[increment + 1] = 'd';
-    workstring[increment + 2] = '\0';
-    sprintf(b->outnodefilename, workstring, meshnumber + 1);
-    strcpy(b->outpolyfilename, b->outnodefilename);
-    strcpy(b->outelefilename, b->outnodefilename);
-    strcpy(b->edgefilename, b->outnodefilename);
-    strcpy(b->vnodefilename, b->outnodefilename);
-    strcpy(b->vedgefilename, b->outnodefilename);
-    strcpy(b->neighborfilename, b->outnodefilename);
-    strcpy(b->offfilename, b->outnodefilename);
-    strcat(b->outnodefilename, ".node");
-    strcat(b->outpolyfilename, ".poly");
-    strcat(b->outelefilename, ".ele");
-    strcat(b->edgefilename, ".edge");
-    strcat(b->vnodefilename, ".v.node");
-    strcat(b->vedgefilename, ".v.edge");
-    strcat(b->neighborfilename, ".neigh");
-    strcat(b->offfilename, ".off");
-  }
-  strcat(b->innodefilename, ".node");
-  strcat(b->inpolyfilename, ".poly");
-  strcat(b->inelefilename, ".ele");
-  strcat(b->areafilename, ".area");
-#endif /* not TRILIBRARY */
 }
 
 /**                                                                         **/
