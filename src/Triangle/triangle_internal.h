@@ -4,6 +4,9 @@
 #include "triangle_config.h"
 #include "triangle_core.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 /********* User-defined triangle evaluation routine begins here      *********/
 /**                                                                         **/
 
@@ -407,7 +410,7 @@ void enforcequality(mesh *m, behavior *b, int *err);
 
 void highorder(mesh *m, behavior *b);
 
-/********* File I/O routines begin here                              *********/
+/********* Array I/O routines begin here                              *********/
 /**                                                                         **/
 
 void transfernodes(mesh *m, behavior *b, REAL *pointlist,
@@ -433,6 +436,30 @@ void writevoronoi(mesh *m, behavior *b, REAL **vpointlist,
                   int **vedgelist, int **vedgemarkerlist, REAL **vnormlist);
 
 void writeneighbors(mesh *m, behavior *b, int **neighborlist);
+
+/**                                                                         **/
+/********* Array I/O routines end here                                *********/
+
+/********* File I/O routines begin here                              *********/
+/**                                                                         **/
+
+int file_writenodes(mesh *m, behavior *b, FILE *nodefile);
+
+int file_writeelements(mesh *m, behavior *b, FILE *elefile);
+
+int file_writepoly(mesh *m, behavior *b, FILE *polyfile,
+				   REAL *holelist, int holes, REAL *regionlist, int regions);
+
+int file_writeedges(mesh *m, behavior *b, FILE *edgefile);
+
+int file_writeneighbors(mesh *m, behavior *b, FILE *neighborfile);
+
+int file_readnodes(mesh *m, behavior *b, char *nodefilename,
+				   char *polyfilename, FILE **polyfile);
+				   
+int file_readholes(mesh *m, behavior *b,
+				   FILE *polyfile, char *polyfilename, REAL **hlist, int *holes,
+				   REAL **rlist, int *regions);
 
 /**                                                                         **/
 /********* File I/O routines end here                                *********/

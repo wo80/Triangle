@@ -69,6 +69,7 @@
     <ClCompile Include="predicates.c" />
     <ClCompile Include="triangle.c" />
     <ClCompile Include="triangle_api.c" />
+    <ClCompile Include="triangle_io.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="acute.h" />
