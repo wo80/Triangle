@@ -1,6 +1,14 @@
 
 #include "predicates.h"
 
+#ifdef CPU86
+#include <float.h>
+#endif /* CPU86 */
+
+#ifdef LINUX
+#include <fpu_control.h>
+#endif /* LINUX */
+
 /* Global constants.                                                         */
 
 REAL splitter;       /* Used to split REAL factors for exact multiplication. */
