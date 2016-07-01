@@ -323,7 +323,7 @@ typedef struct behavior_t {
   int incremental, sweepline, dwyer;
   int splitseg;
   int docheck;
-  int quiet, verbose;
+  int quiet;
   int usesegments;
   int order;
   int nobisect;
@@ -335,7 +335,7 @@ typedef struct behavior_t {
 #endif
 } behavior;                                              /* End of `struct behavior'. */
 
-/* Forward definition of acutepool struct */
+/* Forward declaration of acute memorypool struct */
 #ifndef NO_ACUTE
 typedef struct acutepool_t acutepool;
 #endif

@@ -217,14 +217,6 @@
 #include "acute.h"
 #endif
 
-/* A few forward declarations.                                               */
-
-#ifndef TRILIBRARY
-char *readline();
-char *findfield();
-#endif /* not TRILIBRARY */
-
-
 /* Random number seed is not constant, but I've made it global anyway.       */
 
 unsigned long randomseed;                     /* Current random number seed. */
@@ -385,7 +377,7 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
   b->maxangle = 0.0;
 #endif
   b->maxarea = -1.0;
-  b->quiet = b->verbose = 0;
+  b->quiet = 0;
 
   for (i = 0; i < argc; i++) {
       for (j = 0; argv[i][j] != '\0'; j++) {
@@ -551,9 +543,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
 #endif /* not REDUCED */
         if (argv[i][j] == 'Q') {
           b->quiet = 1;
-        }
-        if (argv[i][j] == 'V') {
-          b->verbose++;
         }
       }
   }
@@ -1783,14 +1772,6 @@ void enqueuebadtriang(mesh *m, behavior *b,
   int posexponent;
   int i;
 
-  if (b->verbose > 2) {
-    printf("  Queueing bad triangle:\n");
-    printf("    (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n",
-           badtri->triangorg[0], badtri->triangorg[1],
-           badtri->triangdest[0], badtri->triangdest[1],
-           badtri->triangapex[0], badtri->triangapex[1]);
-  }
-
   /* Determine the appropriate queue to put the bad triangle into.    */
   /*   Recall that the key is the square of its shortest edge length. */
   if (badtri->key >= 1.0) {
@@ -2013,11 +1994,6 @@ int checkseg4encroach(mesh *m, behavior *b,
   }
 
   if (encroached && (!b->nobisect || ((b->nobisect == 1) && (sides == 2)))) {
-    if (b->verbose > 2) {
-      printf(
-        "  Queueing encroached subsegment (%.12g, %.12g) (%.12g, %.12g).\n",
-        eorg[0], eorg[1], edest[0], edest[1]);
-    }
     /* Add the subsegment to the list of encroached subsegments. */
     /*   Be sure to get the orientation right.                   */
     encroachedseg = (struct badsubseg *) poolalloc(&m->badsubsegs);
@@ -2259,9 +2235,6 @@ void makevertexmap(mesh *m, behavior *b)
   struct otri triangleloop;
   vertex triorg;
 
-  if (b->verbose) {
-    printf("    Constructing mapping from vertices to triangles.\n");
-  }
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
   while (triangleloop.tri != (triangle *) NULL) {
@@ -2354,19 +2327,11 @@ enum locateresult preciselocate(mesh *m, behavior *b,
   triangle ptr;                         /* Temporary variable used by sym(). */
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  if (b->verbose > 2) {
-    printf("  Searching for point (%.12g, %.12g).\n",
-           searchpoint[0], searchpoint[1]);
-  }
   /* Where are we? */
   org(*searchtri, forg);
   dest(*searchtri, fdest);
   apex(*searchtri, fapex);
   while (1) {
-    if (b->verbose > 2) {
-      printf("    At (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n",
-             forg[0], forg[1], fdest[0], fdest[1], fapex[0], fapex[1]);
-    }
     /* Check whether the apex is the point we seek. */
     if ((fapex[0] == searchpoint[0]) && (fapex[1] == searchpoint[1])) {
       lprevself(*searchtri);
@@ -2490,19 +2455,11 @@ enum locateresult locate(mesh *m, behavior *b,
   long population, totalpopulation;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-  if (b->verbose > 2) {
-    printf("  Randomly sampling for a triangle near point (%.12g, %.12g).\n",
-           searchpoint[0], searchpoint[1]);
-  }
   /* Record the distance from the suggested starting triangle to the */
   /*   point we seek.                                                */
   org(*searchtri, torg);
   searchdist = (searchpoint[0] - torg[0]) * (searchpoint[0] - torg[0]) +
                (searchpoint[1] - torg[1]) * (searchpoint[1] - torg[1]);
-  if (b->verbose > 2) {
-    printf("    Boundary triangle has origin (%.12g, %.12g).\n",
-           torg[0], torg[1]);
-  }
 
   /* If a recently encountered triangle has been recorded and has not been */
   /*   deallocated, test it as a good starting point.                      */
@@ -2518,10 +2475,6 @@ enum locateresult locate(mesh *m, behavior *b,
       if (dist < searchdist) {
         otricopy(m->recenttri, *searchtri);
         searchdist = dist;
-        if (b->verbose > 2) {
-          printf("    Choosing recent triangle with origin (%.12g, %.12g).\n",
-                 torg[0], torg[1]);
-        }
       }
     }
   }
@@ -2573,10 +2526,6 @@ enum locateresult locate(mesh *m, behavior *b,
         if (dist < searchdist) {
           otricopy(sampletri, *searchtri);
           searchdist = dist;
-          if (b->verbose > 2) {
-            printf("    Choosing triangle with origin (%.12g, %.12g).\n",
-                   torg[0], torg[1]);
-          }
         }
       }
 
@@ -2674,10 +2623,6 @@ void insertsubseg(mesh *m, behavior *b, struct otri *tri,
     ssymself(newsubseg);
     tsbond(oppotri, newsubseg);
     setmark(newsubseg, subsegmark);
-    if (b->verbose > 2) {
-      printf("  Inserting new ");
-      printsubseg(m, b, &newsubseg);
-    }
   } else {
     if (mark(newsubseg) == 0) {
       setmark(newsubseg, subsegmark);
@@ -2819,12 +2764,6 @@ void flip(mesh *m, behavior *b, struct otri *flipedge)
   setorg(top, botvertex);
   setdest(top, farvertex);
   setapex(top, leftvertex);
-  if (b->verbose > 2) {
-    printf("  Edge flip results in left ");
-    printtriangle(m, b, &top);
-    printf("  and right ");
-    printtriangle(m, b, flipedge);
-  }
 }
 
 /*****************************************************************************/
@@ -2946,12 +2885,6 @@ void unflip(mesh *m, behavior *b, struct otri *flipedge)
   setorg(top, farvertex);
   setdest(top, botvertex);
   setapex(top, rightvertex);
-  if (b->verbose > 2) {
-    printf("  Edge unflip results in left ");
-    printtriangle(m, b, flipedge);
-    printf("  and right ");
-    printtriangle(m, b, &top);
-  }
 }
 
 /*****************************************************************************/
@@ -3038,10 +2971,6 @@ enum insertvertexresult insertvertex(mesh *m, behavior *b,
   triangle ptr;                         /* Temporary variable used by sym(). */
   subseg sptr;         /* Temporary variable used by spivot() and tspivot(). */
 
-  if (b->verbose > 1) {
-    printf("  Inserting (%.12g, %.12g).\n", newvertex[0], newvertex[1]);
-  }
-
   if (splitseg == (struct osub *) NULL) {
     /* Find the location of the vertex to be inserted.  Check if a good */
     /*   starting triangle has already been provided by the caller.     */
@@ -3092,12 +3021,6 @@ enum insertvertexresult insertvertex(mesh *m, behavior *b,
             encroached->encsubseg = sencode(brokensubseg);
             sorg(brokensubseg, encroached->subsegorg);
             sdest(brokensubseg, encroached->subsegdest);
-            if (b->verbose > 2) {
-              printf(
-          "  Queueing encroached subsegment (%.12g, %.12g) (%.12g, %.12g).\n",
-                     encroached->subsegorg[0], encroached->subsegorg[1],
-                     encroached->subsegdest[0], encroached->subsegdest[1]);
-            }
           }
         }
         /* Return a handle whose primary edge contains the vertex, */
@@ -3257,18 +3180,6 @@ enum insertvertexresult insertvertex(mesh *m, behavior *b,
         "  Clockwise triangle after edge vertex insertion (bottom right).\n");
     }
 #endif /* SELF_CHECK */
-    if (b->verbose > 2) {
-      printf("  Updating bottom left ");
-      printtriangle(m, b, &botright);
-      if (mirrorflag) {
-        printf("  Updating top left ");
-        printtriangle(m, b, &topright);
-        printf("  Creating top right ");
-        printtriangle(m, b, &newtopright);
-      }
-      printf("  Creating bottom right ");
-      printtriangle(m, b, &newbotright);
-    }
 
     /* Position `horiz' on the first edge to check for */
     /*   the Delaunay property.                        */
@@ -3363,14 +3274,6 @@ enum insertvertexresult insertvertex(mesh *m, behavior *b,
       printf("  Clockwise triangle after vertex insertion (right).\n");
     }
 #endif /* SELF_CHECK */
-    if (b->verbose > 2) {
-      printf("  Updating top ");
-      printtriangle(m, b, &horiz);
-      printf("  Creating left ");
-      printtriangle(m, b, &newbotleft);
-      printf("  Creating right ");
-      printtriangle(m, b, &newbotright);
-    }
   }
 
   /* The insertion is successful by default, unless an encroached */
@@ -3553,13 +3456,6 @@ enum insertvertexresult insertvertex(mesh *m, behavior *b,
             }
           }
 #endif /* SELF_CHECK */
-          if (b->verbose > 2) {
-            printf("  Edge flip results in left ");
-            lnextself(topleft);
-            printtriangle(m, b, &topleft);
-            printf("  and right ");
-            printtriangle(m, b, &horiz);
-          }
           /* On the next iterations, consider the two edges that were  */
           /*   exposed (this is, are now visible to the newly inserted */
           /*   vertex) by the edge flip.                               */
@@ -3677,11 +3573,7 @@ void triangulatepolygon(mesh *m, behavior *b,
   /* Identify the base vertices. */
   apex(*lastedge, leftbasevertex);
   dest(*firstedge, rightbasevertex);
-  if (b->verbose > 2) {
-    printf("  Triangulating interior polygon at edge\n");
-    printf("    (%.12g, %.12g) (%.12g, %.12g)\n", leftbasevertex[0],
-           leftbasevertex[1], rightbasevertex[0], rightbasevertex[1]);
-  }
+
   /* Find the best vertex to connect the base to. */
   onext(*firstedge, besttri);
   dest(besttri, bestvertex);
@@ -3697,10 +3589,6 @@ void triangulatepolygon(mesh *m, behavior *b,
       bestvertex = testvertex;
       bestnumber = i;
     }
-  }
-  if (b->verbose > 2) {
-    printf("    Connecting edge to (%.12g, %.12g)\n", bestvertex[0],
-           bestvertex[1]);
   }
   if (bestnumber > 1) {
     /* Recursively triangulate the smaller polygon on the right. */
@@ -3762,9 +3650,6 @@ void deletevertex(mesh *m, behavior *b, struct otri *deltri)
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
   org(*deltri, delvertex);
-  if (b->verbose > 1) {
-    printf("  Deleting (%.12g, %.12g).\n", delvertex[0], delvertex[1]);
-  }
   vertexdealloc(m, delvertex);
 
   /* Count the degree of the vertex being deleted. */
@@ -4276,10 +4161,7 @@ void mergehulls(mesh *m, behavior *b, struct otri *farleft,
   setorg(baseedge, innerrightorg);
   setdest(baseedge, innerleftdest);
   /* Apex is intentionally left NULL. */
-  if (b->verbose > 2) {
-    printf("  Creating base bounding ");
-    printtriangle(m, b, &baseedge);
-  }
+
   /* Fix the extreme triangles if necessary. */
   org(*farleft, farleftpt);
   if (innerleftdest == farleftpt) {
@@ -4317,10 +4199,6 @@ void mergehulls(mesh *m, behavior *b, struct otri *farleft,
       bond(nextedge, rightcand);
       lnextself(nextedge);
       bond(nextedge, leftcand);
-      if (b->verbose > 2) {
-        printf("  Creating top bounding ");
-        printtriangle(m, b, &nextedge);
-      }
       /* Special treatment for horizontal cuts. */
       if (b->dwyer && (axis == 1)) {
         org(*farleft, farleftpt);
@@ -4465,10 +4343,6 @@ void mergehulls(mesh *m, behavior *b, struct otri *farleft,
       sym(baseedge, leftcand);
       apex(leftcand, upperleft);
     }
-    if (b->verbose > 2) {
-      printf("  Connecting ");
-      printtriangle(m, b, &baseedge);
-    }
   }
 }
 
@@ -4498,9 +4372,6 @@ void divconqrecurse(mesh *m, behavior *b, vertex *sortarray,
   REAL area;
   int divider;
 
-  if (b->verbose > 2) {
-    printf("  Triangulating %d vertices.\n", vertices);
-  }
   if (vertices == 2) {
     /* The triangulation of two vertices is an edge.  An edge is */
     /*   represented by two bounding triangles.                  */
@@ -4519,12 +4390,6 @@ void divconqrecurse(mesh *m, behavior *b, vertex *sortarray,
     lprevself(*farleft);
     lnextself(*farright);
     bond(*farleft, *farright);
-    if (b->verbose > 2) {
-      printf("  Creating ");
-      printtriangle(m, b, farleft);
-      printf("  Creating ");
-      printtriangle(m, b, farright);
-    }
     /* Ensure that the origin of `farleft' is sortarray[0]. */
     lprev(*farright, *farleft);
     return;
@@ -4614,16 +4479,6 @@ void divconqrecurse(mesh *m, behavior *b, vertex *sortarray,
         lnext(*farleft, *farright);
       }
     }
-    if (b->verbose > 2) {
-      printf("  Creating ");
-      printtriangle(m, b, &midtri);
-      printf("  Creating ");
-      printtriangle(m, b, &tri1);
-      printf("  Creating ");
-      printtriangle(m, b, &tri2);
-      printf("  Creating ");
-      printtriangle(m, b, &tri3);
-    }
     return;
   } else {
     /* Split the vertices in half. */
@@ -4632,10 +4487,6 @@ void divconqrecurse(mesh *m, behavior *b, vertex *sortarray,
     divconqrecurse(m, b, sortarray, divider, 1 - axis, farleft, &innerleft);
     divconqrecurse(m, b, &sortarray[divider], vertices - divider, 1 - axis,
                    &innerright, farright);
-    if (b->verbose > 1) {
-      printf("  Joining triangulations with %d and %d vertices.\n", divider,
-             vertices - divider);
-    }
     /* Merge the two triangulations into one. */
     mergehulls(m, b, farleft, &innerleft, &innerright, farright, axis);
   }
@@ -4650,9 +4501,6 @@ long removeghosts(mesh *m, behavior *b, struct otri *startghost)
   long hullsize;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-  if (b->verbose) {
-    printf("  Removing ghost triangles.\n");
-  }
   /* Find an edge on the convex hull to start point location from. */
   lprev(*startghost, searchedge);
   symself(searchedge);
@@ -4703,10 +4551,6 @@ long divconqdelaunay(mesh *m, behavior *b)
   int divider;
   int i, j;
 
-  if (b->verbose) {
-    printf("  Sorting vertices.\n");
-  }
-
   /* Allocate an array of pointers to vertices for sorting. */
   sortarray = (vertex *) trimalloc(m->invertices * (int) sizeof(vertex));
   traversalinit(&m->vertices);
@@ -4744,10 +4588,6 @@ long divconqdelaunay(mesh *m, behavior *b)
     }
   }
 
-  if (b->verbose) {
-    printf("  Forming triangulation.\n");
-  }
-
   /* Form the Delaunay triangulation. */
   divconqrecurse(m, b, sortarray, i, 0, &hullleft, &hullright);
   trifree((VOID *) sortarray);
@@ -4781,9 +4621,6 @@ void boundingbox(mesh *m, behavior *b)
   struct otri inftri;          /* Handle for the triangular bounding box. */
   REAL width;
 
-  if (b->verbose) {
-    printf("  Creating triangular bounding box.\n");
-  }
   /* Find the width (or height, whichever is larger) of the triangulation. */
   width = m->xmax - m->xmin;
   if (m->ymax - m->ymin > width) {
@@ -4811,10 +4648,6 @@ void boundingbox(mesh *m, behavior *b)
   /* Link dummytri to the bounding box so we can always find an */
   /*   edge to begin searching (point location) from.           */
   m->dummytri[0] = (triangle) inftri.tri;
-  if (b->verbose > 2) {
-    printf("  Creating ");
-    printtriangle(m, b, &inftri);
-  }
 }
 
 #endif /* not REDUCED */
@@ -4845,9 +4678,6 @@ long removebox(mesh *m, behavior *b)
   long hullsize;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-  if (b->verbose) {
-    printf("  Removing triangular bounding box.\n");
-  }
   /* Find a boundary triangle. */
   nextedge.tri = m->dummytri;
   nextedge.orient = 0;
@@ -4934,9 +4764,6 @@ long incrementaldelaunay(mesh *m, behavior *b)
 
   /* Create a triangular bounding box. */
   boundingbox(m, b);
-  if (b->verbose) {
-    printf("  Incrementally inserting vertices.\n");
-  }
   traversalinit(&m->vertices);
   vertexloop = vertextraverse(m);
   while (vertexloop != (vertex) NULL) {
@@ -5407,15 +5234,9 @@ long sweeplinedelaunay(mesh *m, behavior *b)
            SPLAYNODEPERBLOCK, 0);
   splayroot = (struct splaynode *) NULL;
 
-  if (b->verbose) {
-    printf("  Placing vertices in event heap.\n");
-  }
   createeventheap(m, &eventheap, &events, &freeevents);
   heapsize = m->invertices;
 
-  if (b->verbose) {
-    printf("  Forming triangulation.\n");
-  }
   maketriangle(m, b, &lefttri);
   maketriangle(m, b, &righttri);
   bond(lefttri, righttri);
@@ -5751,9 +5572,6 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
     vertexarray[i] = (triangle) m->dummytri;
   }
 
-  if (b->verbose) {
-    printf("  Assembling triangles.\n");
-  }
   /* Read the triangles from the .ele file, and link */
   /*   together those that share an edge.            */
   traversalinit(&m->triangles);
@@ -5841,9 +5659,6 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
   vertexindex = 0;
   hullsize = 0;                      /* Prepare to count the boundary edges. */
   if (b->poly) {
-    if (b->verbose) {
-      printf("  Marking segments in triangulation.\n");
-    }
     /* Read the segments from the .poly file, and link them */
     /*   to their neighboring triangles.                    */
     boundmarker = 0;
@@ -6120,11 +5935,6 @@ void segmentintersection(mesh *m, behavior *b,
   }
   setvertexmark(newvertex, mark(*splitsubseg));
   setvertextype(newvertex, INPUTVERTEX);
-  if (b->verbose > 1) {
-    printf(
-  "  Splitting subsegment (%.12g, %.12g) (%.12g, %.12g) at (%.12g, %.12g).\n",
-           torg[0], torg[1], tdest[0], tdest[1], newvertex[0], newvertex[1]);
-  }
   /* Insert the intersection vertex.  This should always succeed. */
   success = insertvertex(m, b, newvertex, splittri, splitsubseg, 0, 0, 0);
   if (success != SUCCESSFULVERTEX) {
@@ -6296,11 +6106,6 @@ void conformingedge(mesh *m, behavior *b,
   int i;
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  if (b->verbose > 2) {
-    printf("Forcing segment into triangulation by recursive splitting:\n");
-    printf("  (%.12g, %.12g) (%.12g, %.12g)\n", endpoint1[0], endpoint1[1],
-           endpoint2[0], endpoint2[1]);
-  }
   /* Create a new vertex to insert in the middle of the segment. */
   newvertex = (vertex) poolalloc(&m->vertices);
   /* Interpolate coordinates and attributes. */
@@ -6315,19 +6120,11 @@ void conformingedge(mesh *m, behavior *b,
   success = insertvertex(m, b, newvertex, &searchtri1, (struct osub *) NULL,
                          0, 0, 0);
   if (success == DUPLICATEVERTEX) {
-    if (b->verbose > 2) {
-      printf("  Segment intersects existing vertex (%.12g, %.12g).\n",
-             newvertex[0], newvertex[1]);
-    }
     /* Use the vertex that's already there. */
     vertexdealloc(m, newvertex);
     org(searchtri1, newvertex);
   } else {
     if (success == VIOLATINGVERTEX) {
-      if (b->verbose > 2) {
-        printf("  Two segments intersect at (%.12g, %.12g).\n",
-               newvertex[0], newvertex[1]);
-      }
       /* By fluke, we've landed right on another segment.  Split it. */
       tspivot(searchtri1, brokensubseg);
       success = insertvertex(m, b, newvertex, &searchtri1, &brokensubseg,
@@ -6616,11 +6413,6 @@ void insertsegment(mesh *m, behavior *b,
   vertex checkvertex;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-  if (b->verbose > 1) {
-    printf("  Connecting (%.12g, %.12g) to (%.12g, %.12g).\n",
-           endpoint1[0], endpoint1[1], endpoint2[0], endpoint2[1]);
-  }
-
   /* Find a triangle whose origin is the segment's first endpoint. */
   checkvertex = (vertex) NULL;
   encodedtri = vertex2tri(endpoint1);
@@ -6788,9 +6580,6 @@ void formskeleton(mesh *m, behavior *b, int *segmentlist,
     /*   from vertices to triangles.                     */
     if (m->insegments > 0) {
       makevertexmap(m, b);
-      if (b->verbose) {
-        printf("  Recovering PSLG segments.\n");
-      }
     }
 
     boundmarker = 0;
@@ -6836,9 +6625,6 @@ void formskeleton(mesh *m, behavior *b, int *segmentlist,
   }
   if (b->convex || !b->poly) {
     /* Enclose the convex hull with subsegments. */
-    if (b->verbose) {
-      printf("  Enclosing convex hull with segments.\n");
-    }
     markhull(m, b);
   }
 }
@@ -6870,9 +6656,6 @@ void infecthull(mesh *m, behavior *b)
   triangle ptr;                         /* Temporary variable used by sym(). */
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  if (b->verbose) {
-    printf("  Marking concavities (external triangles) for elimination.\n");
-  }
   /* Find a triangle handle on the hull. */
   hulltri.tri = m->dummytri;
   hulltri.orient = 0;
@@ -6943,14 +6726,10 @@ void plague(mesh *m, behavior *b)
   struct osub neighborsubseg;
   vertex testvertex;
   vertex norg, ndest;
-  vertex deadorg, deaddest, deadapex;
   int killorg;
   triangle ptr;             /* Temporary variable used by sym() and onext(). */
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  if (b->verbose) {
-    printf("  Marking neighbors of marked triangles.\n");
-  }
   /* Loop through all the infected triangles, spreading the virus to */
   /*   their neighbors, then to their neighbors' neighbors.          */
   traversalinit(&m->viri);
@@ -6962,17 +6741,7 @@ void plague(mesh *m, behavior *b)
     /*   temporarily uninfect this triangle so that we can examine its      */
     /*   adjacent subsegments.                                              */
     uninfect(testtri);
-    if (b->verbose > 2) {
-      /* Assign the triangle an orientation for convenience in */
-      /*   checking its vertices.                              */
-      testtri.orient = 0;
-      org(testtri, deadorg);
-      dest(testtri, deaddest);
-      apex(testtri, deadapex);
-      printf("    Checking (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n",
-             deadorg[0], deadorg[1], deaddest[0], deaddest[1],
-             deadapex[0], deadapex[1]);
-    }
+
     /* Check each of the triangle's three neighbors. */
     for (testtri.orient = 0; testtri.orient < 3; testtri.orient++) {
       /* Find the neighbor. */
@@ -6998,15 +6767,6 @@ void plague(mesh *m, behavior *b)
         if (neighborsubseg.ss == m->dummysub) {
           /* There is no subsegment protecting the neighbor, so */
           /*   the neighbor becomes infected.                   */
-          if (b->verbose > 2) {
-            org(neighbor, deadorg);
-            dest(neighbor, deaddest);
-            apex(neighbor, deadapex);
-            printf(
-              "    Marking (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n",
-                   deadorg[0], deadorg[1], deaddest[0], deaddest[1],
-                   deadapex[0], deadapex[1]);
-          }
           infect(neighbor);
           /* Ensure that the neighbor's neighbors will be infected. */
           deadtriangle = (triangle **) poolalloc(&m->viri);
@@ -7033,10 +6793,6 @@ void plague(mesh *m, behavior *b)
     /*   virus pool again.                                             */
     infect(testtri);
     virusloop = (triangle **) traverse(&m->viri);
-  }
-
-  if (b->verbose) {
-    printf("  Deleting marked triangles.\n");
   }
 
   traversalinit(&m->viri);
@@ -7087,10 +6843,6 @@ void plague(mesh *m, behavior *b)
           }
         }
         if (killorg) {
-          if (b->verbose > 1) {
-            printf("    Deleting vertex (%.12g, %.12g)\n",
-                   testvertex[0], testvertex[1]);
-          }
           setvertextype(testvertex, UNDEADVERTEX);
           m->undeads++;
         }
@@ -7145,13 +6897,9 @@ void regionplague(mesh *m, behavior *b,
   triangle **virusloop;
   triangle **regiontri;
   struct osub neighborsubseg;
-  vertex regionorg, regiondest, regionapex;
   triangle ptr;             /* Temporary variable used by sym() and onext(). */
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  if (b->verbose > 1) {
-    printf("  Marking neighbors of marked triangles.\n");
-  }
   /* Loop through all the infected triangles, spreading the attribute      */
   /*   and/or area constraint to their neighbors, then to their neighbors' */
   /*   neighbors.                                                          */
@@ -7172,17 +6920,6 @@ void regionplague(mesh *m, behavior *b,
       /* Set an area constraint. */
       setareabound(testtri, area);
     }
-    if (b->verbose > 2) {
-      /* Assign the triangle an orientation for convenience in */
-      /*   checking its vertices.                              */
-      testtri.orient = 0;
-      org(testtri, regionorg);
-      dest(testtri, regiondest);
-      apex(testtri, regionapex);
-      printf("    Checking (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n",
-             regionorg[0], regionorg[1], regiondest[0], regiondest[1],
-             regionapex[0], regionapex[1]);
-    }
     /* Check each of the triangle's three neighbors. */
     for (testtri.orient = 0; testtri.orient < 3; testtri.orient++) {
       /* Find the neighbor. */
@@ -7193,14 +6930,6 @@ void regionplague(mesh *m, behavior *b,
       /*   isn't protected by a subsegment.                          */
       if ((neighbor.tri != m->dummytri) && !infected(neighbor)
           && (neighborsubseg.ss == m->dummysub)) {
-        if (b->verbose > 2) {
-          org(neighbor, regionorg);
-          dest(neighbor, regiondest);
-          apex(neighbor, regionapex);
-          printf("    Marking (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n",
-                 regionorg[0], regionorg[1], regiondest[0], regiondest[1],
-                 regionapex[0], regionapex[1]);
-        }
         /* Infect the neighbor. */
         infect(neighbor);
         /* Ensure that the neighbor's neighbors will be infected. */
@@ -7215,9 +6944,6 @@ void regionplague(mesh *m, behavior *b,
   }
 
   /* Uninfect all triangles. */
-  if (b->verbose > 1) {
-    printf("  Unmarking marked triangles.\n");
-  }
   traversalinit(&m->viri);
   virusloop = (triangle **) traverse(&m->viri);
   while (virusloop != (triangle **) NULL) {
@@ -7256,9 +6982,6 @@ void carveholes(mesh *m, behavior *b, REAL *holelist, int holes,
 
   if (!(b->quiet || (b->noholes && b->convex))) {
     printf("Removing unwanted triangles.\n");
-    if (b->verbose && (holes > 0)) {
-      printf("  Marking holes for elimination.\n");
-    }
   }
 
   if (regions > 0) {
@@ -7632,12 +7355,6 @@ void splitencsegs(mesh *m, behavior *b, int triflaws, int *err)
 
         setvertexmark(newvertex, mark(currentenc));
         setvertextype(newvertex, SEGMENTVERTEX);
-        if (b->verbose > 1) {
-          printf(
-  "  Splitting subsegment (%.12g, %.12g) (%.12g, %.12g) at (%.12g, %.12g).\n",
-                 eorg[0], eorg[1], edest[0], edest[1],
-                 newvertex[0], newvertex[1]);
-        }
         /* Check whether the new vertex lies on an endpoint. */
         if (((newvertex[0] == eorg[0]) && (newvertex[1] == eorg[1])) ||
             ((newvertex[0] == edest[0]) && (newvertex[1] == edest[1]))) {
@@ -7696,9 +7413,6 @@ void tallyfaces(mesh *m, behavior *b)
 {
   struct otri triangleloop;
 
-  if (b->verbose) {
-    printf("  Making a list of bad triangles.\n");
-  }
   traversalinit(&m->triangles);
   triangleloop.orient = 0;
   triangleloop.tri = triangletraverse(m);
@@ -7740,11 +7454,6 @@ void splittriangle(mesh *m, behavior *b,
   /*   Subsequent transformations may have made it a different triangle. */
   if (!deadtri(badotri.tri) && (borg == badtri->triangorg) &&
       (bdest == badtri->triangdest) && (bapex == badtri->triangapex)) {
-    if (b->verbose > 1) {
-      printf("  Splitting this triangle at its circumcenter:\n");
-      printf("    (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n", borg[0],
-             borg[1], bdest[0], bdest[1], bapex[0], bapex[1]);
-    }
 
     errorflag = 0;
     /* Create a new vertex at the triangle's circumcenter. */
@@ -7797,9 +7506,6 @@ void splittriangle(mesh *m, behavior *b,
         /* If the newly inserted vertex encroaches upon a subsegment, */
         /*   delete the new vertex.                                   */
         undovertex(m, b);
-        if (b->verbose > 1) {
-          printf("  Rejecting (%.12g, %.12g).\n", newvertex[0], newvertex[1]);
-        }
         vertexdealloc(m, newvertex);
       } else if (success == VIOLATINGVERTEX) {
         /* Failed to insert the new vertex, but some subsegment was */
@@ -7817,11 +7523,6 @@ void splittriangle(mesh *m, behavior *b,
       }
     }
     if (errorflag) {
-      if (b->verbose) {
-        printf("  The new vertex is at the circumcenter of triangle\n");
-        printf("    (%.12g, %.12g) (%.12g, %.12g) (%.12g, %.12g)\n",
-               borg[0], borg[1], bdest[0], bdest[1], bapex[0], bapex[1]);
-      }
       printf("This probably means that I am trying to refine triangles\n");
       printf("  to a smaller size than can be accommodated by the finite\n");
       printf("  precision of floating point arithmetic.  (You can be\n");
@@ -7853,14 +7554,10 @@ void enforcequality(mesh *m, behavior *b, int *err)
   /* Initialize the pool of encroached subsegments. */
   poolinit(&m->badsubsegs, sizeof(struct badsubseg), BADSUBSEGPERBLOCK,
            BADSUBSEGPERBLOCK, 0);
-  if (b->verbose) {
-    printf("  Looking for encroached subsegments.\n");
-  }
+
   /* Test all segments to see if they're encroached. */
   tallyencs(m, b);
-  if (b->verbose && (m->badsubsegs.items > 0)) {
-    printf("  Splitting encroached subsegments.\n");
-  }
+
   /* Fix encroached subsegments without noting bad triangles. */
   splitencsegs(m, b, 0, err);
 #ifdef TRILIBRARY
@@ -7885,9 +7582,7 @@ void enforcequality(mesh *m, behavior *b, int *err)
     poolinit(&m->flipstackers, sizeof(struct flipstacker), FLIPSTACKERPERBLOCK,
              FLIPSTACKERPERBLOCK, 0);
     m->checkquality = 1;
-    if (b->verbose) {
-      printf("  Splitting bad triangles.\n");
-    }
+
     while ((m->badtriangles.items > 0) && (m->steinerleft != 0)) {
       /* Fix one bad triangle by inserting a vertex at its circumcenter. */
       badtri = dequeuebadtriang(m);
@@ -7993,9 +7688,6 @@ void highorder(mesh *m, behavior *b)
             setvertexmark(newvertex, mark(checkmark));
             setvertextype(newvertex, SEGMENTVERTEX);
           }
-        }
-        if (b->verbose > 1) {
-          printf("  Creating (%.12g, %.12g).\n", newvertex[0], newvertex[1]);
         }
         /* Record the new node in the (one or two) adjacent elements. */
         triangleloop.tri[m->highorderindex + triangleloop.orient] =
