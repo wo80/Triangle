@@ -437,12 +437,6 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist);
 /**                                                                         **/
 /********* File I/O routines end here                                *********/
 
-#ifndef TRILIBRARY
-
-void quality_statistics(mesh *m, behavior *b);
-
-void statistics(mesh *m, behavior *b);
-
-#endif /* not TRILIBRARY */
+int quality_statistics(mesh *m, behavior *b, statistics *s);
 
 #endif /* TRIANGLE_INTERNAL_H */

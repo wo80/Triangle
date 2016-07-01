@@ -8063,6 +8063,191 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 /**                                                                         **/
 /********* File I/O routines end here                                *********/
 
+
+/*****************************************************************************/
+/*                                                                           */
+/*  quality_statistics()   Compute statistics about the quality of the mesh.   */
+/*                                                                           */
+/*****************************************************************************/
+
+int quality_statistics(mesh *m, behavior *b, statistics *s)
+{
+  struct otri triangleloop;
+  vertex p[3];
+  REAL cossquaretable[8];
+  REAL ratiotable[16];
+  REAL dx[3], dy[3];
+  REAL edgelength[3];
+  REAL dotproduct;
+  REAL cossquare;
+  REAL triarea;
+  REAL trilongest2;
+  REAL triminaltitude2;
+  REAL triaspect2;
+  REAL radconst, degconst;
+  REAL shortest, longest;
+  REAL smallestarea, biggestarea;
+  REAL smallestangle, biggestangle;
+  REAL minaltitude;
+  REAL worstaspect;
+  int aspectindex;
+  int tendegree;
+  int acutebiggest;
+  int i, ii, j, k;
+
+  if (s->angletable == NULL) {
+    return -1;
+  }
+  if (s->aspecttable == NULL) {
+    return -1;
+  }
+
+  radconst = PI / 18.0;
+  degconst = 180.0 / PI;
+  for (i = 0; i < 8; i++) {
+    cossquaretable[i] = cos(radconst * (REAL) (i + 1));
+    cossquaretable[i] = cossquaretable[i] * cossquaretable[i];
+  }
+  for (i = 0; i < 18; i++) {
+    s->angletable[i] = 0;
+  }
+
+  ratiotable[0]  =      1.5;      ratiotable[1]  =     2.0;
+  ratiotable[2]  =      2.5;      ratiotable[3]  =     3.0;
+  ratiotable[4]  =      4.0;      ratiotable[5]  =     6.0;
+  ratiotable[6]  =     10.0;      ratiotable[7]  =    15.0;
+  ratiotable[8]  =     25.0;      ratiotable[9]  =    50.0;
+  ratiotable[10] =    100.0;      ratiotable[11] =   300.0;
+  ratiotable[12] =   1000.0;      ratiotable[13] = 10000.0;
+  ratiotable[14] = 100000.0;      ratiotable[15] =     0.0;
+  for (i = 0; i < 16; i++) {
+    s->aspecttable[i] = 0;
+  }
+
+  worstaspect = 0.0;
+  minaltitude = m->xmax - m->xmin + m->ymax - m->ymin;
+  minaltitude = minaltitude * minaltitude;
+  shortest = minaltitude;
+  longest = 0.0;
+  smallestarea = minaltitude;
+  biggestarea = 0.0;
+  worstaspect = 0.0;
+  smallestangle = 0.0;
+  biggestangle = 2.0;
+  acutebiggest = 1;
+
+  traversalinit(&m->triangles);
+  triangleloop.tri = triangletraverse(m);
+  triangleloop.orient = 0;
+  while (triangleloop.tri != (triangle *) NULL) {
+    org(triangleloop, p[0]);
+    dest(triangleloop, p[1]);
+    apex(triangleloop, p[2]);
+    trilongest2 = 0.0;
+
+    for (i = 0; i < 3; i++) {
+      j = plus1mod3[i];
+      k = minus1mod3[i];
+      dx[i] = p[j][0] - p[k][0];
+      dy[i] = p[j][1] - p[k][1];
+      edgelength[i] = dx[i] * dx[i] + dy[i] * dy[i];
+      if (edgelength[i] > trilongest2) {
+        trilongest2 = edgelength[i];
+      }
+      if (edgelength[i] > longest) {
+        longest = edgelength[i];
+      }
+      if (edgelength[i] < shortest) {
+        shortest = edgelength[i];
+      }
+    }
+
+    triarea = counterclockwise(m, b, p[0], p[1], p[2]);
+    if (triarea < smallestarea) {
+      smallestarea = triarea;
+    }
+    if (triarea > biggestarea) {
+      biggestarea = triarea;
+    }
+    triminaltitude2 = triarea * triarea / trilongest2;
+    if (triminaltitude2 < minaltitude) {
+      minaltitude = triminaltitude2;
+    }
+    triaspect2 = trilongest2 / triminaltitude2;
+    if (triaspect2 > worstaspect) {
+      worstaspect = triaspect2;
+    }
+    aspectindex = 0;
+    while ((triaspect2 > ratiotable[aspectindex] * ratiotable[aspectindex])
+      && (aspectindex < 15)) {
+        aspectindex++;
+    }
+    s->aspecttable[aspectindex]++;
+
+    for (i = 0; i < 3; i++) {
+      j = plus1mod3[i];
+      k = minus1mod3[i];
+      dotproduct = dx[j] * dx[k] + dy[j] * dy[k];
+      cossquare = dotproduct * dotproduct / (edgelength[j] * edgelength[k]);
+      tendegree = 8;
+      for (ii = 7; ii >= 0; ii--) {
+        if (cossquare > cossquaretable[ii]) {
+          tendegree = ii;
+        }
+      }
+      if (dotproduct <= 0.0) {
+        s->angletable[tendegree]++;
+        if (cossquare > smallestangle) {
+          smallestangle = cossquare;
+        }
+        if (acutebiggest && (cossquare < biggestangle)) {
+          biggestangle = cossquare;
+        }
+      } else {
+        s->angletable[17 - tendegree]++;
+        if (acutebiggest || (cossquare > biggestangle)) {
+          biggestangle = cossquare;
+          acutebiggest = 0;
+        }
+      }
+    }
+    triangleloop.tri = triangletraverse(m);
+  }
+
+  shortest = sqrt(shortest);
+  longest = sqrt(longest);
+  minaltitude = sqrt(minaltitude);
+  worstaspect = sqrt(worstaspect);
+  smallestarea *= 0.5;
+  biggestarea *= 0.5;
+  if (smallestangle >= 1.0) {
+    smallestangle = 0.0;
+  } else {
+    smallestangle = degconst * acos(sqrt(smallestangle));
+  }
+  if (biggestangle >= 1.0) {
+    biggestangle = 180.0;
+  } else {
+    if (acutebiggest) {
+      biggestangle = degconst * acos(sqrt(biggestangle));
+    } else {
+      biggestangle = 180.0 - degconst * acos(sqrt(biggestangle));
+    }
+  }
+
+  s->worstaspect = worstaspect;
+  s->minaltitude = minaltitude;
+  s->shortest = shortest;
+  s->longest = longest;
+  s->smallestarea = smallestarea;
+  s->biggestarea = biggestarea;
+  s->worstaspect = worstaspect;
+  s->smallestangle = smallestangle;
+  s->biggestangle = biggestangle;
+
+  return 0;
+}
+
 /*****************************************************************************/
 /*                                                                           */
 /*  main() or triangulate()   Gosh, do everything.                           */
@@ -8105,7 +8290,6 @@ void triangulate(char *triswitches, triangleio *in,
     out->errorcode = err;
     return;
   }
-
 
 #ifndef NO_ACUTE
   acutepool_init(20, &b, m.acute_mem);

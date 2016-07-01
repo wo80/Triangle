@@ -430,6 +430,16 @@ typedef struct mesh_t {
 
 } mesh;                                                  /* End of `struct mesh'. */
 
+typedef struct statistics_t {
+	REAL shortest, longest;
+	REAL smallestarea, biggestarea;
+	REAL smallestangle, biggestangle;
+	REAL minaltitude;
+	REAL worstaspect;
+	int angletable[18];
+	int aspecttable[16];
+} statistics;
+
 /*****************************************************************************/
 /*                                                                           */
 /*  Mesh manipulation primitives.  Each triangle contains three pointers to  */
