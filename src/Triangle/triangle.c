@@ -8470,8 +8470,8 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 
 #ifdef TRILIBRARY
 
-void triangulate(char *triswitches, struct triangulateio *in,
-                 struct triangulateio *out)
+void triangulate(char *triswitches, triangleio *in,
+                 triangleio *out)
 #else /* not TRILIBRARY */
 
 int main(int argc, char **argv)

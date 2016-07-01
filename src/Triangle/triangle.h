@@ -255,7 +255,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-struct triangulateio {
+typedef struct triangleio_t {
 	REAL *pointlist;                                               /* In / out */
 	REAL *pointattributelist;                                      /* In / out */
 	int *pointmarkerlist;                                          /* In / out */
@@ -284,7 +284,7 @@ struct triangulateio {
 	int *edgemarkerlist;                                           /* Out only */
 	int numberofedges;                                             /* Out only */
 	int errorcode;                                                 /* Out only */
-};
+} triangleio;
 
 typedef struct context_t {
 	mesh *m;
@@ -306,16 +306,16 @@ extern "C" {
 
 	EXPORT int triangle_options(context* ctx, char *options);
 
-	EXPORT int triangle_mesh(context* ctx, struct triangulateio *in);
+	EXPORT int triangle_mesh(context* ctx, triangleio *in);
 
 	EXPORT int triangle_refine(context* ctx);
 
-	EXPORT int triangle_output(context* ctx, struct triangulateio *out);
+	EXPORT int triangle_output(context* ctx, triangleio *out);
 
 	/* NEW API end */
 	/*****************************************************************************/
 
-	EXPORT void __cdecl triangulate(char *, struct triangulateio *, struct triangulateio *);
+	EXPORT void __cdecl triangulate(char *, triangleio *, triangleio *);
 	EXPORT void __cdecl trifree(VOID *memptr);
 
 #ifdef __cplusplus

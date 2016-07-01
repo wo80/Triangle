@@ -38,7 +38,7 @@ int triangle_options(context* ctx, char *options)
 	return result;
 }
 
-int triangle_mesh(context* ctx, struct triangulateio *in)
+int triangle_mesh(context* ctx, triangleio *in)
 {
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
@@ -141,7 +141,7 @@ int triangle_refine(context* ctx)
 	return result;
 }
 
-int triangle_output(context* ctx, struct triangulateio *out)
+int triangle_output(context* ctx, triangleio *out)
 {
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
