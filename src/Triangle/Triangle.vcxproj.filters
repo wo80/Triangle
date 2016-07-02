@@ -21,9 +21,6 @@
     <ClCompile Include="predicates.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="triangle_api.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="acute.c">
       <Filter>Source Files</Filter>
     </ClCompile>

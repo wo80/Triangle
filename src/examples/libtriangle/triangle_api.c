@@ -1,7 +1,6 @@
 
-#include "triangle.h"
-#include "triangle_internal.h"
-#include <stdlib.h>
+#include "triangle_api.h"
+#include <triangle_internal.h>
 
 context* triangle_context_create()
 {
@@ -25,6 +24,11 @@ VOID triangle_context_destory(context* ctx)
 	free(ctx->b);
 	free(ctx->m);
 	free(ctx);
+}
+
+int triangle_quality_statistics(context* ctx, statistics *stats)
+{
+	return quality_statistics(ctx->m, ctx->b, stats);
 }
 
 int triangle_options(context* ctx, char *options)
@@ -206,4 +210,31 @@ int triangle_output(context* ctx, triangleio *out)
 	}
 
 	return result;
+}
+
+int triangle_write_nodes(context *ctx, FILE *nodefile)
+{
+	return file_writenodes(ctx->m, ctx->b, nodefile);
+}
+
+int triangle_write_elements(context *ctx, FILE *elefile)
+{
+	return file_writeelements(ctx->m, ctx->b, elefile);
+}
+
+int triangle_write_poly(context *ctx, FILE *polyfile,
+		REAL *holelist, int holes, REAL *regionlist, int regions)
+{
+	return file_writepoly(ctx->m, ctx->b, polyfile,
+				   holelist, holes, regionlist, regions);
+}
+
+int triangle_write_edges(context *ctx, FILE *edgefile)
+{
+	return file_writeedges(ctx->m, ctx->b, edgefile);
+}
+
+int triangle_write_neighbors(context *ctx, FILE *neighborfile)
+{
+	return file_writeneighbors(ctx->m, ctx->b, neighborfile);
 }

@@ -286,40 +286,5 @@ typedef struct triangleio_t {
 	int errorcode;                                                 /* Out only */
 } triangleio;
 
-typedef struct context_t {
-	mesh *m;
-	behavior *b;
-} context;
-
-#define EXPORT __declspec(dllexport)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-	/*****************************************************************************/
-	/* NEW API */
-
-	EXPORT context* triangle_context_create();
-
-	EXPORT VOID triangle_context_destory(context* ctx);
-
-	EXPORT int triangle_options(context* ctx, char *options);
-
-	EXPORT int triangle_mesh(context* ctx, triangleio *in);
-
-	EXPORT int triangle_refine(context* ctx);
-
-	EXPORT int triangle_output(context* ctx, triangleio *out);
-
-	/* NEW API end */
-	/*****************************************************************************/
-
-	EXPORT void __cdecl triangulate(char *, triangleio *, triangleio *);
-	EXPORT void __cdecl trifree(VOID *memptr);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* TRIANGLE_H */

@@ -5,6 +5,13 @@ VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Triangle", "Triangle\Triangle.vcxproj", "{C83E3E42-C594-4379-BA06-5F4EFD41CDC7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{102ACCD1-7321-4F15-8B5A-03834669F773}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtriangle", "examples\libtriangle\libtriangle.vcxproj", "{25F029ED-FF51-4055-A04E-4EF05A89DB88}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C83E3E42-C594-4379-BA06-5F4EFD41CDC7} = {C83E3E42-C594-4379-BA06-5F4EFD41CDC7}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,8 +22,15 @@ Global
 		{C83E3E42-C594-4379-BA06-5F4EFD41CDC7}.Debug|Win32.Build.0 = Debug|Win32
 		{C83E3E42-C594-4379-BA06-5F4EFD41CDC7}.Release|Win32.ActiveCfg = Release|Win32
 		{C83E3E42-C594-4379-BA06-5F4EFD41CDC7}.Release|Win32.Build.0 = Release|Win32
+		{25F029ED-FF51-4055-A04E-4EF05A89DB88}.Debug|Win32.ActiveCfg = Debug|Win32
+		{25F029ED-FF51-4055-A04E-4EF05A89DB88}.Debug|Win32.Build.0 = Debug|Win32
+		{25F029ED-FF51-4055-A04E-4EF05A89DB88}.Release|Win32.ActiveCfg = Release|Win32
+		{25F029ED-FF51-4055-A04E-4EF05A89DB88}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25F029ED-FF51-4055-A04E-4EF05A89DB88} = {102ACCD1-7321-4F15-8B5A-03834669F773}
 	EndGlobalSection
 EndGlobal
