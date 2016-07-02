@@ -16,6 +16,9 @@ int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area);
 /**                                                                         **/
 /********* User-defined triangle evaluation routine ends here        *********/
 
+
+void interpolate(vertex newvertex, vertex org, vertex dest, vertex apex, int nextras);
+
 /********* Memory allocation and program exit wrappers begin here    *********/
 /**                                                                         **/
 
