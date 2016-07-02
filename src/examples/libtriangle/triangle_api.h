@@ -23,11 +23,13 @@ extern "C" {
 
 	EXPORT int triangle_options(context* ctx, char *options);
 
-	EXPORT int triangle_mesh(context* ctx, triangleio *in);
+	EXPORT int triangle_mesh_create(context* ctx, triangleio *in);
 
-	EXPORT int triangle_refine(context* ctx);
+	EXPORT int triangle_mesh_load(context* ctx, triangleio *in);
 
-	EXPORT int triangle_output(context* ctx, triangleio *out);
+	EXPORT int triangle_mesh_refine(context* ctx);
+
+	EXPORT int triangle_mesh_copy(context* ctx, triangleio *out);
 
 	EXPORT int triangle_quality_statistics(context *ctx, statistics *stats);
 
