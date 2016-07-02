@@ -1458,6 +1458,9 @@ void triangledeinit(mesh *m, behavior *b)
     }
   }
 #endif /* not CDT_ONLY */
+#ifndef NO_ACUTE
+  acutepool_deinit(m->acute_mem);
+#endif
 }
 
 /**                                                                         **/
@@ -1542,7 +1545,7 @@ void makesubseg(mesh *m, struct osub *newsubseg)
 /*                                                                           */
 /*****************************************************************************/
 
-void triangleinit(mesh *m)
+void triangleinit(mesh *m, behavior *b)
 {
   poolzero(&m->vertices);
   poolzero(&m->triangles);
@@ -1563,6 +1566,10 @@ void triangleinit(mesh *m)
   randomseed = 1;
 
   exactinit();                     /* Initialize exact arithmetic constants. */
+
+#ifndef NO_ACUTE
+  acutepool_init(20, b, m->acute_mem);
+#endif
 }
 
 /*****************************************************************************/
@@ -8325,8 +8332,6 @@ void triangulate(char *triswitches, triangleio *in,
   REAL *regionarray;   /* Array of regional attributes and area constraints. */
   int err;
 
-  triangleinit(&m);
-
   out->errorcode = err = 0;
   parsecommandline(1, &triswitches, &b, &err);
   if (err > 0) {
@@ -8334,9 +8339,8 @@ void triangulate(char *triswitches, triangleio *in,
     return;
   }
 
-#ifndef NO_ACUTE
-  acutepool_init(20, &b, m.acute_mem);
-#endif
+  triangleinit(&m, &b);
+
   m.steinerleft = b.steiner;
 
   transfernodes(&m, &b, in->pointlist, in->pointattributelist,
@@ -8487,8 +8491,5 @@ void triangulate(char *triswitches, triangleio *in,
   }
 #endif /* not REDUCED */
 
-#ifndef NO_ACUTE
-  acutepool_deinit(m.acute_mem);
-#endif
   triangledeinit(&m, &b);
 }

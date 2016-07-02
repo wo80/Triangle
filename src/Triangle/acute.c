@@ -26,7 +26,7 @@ void acutepool_init(int n, behavior *b, acutepool *p) {
     p->petalx = (REAL *)malloc(sizeof(REAL)* 2 * n);
     p->petaly = (REAL *)malloc(sizeof(REAL)* 2 * n);
     p->petalr = (REAL *)malloc(sizeof(REAL)* 2 * n);
-    if(b->maxangle == 0.00000){
+    if(b->maxangle == 0.0){
        p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 16 + 36);
     }else{
        p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 20 + 40);
@@ -51,7 +51,7 @@ void acutepool_resize(int n, behavior *b, acutepool *p) {
         p->petalx = (REAL *)malloc(sizeof(REAL)* 2 * n);
         p->petaly = (REAL *)malloc(sizeof(REAL)* 2 * n);
         p->petalr = (REAL *)malloc(sizeof(REAL)* 2 * n);
-        if(b->maxangle == 0.00000){
+        if(b->maxangle == 0.0){
            p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 16 + 36);
         }else{
            p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 20 + 40);
