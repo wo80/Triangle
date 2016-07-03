@@ -1460,6 +1460,7 @@ void triangledeinit(mesh *m, behavior *b)
 #endif /* not CDT_ONLY */
 #ifndef NO_ACUTE
   acutepool_deinit(m->acute_mem);
+  trifree(m->acute_mem);
 #endif
 }
 
@@ -1568,6 +1569,7 @@ void triangleinit(mesh *m, behavior *b)
   exactinit();                     /* Initialize exact arithmetic constants. */
 
 #ifndef NO_ACUTE
+  m->acute_mem = (acutepool *) trimalloc(sizeof(acutepool));
   acutepool_init(20, b, m->acute_mem);
 #endif
 }

@@ -2,17 +2,40 @@
 #include "triangle_api.h"
 #include <triangle_internal.h>
 
-context* triangle_context_create()
+int triangle_behavior_parse(behavior *b, char *options)
 {
-	mesh *m = malloc(sizeof *m);
-	behavior *b = malloc(sizeof *b);
+	int result = 0;
+
+	parsecommandline(1, &options, b, &result);
+
+	return result;
+}
+
+context* triangle_context_create(behavior *b)
+{
+	int result = 0;
 
 	context *ctx = malloc(sizeof *ctx);
+
+	mesh *m = malloc(sizeof *m);
 
 	ctx->m = m;
 	ctx->b = b;
 
 	triangleinit(ctx->m);
+
+	m->steinerleft = b->steiner;
+	
+	/* Initialize some mesh pointers to zero. */
+
+    m->lastflip = NULL;
+    m->infvertex1 = NULL;
+    m->infvertex2 = NULL;
+    m->infvertex3 = NULL;
+    m->dummytri = NULL;
+    m->dummytribase = NULL;
+    m->dummysub = NULL;
+    m->dummysubbase = NULL;
 
 	return ctx;
 }
@@ -30,17 +53,6 @@ VOID triangle_context_destory(context* ctx)
 int triangle_quality_statistics(context* ctx, statistics *stats)
 {
 	return quality_statistics(ctx->m, ctx->b, stats);
-}
-
-int triangle_options(context* ctx, char *options)
-{
-	int result = 0;
-
-	parsecommandline(1, &options, ctx->b, &result);
-
-	ctx->m->steinerleft = ctx->b->steiner;
-
-	return result;
 }
 
 int triangle_mesh_create(context* ctx, triangleio *in)

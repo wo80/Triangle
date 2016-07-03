@@ -17,11 +17,11 @@ extern "C" {
 		behavior *b;
 	} context;
 
-	EXPORT context* triangle_context_create();
+	EXPORT int triangle_behavior_parse(behavior *b, char *options);
+
+	EXPORT context* triangle_context_create(behavior* b);
 
 	EXPORT VOID triangle_context_destory(context* ctx);
-
-	EXPORT int triangle_options(context* ctx, char *options);
 
 	EXPORT int triangle_mesh_create(context* ctx, triangleio *in);
 
