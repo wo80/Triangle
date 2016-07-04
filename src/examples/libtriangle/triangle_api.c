@@ -22,6 +22,9 @@ context* triangle_context_create()
 
 	ctx->m = m;
 	ctx->b = b;
+	
+	/* Initialize default behavior values. */
+	parsecommandline(0, (char **)NULL, b, &result);
 
 	triangleinit(ctx->m);
 
