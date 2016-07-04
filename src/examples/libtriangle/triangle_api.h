@@ -17,11 +17,21 @@ extern "C" {
 		behavior *b;
 	} context;
 
-	EXPORT int triangle_behavior_parse(behavior *b, char *options);
+	typedef struct statistics_t {
+		int vertices;
+		int undeads;
+		int triangles;
+		int hullsize;
+		int subsegs;
+		int edges;
+		int memory;
+	} statistics;
 
-	EXPORT context* triangle_context_create(behavior* b);
+	EXPORT context* triangle_context_create();
 
 	EXPORT VOID triangle_context_destory(context* ctx);
+
+	EXPORT int triangle_behavior_parse(behavior *b, char *options);
 
 	EXPORT int triangle_mesh_create(context* ctx, triangleio *in);
 
@@ -31,7 +41,9 @@ extern "C" {
 
 	EXPORT int triangle_mesh_copy(context* ctx, triangleio *out);
 
-	EXPORT int triangle_quality_statistics(context *ctx, statistics *stats);
+	EXPORT int triangle_mesh_statistics(context *ctx, statistics *s);
+
+	EXPORT int triangle_mesh_quality(context *ctx, quality *q);
 
 	EXPORT int triangle_write_nodes(context *ctx, FILE *nodefile);
 

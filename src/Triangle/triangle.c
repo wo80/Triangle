@@ -259,6 +259,60 @@ void interpolate(vertex newvertex, vertex org, vertex dest, vertex apex, int nex
   }
 }
 
+/*****************************************************************************/
+/*                                                                           */
+/*  behavior_update()  Update behavior values.                               */
+/*                                                                           */
+/*****************************************************************************/
+
+void behavior_update(behavior *b, int *err)
+{
+  b->usesegments = b->poly || b->refine || b->quality || b->convex;
+  b->goodangle = cos(b->minangle * PI / 180.0);
+#ifndef NO_ACUTE
+  b->maxgoodangle = cos(b->maxangle * PI / 180.0);
+#endif
+  if (b->goodangle == 1.0) {
+    b->offconstant = 0.0;
+  } else {
+    b->offconstant = 0.475 * sqrt((1.0 + b->goodangle) / (1.0 - b->goodangle));
+  }
+  b->goodangle *= b->goodangle;
+  if (b->refine && b->noiterationnum) {
+    // TODO: Error: you cannot use the -I switch when refining a triangulation.
+    *err = ERR_CMD_LINE;
+    return;
+  }
+  /* Be careful not to allocate space for element area constraints that */
+  /*   will never be assigned any value (other than the default -1.0).  */
+  if (!b->refine && !b->poly) {
+    b->vararea = 0;
+  }
+  /* Be careful not to add an extra attribute to each element unless the */
+  /*   input supports it (PSLG in, but not refining a preexisting mesh). */
+  if (b->refine || !b->poly) {
+    b->regionattrib = 0;
+  }
+  /* Regular/weighted triangulations are incompatible with PSLGs */
+  /*   and meshing.                                              */
+  if (b->weighted && (b->poly || b->quality)) {
+    b->weighted = 0;
+    if (!b->quiet) {
+      // TODO: Warning: weighted triangulations (-w, -W) are incompatible
+      //       with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.
+      *err = ERR_CMD_LINE;
+      return;
+    }
+  }
+  if (b->jettison && b->nonodewritten && !b->quiet) {
+    // TODO: Warning: -j and -N switches are somewhat incompatible.
+    //       If any vertices are jettisoned, you will need the output
+    //       .node file to reconstruct the new node indices.
+    *err = ERR_CMD_LINE;
+    return;
+  }
+}
+
 /**                                                                         **/
 /**                                                                         **/
 /********* Triangle utility functions end here                       *********/
@@ -8122,7 +8176,7 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 /*                                                                           */
 /*****************************************************************************/
 
-int quality_statistics(mesh *m, behavior *b, statistics *s)
+int quality_statistics(mesh *m, behavior *b, quality *q)
 {
   struct otri triangleloop;
   vertex p[3];
@@ -8147,10 +8201,10 @@ int quality_statistics(mesh *m, behavior *b, statistics *s)
   int acutebiggest;
   int i, ii, j, k;
 
-  if (s->angletable == NULL) {
+  if (q->angletable == NULL) {
     return -1;
   }
-  if (s->aspecttable == NULL) {
+  if (q->aspecttable == NULL) {
     return -1;
   }
 
@@ -8161,7 +8215,7 @@ int quality_statistics(mesh *m, behavior *b, statistics *s)
     cossquaretable[i] = cossquaretable[i] * cossquaretable[i];
   }
   for (i = 0; i < 18; i++) {
-    s->angletable[i] = 0;
+    q->angletable[i] = 0;
   }
 
   ratiotable[0]  =      1.5;      ratiotable[1]  =     2.0;
@@ -8173,7 +8227,7 @@ int quality_statistics(mesh *m, behavior *b, statistics *s)
   ratiotable[12] =   1000.0;      ratiotable[13] = 10000.0;
   ratiotable[14] = 100000.0;      ratiotable[15] =     0.0;
   for (i = 0; i < 16; i++) {
-    s->aspecttable[i] = 0;
+    q->aspecttable[i] = 0;
   }
 
   worstaspect = 0.0;
@@ -8234,7 +8288,7 @@ int quality_statistics(mesh *m, behavior *b, statistics *s)
       && (aspectindex < 15)) {
         aspectindex++;
     }
-    s->aspecttable[aspectindex]++;
+    q->aspecttable[aspectindex]++;
 
     for (i = 0; i < 3; i++) {
       j = plus1mod3[i];
@@ -8248,7 +8302,7 @@ int quality_statistics(mesh *m, behavior *b, statistics *s)
         }
       }
       if (dotproduct <= 0.0) {
-        s->angletable[tendegree]++;
+        q->angletable[tendegree]++;
         if (cossquare > smallestangle) {
           smallestangle = cossquare;
         }
@@ -8256,7 +8310,7 @@ int quality_statistics(mesh *m, behavior *b, statistics *s)
           biggestangle = cossquare;
         }
       } else {
-        s->angletable[17 - tendegree]++;
+        q->angletable[17 - tendegree]++;
         if (acutebiggest || (cossquare > biggestangle)) {
           biggestangle = cossquare;
           acutebiggest = 0;
@@ -8287,15 +8341,15 @@ int quality_statistics(mesh *m, behavior *b, statistics *s)
     }
   }
 
-  s->worstaspect = worstaspect;
-  s->minaltitude = minaltitude;
-  s->shortest = shortest;
-  s->longest = longest;
-  s->smallestarea = smallestarea;
-  s->biggestarea = biggestarea;
-  s->worstaspect = worstaspect;
-  s->smallestangle = smallestangle;
-  s->biggestangle = biggestangle;
+  q->worstaspect = worstaspect;
+  q->minaltitude = minaltitude;
+  q->shortest = shortest;
+  q->longest = longest;
+  q->smallestarea = smallestarea;
+  q->biggestarea = biggestarea;
+  q->worstaspect = worstaspect;
+  q->smallestangle = smallestangle;
+  q->biggestangle = biggestangle;
 
   return 0;
 }

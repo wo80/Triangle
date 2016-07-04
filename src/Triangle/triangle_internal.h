@@ -16,8 +16,9 @@ int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area);
 /**                                                                         **/
 /********* User-defined triangle evaluation routine ends here        *********/
 
-
 void interpolate(vertex newvertex, vertex org, vertex dest, vertex apex, int nextras);
+
+void behavior_update(behavior *b, int *err);
 
 /********* Memory allocation and program exit wrappers begin here    *********/
 /**                                                                         **/
@@ -467,6 +468,6 @@ int file_readholes(mesh *m, behavior *b,
 /**                                                                         **/
 /********* File I/O routines end here                                *********/
 
-int quality_statistics(mesh *m, behavior *b, statistics *s);
+int quality_statistics(mesh *m, behavior *b, quality *q);
 
 #endif /* TRIANGLE_INTERNAL_H */

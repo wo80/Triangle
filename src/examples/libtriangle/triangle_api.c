@@ -11,13 +11,14 @@ int triangle_behavior_parse(behavior *b, char *options)
 	return result;
 }
 
-context* triangle_context_create(behavior *b)
+context* triangle_context_create()
 {
 	int result = 0;
 
-	context *ctx = malloc(sizeof *ctx);
-
 	mesh *m = malloc(sizeof *m);
+	behavior *b = malloc(sizeof *b);
+
+	context *ctx = malloc(sizeof *ctx);
 
 	ctx->m = m;
 	ctx->b = b;
@@ -25,17 +26,17 @@ context* triangle_context_create(behavior *b)
 	triangleinit(ctx->m);
 
 	m->steinerleft = b->steiner;
-	
+
 	/* Initialize some mesh pointers to zero. */
 
-    m->lastflip = NULL;
-    m->infvertex1 = NULL;
-    m->infvertex2 = NULL;
-    m->infvertex3 = NULL;
-    m->dummytri = NULL;
-    m->dummytribase = NULL;
-    m->dummysub = NULL;
-    m->dummysubbase = NULL;
+	m->lastflip = NULL;
+	m->infvertex1 = NULL;
+	m->infvertex2 = NULL;
+	m->infvertex3 = NULL;
+	m->dummytri = NULL;
+	m->dummytribase = NULL;
+	m->dummysub = NULL;
+	m->dummysubbase = NULL;
 
 	return ctx;
 }
@@ -50,9 +51,38 @@ VOID triangle_context_destory(context* ctx)
 	// TODO: free(ctx)
 }
 
-int triangle_quality_statistics(context* ctx, statistics *stats)
+int triangle_mesh_quality(context* ctx, quality *q)
 {
-	return quality_statistics(ctx->m, ctx->b, stats);
+	return quality_statistics(ctx->m, ctx->b, q);
+}
+
+int triangle_mesh_statistics(context* ctx, statistics *s)
+{
+	mesh *m = ctx->m;
+	behavior *b = ctx->b;
+
+	s->vertices = m->vertices.items;
+	s->undeads = m->undeads;
+	s->triangles = m->triangles.items;
+	s->hullsize = m->hullsize;
+	s->edges = m->edges;
+
+	if (b->poly || b->refine) {
+		s->subsegs = m->subsegs.items;
+	} else {
+		s->subsegs = 0;
+	}
+
+	s->memory = m->vertices.maxitems * m->vertices.itembytes +
+		m->triangles.maxitems * m->triangles.itembytes +
+		m->subsegs.maxitems * m->subsegs.itembytes +
+		m->viri.maxitems * m->viri.itembytes +
+		m->badsubsegs.maxitems * m->badsubsegs.itembytes +
+		m->badtriangles.maxitems * m->badtriangles.itembytes +
+		m->flipstackers.maxitems * m->flipstackers.itembytes +
+		m->splaynodes.maxitems * m->splaynodes.itembytes;
+
+	return 0;
 }
 
 int triangle_mesh_create(context* ctx, triangleio *in)

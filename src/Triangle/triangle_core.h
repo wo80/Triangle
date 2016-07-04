@@ -430,7 +430,7 @@ typedef struct mesh_t {
 
 } mesh;                                                  /* End of `struct mesh'. */
 
-typedef struct statistics_t {
+typedef struct quality_t {
 	REAL shortest, longest;
 	REAL smallestarea, biggestarea;
 	REAL smallestangle, biggestangle;
@@ -438,7 +438,7 @@ typedef struct statistics_t {
 	REAL worstaspect;
 	int angletable[18];
 	int aspecttable[16];
-} statistics;
+} quality;
 
 /*****************************************************************************/
 /*                                                                           */
