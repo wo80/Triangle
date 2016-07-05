@@ -29,7 +29,7 @@ extern "C" {
 
 	EXPORT context* triangle_context_create();
 
-	EXPORT VOID triangle_context_destory(context* ctx);
+	EXPORT VOID triangle_context_destroy(context* ctx);
 
 	EXPORT int triangle_behavior_parse(behavior *b, char *options);
 

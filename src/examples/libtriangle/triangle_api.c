@@ -44,7 +44,7 @@ context* triangle_context_create()
 	return ctx;
 }
 
-VOID triangle_context_destory(context* ctx)
+VOID triangle_context_destroy(context* ctx)
 {
 	triangledeinit(ctx->m, ctx->b);
 
