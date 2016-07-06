@@ -19,25 +19,29 @@
 
 // ACUTE MEMORY POOL
 
-void acutepool_init(int n, behavior *b, acutepool *p) {
+void acutepool_init(int n, acutepool **mp) {
+    acutepool *p = (acutepool *) trimalloc(sizeof(acutepool));
+
     p->size = n;
     
     p->initialpoly = (REAL *)malloc(sizeof(REAL)* 500);
     p->petalx = (REAL *)malloc(sizeof(REAL)* 2 * n);
     p->petaly = (REAL *)malloc(sizeof(REAL)* 2 * n);
     p->petalr = (REAL *)malloc(sizeof(REAL)* 2 * n);
-    if(b->maxangle == 0.0){
-       p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 16 + 36);
-    }else{
-       p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 20 + 40);
-    }
+
+	// If maxangle is 0.0 we'd only need (2 * n * 16 + 36) REALs, but since we
+	// do not know if maxangle gets set later on, let's allocate more memory.
+
+    p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 20 + 40);
 
     p->points_p = (REAL *)malloc(sizeof(REAL)* 500);
     p->points_q = (REAL *)malloc(sizeof(REAL)* 500);
     p->points_r = (REAL *)malloc(sizeof(REAL)* 500);
+
+	*mp = p;
 }
 
-void acutepool_resize(int n, behavior *b, acutepool *p) {
+void acutepool_resize(int n, acutepool *p) {
     if (p->size < n) {
         p->size = n;
 
@@ -51,24 +55,23 @@ void acutepool_resize(int n, behavior *b, acutepool *p) {
         p->petalx = (REAL *)malloc(sizeof(REAL)* 2 * n);
         p->petaly = (REAL *)malloc(sizeof(REAL)* 2 * n);
         p->petalr = (REAL *)malloc(sizeof(REAL)* 2 * n);
-        if(b->maxangle == 0.0){
-           p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 16 + 36);
-        }else{
-           p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 20 + 40);
-        }
+
+        p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 20 + 40);
     }
 }
 
 void acutepool_deinit(acutepool *p) {
-  free(p->initialpoly);
-  free(p->petalx);
-  free(p->petaly);
-  free(p->petalr);
-  free(p->wedges);
+  if (p != (acutepool *)NULL) {
+    free(p->initialpoly);
+    free(p->petalx);
+    free(p->petaly);
+    free(p->petalr);
+    free(p->wedges);
 
-  free(p->points_p);
-  free(p->points_q);
-  free(p->points_r);
+    free(p->points_p);
+    free(p->points_q);
+    free(p->points_r);
+  }
 }
 // END ACUTE MEMORY POOL
 
@@ -2271,7 +2274,7 @@ int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b,
 
     REAL petalcenterconstant, petalradiusconstant;
 	
-	acutepool_resize(numpoints, b, m->acute_mem);
+	acutepool_resize(numpoints, m->acute_mem);
     
 	petalx = m->acute_mem->petalx;
     petaly = m->acute_mem->petaly;
@@ -2519,7 +2522,7 @@ int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b,
 
     REAL petalcenterconstant, petalradiusconstant;
 	
-	acutepool_resize(numpoints, b, m->acute_mem);
+	acutepool_resize(numpoints, m->acute_mem);
     
 	petalx = m->acute_mem->petalx;
     petaly = m->acute_mem->petaly;

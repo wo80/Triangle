@@ -23,7 +23,9 @@ void findNewSPLocation(mesh *m, behavior *b,
                       vertex torg, vertex tdest, vertex tapex,
                       vertex circumcenter, REAL *xi, REAL *eta, int offcenter, struct otri badotri);
 
-void acutepool_init(int n, behavior *b, acutepool *p);
+void acutepool_init(int n, acutepool **mp);
+
+void acutepool_resize(int n, acutepool *p);
 
 void acutepool_deinit(acutepool *p);
 

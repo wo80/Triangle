@@ -1623,8 +1623,7 @@ void triangleinit(mesh *m, behavior *b)
   exactinit();                     /* Initialize exact arithmetic constants. */
 
 #ifndef NO_ACUTE
-  m->acute_mem = (acutepool *) trimalloc(sizeof(acutepool));
-  acutepool_init(20, b, m->acute_mem);
+  m->acute_mem = (acutepool *) NULL;
 #endif
 }
 
@@ -7593,6 +7592,12 @@ void enforcequality(mesh *m, behavior *b, int *err)
   /* Initialize the pool of encroached subsegments. */
   poolinit(&m->badsubsegs, sizeof(struct badsubseg), BADSUBSEGPERBLOCK,
            BADSUBSEGPERBLOCK, 0);
+  
+#ifndef NO_ACUTE
+  if (m->acute_mem == (acutepool *)NULL) {
+    acutepool_init(20, &m->acute_mem);
+  }
+#endif
 
   /* Test all segments to see if they're encroached. */
   tallyencs(m, b);
