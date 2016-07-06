@@ -29,8 +29,9 @@ void acutepool_init(int n, acutepool **mp) {
     p->petaly = (REAL *)malloc(sizeof(REAL)* 2 * n);
     p->petalr = (REAL *)malloc(sizeof(REAL)* 2 * n);
 
-	// If maxangle is 0.0 we'd only need (2 * n * 16 + 36) REALs, but since we
-	// do not know if maxangle gets set later on, let's allocate more memory.
+    // If maxangle is 0.0 we'd only need (2 * n * 16 + 36) REALs, but since we
+    // do not know if maxangle gets set later on, let's allocate enough memory
+    // right away.
 
     p->wedges = (REAL *)malloc(sizeof(REAL)* 2 * n * 20 + 40);
 
@@ -73,6 +74,7 @@ void acutepool_deinit(acutepool *p) {
     free(p->points_r);
   }
 }
+
 // END ACUTE MEMORY POOL
 
 // for comparing real numbers

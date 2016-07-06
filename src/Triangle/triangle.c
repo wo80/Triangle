@@ -8118,6 +8118,8 @@ void writeedges(mesh *m, behavior *b,
 
 void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 {
+  int *subsegs;
+
   int *nlist;
   int index;
   struct otri triangleloop, trisym;
@@ -8135,18 +8137,31 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
   }
   nlist = *neighborlist;
   index = 0;
+  
+  /* TODO: check writeneighbors subseg pointers. */
 
+  /* This needs some checking: (triangleloop.tri + 6) actually is a
+   * pointer to a subseg and not an int. */
+
+  subsegs = (int *) trimalloc((int) (m->triangles.items * sizeof(int)));
+
+  /* Number the triangles by overwriting the first subseg pointer
+   * with an integer triangle id. */
+  
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
   triangleloop.orient = 0;
   elementnumber = b->firstnumber;
   while (triangleloop.tri != (triangle *) NULL) {
+	subsegs[index] = * (int *) (triangleloop.tri + 6);
     * (int *) (triangleloop.tri + 6) = (int) elementnumber;
     triangleloop.tri = triangletraverse(m);
     elementnumber++;
+	index++;
   }
   * (int *) (m->dummytri + 6) = -1;
-
+  
+  index = 0;
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
   elementnumber = b->firstnumber;
@@ -8167,6 +8182,18 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 
     triangleloop.tri = triangletraverse(m);
     elementnumber++;
+  }
+  
+  /* Restore original subseg values. */
+
+  index = 0;
+  traversalinit(&m->triangles);
+  triangleloop.tri = triangletraverse(m);
+  triangleloop.orient = 0;
+  while (triangleloop.tri != (triangle *) NULL) {
+    * (int *) (triangleloop.tri + 6) = subsegs[index];
+    triangleloop.tri = triangletraverse(m);
+	index++;
   }
 }
 
