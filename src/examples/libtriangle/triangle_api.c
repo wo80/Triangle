@@ -291,6 +291,8 @@ int triangle_mesh_copy(context* ctx, triangleio *out)
 	return result;
 }
 
+#ifndef NO_FILE_IO
+
 int triangle_write_nodes(context *ctx, FILE *nodefile)
 {
 	return file_writenodes(ctx->m, ctx->b, nodefile);
@@ -317,3 +319,5 @@ int triangle_write_neighbors(context *ctx, FILE *neighborfile)
 {
 	return file_writeneighbors(ctx->m, ctx->b, neighborfile);
 }
+
+#endif /* NO_FILE_IO */
