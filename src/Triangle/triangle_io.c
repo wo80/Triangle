@@ -697,8 +697,113 @@ int file_readpoly(FILE *polyfile, triangleio *io)
 /*                                                                           */
 /*****************************************************************************/
 
-int file_readelements(FILE *nodefile, triangleio *io)
+int file_readelements(FILE *file, triangleio *io)
 {
+	char inputline[INPUTLINESIZE];
+	char *stringptr;
+	int areaelements;
+	int inelements;
+	int eextras;
+
+	REAL area;
+	int incorners;
+	int firstnumber;
+	long elementnumber;
+	int i, j;
+
+	/* Read the triangles from an .ele file. */
+	if (file == (FILE *) NULL) {
+		return -1;
+	}
+	/* Read number of triangles, number of vertices per triangle, and */
+	/*   number of triangle attributes from .ele file.                */
+	stringptr = readline(inputline, file);
+	inelements = (int) strtol(stringptr, &stringptr, 0);
+	stringptr = findfield(stringptr);
+	if (*stringptr == '\0') {
+		incorners = 3;
+	} else {
+		incorners = (int) strtol(stringptr, &stringptr, 0);
+		if (incorners < 3) {
+			return -1; // TODO: error: Triangles must have at least 3 vertices.
+		}
+	}
+	stringptr = findfield(stringptr);
+	if (*stringptr == '\0') {
+		eextras = 0;
+	} else {
+		eextras = (int) strtol(stringptr, &stringptr, 0);
+	}
+
+	io->numberoftriangles = inelements;
+	io->trianglelist = (int *)trimalloc(3 * inelements * sizeof(int));
+	if (eextras > 0) {
+		io->numberoftriangleattributes = eextras;
+		io->triangleattributelist = (REAL *)trimalloc(eextras * inelements * sizeof(REAL));
+	}
+
+	//if (vararea) {
+	//	/* Open an .area file, check for consistency with the .ele file. */
+	//	areafile = fopen(areafilename, "r");
+	//	if (areafile == (FILE *) NULL) {
+	//		return -1;
+	//	}
+	//	stringptr = readline(inputline, areafile);
+	//	areaelements = (int) strtol(stringptr, &stringptr, 0);
+	//	if (areaelements != inelements) {
+	//		return -1; // TODO: error: area file disagrees on number of triangles.
+	//	}
+	//}
+
+	firstnumber = 0;
+
+	/* Read the triangles from the .ele file. */
+	elementnumber = firstnumber;
+	for (i = 0; i < inelements; i++) {
+		/* Read triangle number and the triangle's three corners. */
+		stringptr = readline(inputline, file);
+		for (j = 0; j < 3; j++) {
+			stringptr = findfield(stringptr);
+			if (*stringptr == '\0') {
+				return -1; // TODO: error: Triangle (elementnumber) is missing vertex (j + 1).
+			} else {
+				io->trianglelist[3 * i + j] = (int) strtol(stringptr, &stringptr, 0);
+
+				// TODO: check triangleio (postprocessing).
+				/*
+				if ((corner[j] < firstnumber) || (corner[j] >= firstnumber + invertices)) {
+				printf("Error:  Triangle %ld has an invalid vertex index.\n",
+				elementnumber);
+				triexit(1);
+				}
+				*/
+			}
+		}
+
+		/* Read the triangle's attributes. */
+		for (j = 0; j < eextras; j++) {
+			stringptr = findfield(stringptr);
+			if (*stringptr == '\0') {
+				io->triangleattributelist[eextras * i + j] = 0;
+			} else {
+				io->triangleattributelist[eextras * i + j] = (REAL) strtod(stringptr, &stringptr);
+			}
+		}
+
+		//if (vararea) {
+		//	/* Read an area constraint from the .area file. */
+		//	stringptr = readline(inputline, areafile);
+		//	stringptr = findfield(stringptr);
+		//	if (*stringptr == '\0') {
+		//		area = -1.0;                      /* No constraint on this triangle. */
+		//	} else {
+		//		area = (REAL) strtod(stringptr, &stringptr);
+		//	}
+		//}
+
+		elementnumber++;
+	}
+
 	return 0;
 }
 
