@@ -293,31 +293,46 @@ int triangle_mesh_copy(context* ctx, triangleio *out)
 
 #ifndef NO_FILE_IO
 
-int triangle_write_nodes(context *ctx, FILE *nodefile)
+int triangle_write_nodes(context *ctx, FILE *file)
 {
-	return file_writenodes(ctx->m, ctx->b, nodefile);
+	return file_writenodes(ctx->m, ctx->b, file);
 }
 
-int triangle_write_elements(context *ctx, FILE *elefile)
+int triangle_write_elements(context *ctx, FILE *file)
 {
-	return file_writeelements(ctx->m, ctx->b, elefile);
+	return file_writeelements(ctx->m, ctx->b, file);
 }
 
-int triangle_write_poly(context *ctx, FILE *polyfile,
+int triangle_write_poly(context *ctx, FILE *file,
 						REAL *holelist, int holes, REAL *regionlist, int regions)
 {
-	return file_writepoly(ctx->m, ctx->b, polyfile,
+	return file_writepoly(ctx->m, ctx->b, file,
 		holelist, holes, regionlist, regions);
 }
 
-int triangle_write_edges(context *ctx, FILE *edgefile)
+int triangle_write_edges(context *ctx, FILE *file)
 {
-	return file_writeedges(ctx->m, ctx->b, edgefile);
+	return file_writeedges(ctx->m, ctx->b, file);
 }
 
-int triangle_write_neighbors(context *ctx, FILE *neighborfile)
+int triangle_write_neighbors(context *ctx, FILE *file)
 {
-	return file_writeneighbors(ctx->m, ctx->b, neighborfile);
+	return file_writeneighbors(ctx->m, ctx->b, file);
+}
+
+int triangle_read_nodes(FILE *file, triangleio *io)
+{
+	return file_readnodes(file, io);
+}
+	
+int triangle_read_poly(FILE *file, triangleio *io)
+{
+	return file_readpoly(file, io);
+}
+	
+int triangle_read_elements(FILE *file, triangleio *io)
+{
+	return file_readelements(file, io);
 }
 
 #endif /* NO_FILE_IO */

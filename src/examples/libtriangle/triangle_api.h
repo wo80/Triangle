@@ -139,6 +139,30 @@ extern "C" {
 	 * @return Integer status code.
 	 */
 	EXPORT int triangle_write_neighbors(context *ctx, FILE *file);
+	
+	/**
+	 * Read nodes file.
+	 * @param file File pointer (to .node file).
+	 * @param ctx Pointer to triangleio struct.
+	 * @return Integer status code.
+	 */
+	EXPORT int triangle_read_nodes(FILE *file, triangleio *io);
+	
+	/**
+	 * Read poly file.
+	 * @param file File pointer (to .poly file).
+	 * @param ctx Pointer to triangleio struct.
+	 * @return Integer status code.
+	 */
+	EXPORT int triangle_read_poly(FILE *file, triangleio *io);
+	
+	/**
+	 * Read poly file.
+	 * @param file File pointer (to .ele file).
+	 * @param ctx Pointer to triangleio struct.
+	 * @return Integer status code.
+	 */
+	EXPORT int triangle_read_elements(FILE *file, triangleio *io);
 #endif /* NO_FILE_IO */
 
 #ifdef __cplusplus
