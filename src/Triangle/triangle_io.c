@@ -393,7 +393,7 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices)
 	int invertices;
 	int mesh_dim;
 	int nextras;
-	int i, j, k;
+	int i, j;
 
 	if (file == (FILE *) NULL) {
 		return -1; // TODO: read error: cannot access file.
@@ -443,8 +443,6 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices)
 		io->pointmarkerlist = (int *)trimalloc(invertices * sizeof(int));
 	}
 
-	k = 2 + nextras;
-
 	/* Read the vertices. */
 	for (i = 0; i < invertices; i++) {
 		stringptr = readline(inputline, file);
@@ -467,15 +465,15 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices)
 			return -1; // TODO: error: Vertex (b->firstnumber + i) has no y coordinate.
 		}
 		y = (REAL) strtod(stringptr, &stringptr);
-		io->pointlist[k * i + 0] = x;
-		io->pointlist[k * i + 1] = y;
+		io->pointlist[2 * i + 0] = x;
+		io->pointlist[2 * i + 1] = y;
 		/* Read the vertex attributes. */
-		for (j = 2; j < 2 + nextras; j++) {
+		for (j = 0; j < nextras; j++) {
 			stringptr = findfield(stringptr);
 			if (*stringptr == '\0') {
-				io->pointattributelist[k * i + j] = 0.0;
+				io->pointattributelist[nextras * i + j] = 0.0;
 			} else {
-				io->pointattributelist[k * i + j] = (REAL) strtod(stringptr, &stringptr);
+				io->pointattributelist[nextras * i + j] = (REAL) strtod(stringptr, &stringptr);
 			}
 		}
 		if (nodemarkers) {
@@ -492,51 +490,109 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices)
 	return 0;
 }
 
-/*****************************************************************************/
-/*                                                                           */
-/*  readnodes()   Read the vertices from a file, which may be a .node or     */
-/*                .poly file.                                                */
-/*                                                                           */
-/*****************************************************************************/
-
-int file_readnodes(FILE *file, triangleio *io)
+int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 {
-	int numvertices;
+	char inputline[INPUTLINESIZE];
+	char *stringptr;
 
-	file_readnodes_internal(file, io, &numvertices);
+	int segmentmarkers;
+	int boundmarker;
+	int insegments;
+	int firstnumber;
+	int i;
 
+	/* Read the segments from a .poly file. */
+	/* Read number of segments and number of boundary markers. */
+	stringptr = readline(inputline, file);
+	insegments = (int) strtol(stringptr, &stringptr, 0);
+	stringptr = findfield(stringptr);
+	if (*stringptr == '\0') {
+		segmentmarkers = 0;
+	} else {
+		segmentmarkers = (int) strtol(stringptr, &stringptr, 0);
+	}
+
+	/* If the input vertices are collinear, there is no triangulation, */
+	/*   so don't try to insert segments.                              */
+	if (invertices == 0) {
+		return - 1;
+	}
+
+	io->numberofsegments = insegments;
+	io->segmentlist = (int *)trimalloc(2 * insegments * sizeof(int));
+	if (segmentmarkers) {
+		io->segmentmarkerlist = (int *)trimalloc(insegments * sizeof(int));
+	}
+
+	firstnumber = 0;
+	boundmarker = 0;
+	/* Read and insert the segments. */
+	for (i = 0; i < insegments; i++) {
+		stringptr = readline(inputline, file);
+		stringptr = findfield(stringptr);
+		if (*stringptr == '\0') {
+			return -1; // TODO: error: Segment (firstnumber + i) has no endpoints.
+		} else {
+			io->segmentlist[2 * i] = (int) strtol(stringptr, &stringptr, 0);
+		}
+		stringptr = findfield(stringptr);
+		if (*stringptr == '\0') {
+			return -1; // TODO: error: Segment (firstnumber + i) is missing its second endpoint.
+		} else {
+			io->segmentlist[2 * i + 1] = (int) strtol(stringptr, &stringptr, 0);
+		}
+		if (segmentmarkers) {
+			stringptr = findfield(stringptr);
+			if (*stringptr == '\0') {
+				io->segmentmarkerlist[i] = 0;
+			} else {
+				io->segmentmarkerlist[i] = (int) strtol(stringptr, &stringptr, 0);
+			}
+		}
+
+		// TODO: check triangleio (postprocessing).
+		/*
+		if ((end1 < firstnumber) || (end1 >= firstnumber + invertices)) {
+		// TODO: Warning: Invalid first endpoint of segment (firstnumber + i).
+		} else if ((end2 < firstnumber) || (end2 >= firstnumber + invertices)) {
+		// TODO: Warning: Invalid second endpoint of segment (firstnumber + i).
+		} else {
+		if (end1 == end2) {
+		// TODO: Warning: Endpoints of segment (firstnumber + i) are coincident.
+		}
+		}
+		*/
+	}
 	return 0;
 }
 
 /*****************************************************************************/
 /*                                                                           */
-/*  readholes()   Read the holes, and possibly regional attributes and area  */
-/*                constraints, from a .poly file.                            */
+/*  file_readholes_internal()   Read the holes, and possibly regional attributes  */
+/*                              and area  constraints, from a .poly file.    */
 /*                                                                           */
 /*****************************************************************************/
 
-int file_readholes(mesh *m, behavior *b,
-				   FILE *polyfile, char *polyfilename, REAL **hlist, int *holes,
-				   REAL **rlist, int *regions)
+int file_readholes_internal(FILE *file, triangleio *io)
 {
-	REAL *holelist;
-	REAL *regionlist;
 	char inputline[INPUTLINESIZE];
 	char *stringptr;
 	int index;
+	int holes;
+	int regions;
 	int i;
 
 	/* Read the holes. */
-	stringptr = readline(inputline, polyfile);
+	stringptr = readline(inputline, file);
 	if (stringptr != (char *) NULL) {
 		return -1; // TODO: read error
 	}
-	*holes = (int) strtol(stringptr, &stringptr, 0);
-	if (*holes > 0) {
-		holelist = (REAL *) trimalloc(2 * *holes * (int) sizeof(REAL));
-		*hlist = holelist;
-		for (i = 0; i < 2 * *holes; i += 2) {
-			stringptr = readline(inputline, polyfile);
+	holes = (int) strtol(stringptr, &stringptr, 0);
+	if (holes > 0) {
+		io->numberofholes = holes;
+		io->holelist = (REAL *) trimalloc(2 * holes * (int) sizeof(REAL));
+		for (i = 0; i < 2 * holes; i += 2) {
+			stringptr = readline(inputline, file);
 			if (stringptr != (char *) NULL) {
 				return -1; // TODO: read error
 			}
@@ -544,72 +600,105 @@ int file_readholes(mesh *m, behavior *b,
 			if (*stringptr == '\0') {
 				return -1; // TODO: error: Hole (b->firstnumber + (i >> 1)) has no x coordinate.
 			} else {
-				holelist[i] = (REAL) strtod(stringptr, &stringptr);
+				io->holelist[i] = (REAL) strtod(stringptr, &stringptr);
 			}
 			stringptr = findfield(stringptr);
 			if (*stringptr == '\0') {
 				return -1; // TODO: error: Hole (b->firstnumber + (i >> 1)) has no y coordinate.
 			} else {
-				holelist[i + 1] = (REAL) strtod(stringptr, &stringptr);
+				io->holelist[i + 1] = (REAL) strtod(stringptr, &stringptr);
 			}
 		}
-	} else {
-		*hlist = (REAL *) NULL;
 	}
 
 #ifndef CDT_ONLY
-	if ((b->regionattrib || b->vararea) && !b->refine) {
-		/* Read the area constraints. */
-		stringptr = readline(inputline, polyfile);
-		if (stringptr != (char *) NULL) {
-			return -1; // TODO: read error
-		}
-		*regions = (int) strtol(stringptr, &stringptr, 0);
-		if (*regions > 0) {
-			regionlist = (REAL *) trimalloc(4 * *regions * (int) sizeof(REAL));
-			*rlist = regionlist;
-			index = 0;
-			for (i = 0; i < *regions; i++) {
-				stringptr = readline(inputline, polyfile);
-				if (stringptr != (char *) NULL) {
-					return -1; // TODO: read error
-				}
-				stringptr = findfield(stringptr);
-				if (*stringptr == '\0') {
-					return -1; // TODO: error: Region (b->firstnumber + i) has no x coordinate.
-				} else {
-					regionlist[index++] = (REAL) strtod(stringptr, &stringptr);
-				}
-				stringptr = findfield(stringptr);
-				if (*stringptr == '\0') {
-					return -1; // TODO: error: Region (b->firstnumber + i) has no y coordinate.
-				} else {
-					regionlist[index++] = (REAL) strtod(stringptr, &stringptr);
-				}
-				stringptr = findfield(stringptr);
-				if (*stringptr == '\0') {
-					return -1; // TODO: error: Region (b->firstnumber + i) has no region attribute or area constraint.
-				} else {
-					regionlist[index++] = (REAL) strtod(stringptr, &stringptr);
-				}
-				stringptr = findfield(stringptr);
-				if (*stringptr == '\0') {
-					regionlist[index] = regionlist[index - 1];
-				} else {
-					regionlist[index] = (REAL) strtod(stringptr, &stringptr);
-				}
-				index++;
+	/* Read the area constraints. */
+	stringptr = readline(inputline, file);
+	if (stringptr != (char *) NULL) {
+		return -1; // TODO: read error
+	}
+	regions = (int) strtol(stringptr, &stringptr, 0);
+	if (regions > 0) {
+		io->numberofregions = regions;
+		io->regionlist = (REAL *) trimalloc(4 * regions * (int) sizeof(REAL));
+		index = 0;
+		for (i = 0; i < regions; i++) {
+			stringptr = readline(inputline, file);
+			if (stringptr != (char *) NULL) {
+				return -1; // TODO: read error
 			}
+			stringptr = findfield(stringptr);
+			if (*stringptr == '\0') {
+				return -1; // TODO: error: Region (b->firstnumber + i) has no x coordinate.
+			} else {
+				io->regionlist[index++] = (REAL) strtod(stringptr, &stringptr);
+			}
+			stringptr = findfield(stringptr);
+			if (*stringptr == '\0') {
+				return -1; // TODO: error: Region (b->firstnumber + i) has no y coordinate.
+			} else {
+				io->regionlist[index++] = (REAL) strtod(stringptr, &stringptr);
+			}
+			stringptr = findfield(stringptr);
+			if (*stringptr == '\0') {
+				return -1; // TODO: error: Region (b->firstnumber + i) has no region attribute or area constraint.
+			} else {
+				io->regionlist[index++] = (REAL) strtod(stringptr, &stringptr);
+			}
+			stringptr = findfield(stringptr);
+			if (*stringptr == '\0') {
+				io->regionlist[index] = io->regionlist[index - 1];
+			} else {
+				io->regionlist[index] = (REAL) strtod(stringptr, &stringptr);
+			}
+			index++;
 		}
-	} else {
-		/* Set `*regions' to zero to avoid an accidental free() later. */
-		*regions = 0;
-		*rlist = (REAL *) NULL;
 	}
 #endif /* not CDT_ONLY */
 
-	fclose(polyfile);
+	return 0;
+}
 
+/*****************************************************************************/
+/*                                                                           */
+/*  readnodes()   Read the vertices from a .node file.                       */
+/*                                                                           */
+/*****************************************************************************/
+
+int file_readnodes(FILE *nodefile, triangleio *io)
+{
+	int numvertices;
+
+	file_readnodes_internal(nodefile, io, &numvertices);
+
+	return 0;
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/*  file_readpoly()   Read vertices and segments from a .poly file.          */
+/*                                                                           */
+/*****************************************************************************/
+
+int file_readpoly(FILE *polyfile, triangleio *io)
+{
+	int numvertices;
+
+	file_readnodes_internal(polyfile, io, &numvertices);
+	file_readsegments_internal(polyfile, io, numvertices);
+	file_readholes_internal(polyfile, io);
+
+	return 0;
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/*  file_readelements()  Read mesh elements from an .ele file.               */
+/*                                                                           */
+/*****************************************************************************/
+
+int file_readelements(FILE *nodefile, triangleio *io)
+{
 	return 0;
 }
 

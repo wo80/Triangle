@@ -458,12 +458,11 @@ int file_writeedges(mesh *m, behavior *b, FILE *edgefile);
 
 int file_writeneighbors(mesh *m, behavior *b, FILE *neighborfile);
 
-int file_readnodes(mesh *m, behavior *b, char *nodefilename,
-				   char *polyfilename, FILE **polyfile);
+int file_readnodes(FILE *nodefile, triangleio *io);
 				   
-int file_readholes(mesh *m, behavior *b,
-				   FILE *polyfile, char *polyfilename, REAL **hlist, int *holes,
-				   REAL **rlist, int *regions);
+int file_readpoly(FILE *nodefile, triangleio *io);
+				   
+int file_readelements(FILE *nodefile, triangleio *io);
 
 /**                                                                         **/
 /********* File I/O routines end here                                *********/
