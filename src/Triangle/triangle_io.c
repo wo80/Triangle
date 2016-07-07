@@ -378,128 +378,83 @@ char *findfield(char *string)
 
 /*****************************************************************************/
 /*                                                                           */
-/*  readnodes()   Read the vertices from a file, which may be a .node or     */
-/*                .poly file.                                                */
+/*  file_readnodes_internal()   Read the vertices from a file, which may be  */
+/*                              a .node or .poly file.                       */
 /*                                                                           */
 /*****************************************************************************/
 
-int file_readnodes(mesh *m, behavior *b, char *nodefilename,
-				   char *polyfilename, FILE **polyfile)
+int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices)
 {
-	FILE *infile;
-	vertex vertexloop;
 	char inputline[INPUTLINESIZE];
 	char *stringptr;
-	char *infilename;
 	REAL x, y;
 	int firstnode;
 	int nodemarkers;
-	int currentmarker;
-	int i, j;
+	int invertices;
+	int mesh_dim;
+	int nextras;
+	int i, j, k;
 
-	if (b->poly) {
-		/* Read the vertices from a .poly file. */
-		*polyfile = fopen(polyfilename, "r");
-		if (*polyfile == (FILE *) NULL) {
-			return -1; // TODO: read error: cannot access file.
-		}
-		/* Read number of vertices, number of dimensions, number of vertex */
-		/*   attributes, and number of boundary markers.                   */
-		stringptr = readline(inputline, *polyfile);
-		if (stringptr != (char *) NULL) {
-			return -1; // TODO: read error
-		}
-		m->invertices = (int) strtol(stringptr, &stringptr, 0);
-		stringptr = findfield(stringptr);
-		if (*stringptr == '\0') {
-			m->mesh_dim = 2;
-		} else {
-			m->mesh_dim = (int) strtol(stringptr, &stringptr, 0);
-		}
-		stringptr = findfield(stringptr);
-		if (*stringptr == '\0') {
-			m->nextras = 0;
-		} else {
-			m->nextras = (int) strtol(stringptr, &stringptr, 0);
-		}
-		stringptr = findfield(stringptr);
-		if (*stringptr == '\0') {
-			nodemarkers = 0;
-		} else {
-			nodemarkers = (int) strtol(stringptr, &stringptr, 0);
-		}
-		if (m->invertices > 0) {
-			infile = *polyfile;
-			infilename = polyfilename;
-			m->readnodefile = 0;
-		} else {
-			/* If the .poly file claims there are zero vertices, that means that */
-			/*   the vertices should be read from a separate .node file.         */
-			m->readnodefile = 1;
-			infilename = nodefilename;
-		}
+	if (file == (FILE *) NULL) {
+		return -1; // TODO: read error: cannot access file.
+	}
+
+	/* Read number of vertices, number of dimensions, number of vertex */
+	/*   attributes, and number of boundary markers.                   */
+	stringptr = readline(inputline, file);
+	if (stringptr != (char *) NULL) {
+		return -1; // TODO: read error
+	}
+	invertices = (int) strtol(stringptr, &stringptr, 0);
+	stringptr = findfield(stringptr);
+	if (*stringptr == '\0') {
+		mesh_dim = 2;
 	} else {
-		m->readnodefile = 1;
-		infilename = nodefilename;
-		*polyfile = (FILE *) NULL;
+		mesh_dim = (int) strtol(stringptr, &stringptr, 0);
+	}
+	stringptr = findfield(stringptr);
+	if (*stringptr == '\0') {
+		nextras = 0;
+	} else {
+		nextras = (int) strtol(stringptr, &stringptr, 0);
+	}
+	stringptr = findfield(stringptr);
+	if (*stringptr == '\0') {
+		nodemarkers = 0;
+	} else {
+		nodemarkers = (int) strtol(stringptr, &stringptr, 0);
 	}
 
-	if (m->readnodefile) {
-		/* Read the vertices from a .node file. */
-		infile = fopen(nodefilename, "r");
-		if (infile == (FILE *) NULL) {
-			return -1; // TODO: read error: cannot access file.
-		}
-		/* Read number of vertices, number of dimensions, number of vertex */
-		/*   attributes, and number of boundary markers.                   */
-		stringptr = readline(inputline, infile);
-		if (stringptr != (char *) NULL) {
-			return -1; // TODO: read error
-		}
-		m->invertices = (int) strtol(stringptr, &stringptr, 0);
-		stringptr = findfield(stringptr);
-		if (*stringptr == '\0') {
-			m->mesh_dim = 2;
-		} else {
-			m->mesh_dim = (int) strtol(stringptr, &stringptr, 0);
-		}
-		stringptr = findfield(stringptr);
-		if (*stringptr == '\0') {
-			m->nextras = 0;
-		} else {
-			m->nextras = (int) strtol(stringptr, &stringptr, 0);
-		}
-		stringptr = findfield(stringptr);
-		if (*stringptr == '\0') {
-			nodemarkers = 0;
-		} else {
-			nodemarkers = (int) strtol(stringptr, &stringptr, 0);
-		}
-	}
-
-	if (m->invertices < 3) {
+	if (invertices < 3) {
 		return -1; // TODO: error: Input must have at least three input vertices.
 	}
-	if (m->mesh_dim != 2) {
+	if (mesh_dim != 2) {
 		return -1; // TODO: error: Triangle only works with two-dimensional meshes.
 	}
-	if (m->nextras == 0) {
-		b->weighted = 0;
+	if (nextras == 0) {
+		//b->weighted = 0;
 	}
 
-	initializevertexpool(m, b);
+	io->numberofpoints = invertices;
+	io->numberofpointattributes = nextras;
+	io->pointlist = (REAL *)trimalloc(2 * invertices * sizeof(REAL));
+	io->pointattributelist = (REAL *)trimalloc(nextras * invertices * sizeof(REAL));
+	if (nodemarkers) {
+		io->pointmarkerlist = (int *)trimalloc(invertices * sizeof(int));
+	}
+
+	k = 2 + nextras;
 
 	/* Read the vertices. */
-	for (i = 0; i < m->invertices; i++) {
-		vertexloop = (vertex) poolalloc(&m->vertices);
-		stringptr = readline(inputline, infile);
+	for (i = 0; i < invertices; i++) {
+		stringptr = readline(inputline, file);
 		if (stringptr != (char *) NULL) {
 			return -1; // TODO: read error
 		}
 		if (i == 0) {
 			firstnode = (int) strtol(stringptr, &stringptr, 0);
 			if ((firstnode == 0) || (firstnode == 1)) {
-				b->firstnumber = firstnode;
+				//b->firstnumber = firstnode;
 			}
 		}
 		stringptr = findfield(stringptr);
@@ -512,49 +467,43 @@ int file_readnodes(mesh *m, behavior *b, char *nodefilename,
 			return -1; // TODO: error: Vertex (b->firstnumber + i) has no y coordinate.
 		}
 		y = (REAL) strtod(stringptr, &stringptr);
-		vertexloop[0] = x;
-		vertexloop[1] = y;
+		io->pointlist[k * i + 0] = x;
+		io->pointlist[k * i + 1] = y;
 		/* Read the vertex attributes. */
-		for (j = 2; j < 2 + m->nextras; j++) {
+		for (j = 2; j < 2 + nextras; j++) {
 			stringptr = findfield(stringptr);
 			if (*stringptr == '\0') {
-				vertexloop[j] = 0.0;
+				io->pointattributelist[k * i + j] = 0.0;
 			} else {
-				vertexloop[j] = (REAL) strtod(stringptr, &stringptr);
+				io->pointattributelist[k * i + j] = (REAL) strtod(stringptr, &stringptr);
 			}
 		}
 		if (nodemarkers) {
 			/* Read a vertex marker. */
 			stringptr = findfield(stringptr);
 			if (*stringptr == '\0') {
-				setvertexmark(vertexloop, 0);
+				io->pointmarkerlist[i] = 0;
 			} else {
-				currentmarker = (int) strtol(stringptr, &stringptr, 0);
-				setvertexmark(vertexloop, currentmarker);
+				io->pointmarkerlist[i] = (int) strtol(stringptr, &stringptr, 0);
 			}
-		} else {
-			/* If no markers are specified in the file, they default to zero. */
-			setvertexmark(vertexloop, 0);
 		}
-		setvertextype(vertexloop, INPUTVERTEX);
-		/* Determine the smallest and largest x and y coordinates. */
-		if (i == 0) {
-			m->xmin = m->xmax = x;
-			m->ymin = m->ymax = y;
-		} else {
-			m->xmin = (x < m->xmin) ? x : m->xmin;
-			m->xmax = (x > m->xmax) ? x : m->xmax;
-			m->ymin = (y < m->ymin) ? y : m->ymin;
-			m->ymax = (y > m->ymax) ? y : m->ymax;
-		}
-	}
-	if (m->readnodefile) {
-		fclose(infile);
 	}
 
-	/* Nonexistent x value used as a flag to mark circle events in sweepline */
-	/*   Delaunay algorithm.                                                 */
-	m->xminextreme = 10 * m->xmin - 9 * m->xmax;
+	return 0;
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/*  readnodes()   Read the vertices from a file, which may be a .node or     */
+/*                .poly file.                                                */
+/*                                                                           */
+/*****************************************************************************/
+
+int file_readnodes(FILE *file, triangleio *io)
+{
+	int numvertices;
+
+	file_readnodes_internal(file, io, &numvertices);
 
 	return 0;
 }
