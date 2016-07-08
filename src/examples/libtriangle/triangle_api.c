@@ -22,7 +22,7 @@ context* triangle_context_create()
 
 	ctx->m = m;
 	ctx->b = b;
-	
+
 	/* Initialize default behavior values. */
 	parsecommandline(0, (char **)NULL, b, &result);
 
@@ -224,7 +224,8 @@ int triangle_mesh_refine(context* ctx)
 	return result;
 }
 
-int triangle_mesh_copy(context* ctx, triangleio *out)
+int triangle_mesh_copy(context* ctx, triangleio *out,
+	int edges, int neighbors)
 {
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
@@ -247,44 +248,33 @@ int triangle_mesh_copy(context* ctx, triangleio *out)
 		out->numberofsegments = m->hullsize;
 	}
 
-	/* If not using iteration numbers, don't write a .node file if one was */
-	/*   read, because the original one would be overwritten!              */
-	if (b->nonodewritten || (b->noiterationnum && m->readnodefile)) {
-		numbernodes(m, b);         /* We must remember to number the vertices. */
-	} else {
-		/* writenodes() numbers the vertices too. */
-		writenodes(m, b, &out->pointlist, &out->pointattributelist,
-			&out->pointmarkerlist);
-	}
+	/* writenodes() numbers the vertices too. */
+	writenodes(m, b, &out->pointlist, &out->pointattributelist,
+		&out->pointmarkerlist);
 
-	if (!b->noelewritten) {
-		writeelements(m, b, &out->trianglelist, &out->triangleattributelist);
-	}
+	/* Always write elements. */
+	writeelements(m, b, &out->trianglelist, &out->triangleattributelist);
 
 	/* The -c switch (convex switch) causes a PSLG to be written */
 	/*   even if none was read.                                  */
 	if (b->poly || b->convex) {
-		/* If not using iteration numbers, don't overwrite the .poly file. */
-		if (b->nopolywritten || b->noiterationnum) {
+		writepoly(m, b, &out->segmentlist, &out->segmentmarkerlist);
+		out->numberofholes = m->holes;
+		out->numberofregions = m->regions;
+		if (b->poly) {
+			//out->holelist = in->holelist;
+			//out->regionlist = in->regionlist;
 		} else {
-			writepoly(m, b, &out->segmentlist, &out->segmentmarkerlist);
-			out->numberofholes = m->holes;
-			out->numberofregions = m->regions;
-			if (b->poly) {
-				//out->holelist = in->holelist;
-				//out->regionlist = in->regionlist;
-			} else {
-				out->holelist = (REAL *) NULL;
-				out->regionlist = (REAL *) NULL;
-			}
+			out->holelist = (REAL *) NULL;
+			out->regionlist = (REAL *) NULL;
 		}
 	}
 
-	if (b->edgesout) {
+	if (edges) {
 		writeedges(m, b, &out->edgelist, &out->edgemarkerlist);
 	}
 
-	if (b->neighbors) {
+	if (neighbors) {
 		writeneighbors(m, b, &out->neighborlist);
 	}
 
@@ -324,12 +314,12 @@ int triangle_read_nodes(FILE *file, triangleio *io)
 {
 	return file_readnodes(file, io);
 }
-	
+
 int triangle_read_poly(FILE *file, triangleio *io)
 {
 	return file_readpoly(file, io);
 }
-	
+
 int triangle_read_elements(FILE *file, triangleio *io)
 {
 	return file_readelements(file, io);

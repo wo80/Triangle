@@ -278,11 +278,6 @@ void behavior_update(behavior *b, int *err)
     b->offconstant = 0.475 * sqrt((1.0 + b->goodangle) / (1.0 - b->goodangle));
   }
   b->goodangle *= b->goodangle;
-  if (b->refine && b->noiterationnum) {
-    // TODO: Error: you cannot use the -I switch when refining a triangulation.
-    *err = ERR_CMD_LINE;
-    return;
-  }
   /* Be careful not to allocate space for element area constraints that */
   /*   will never be assigned any value (other than the default -1.0).  */
   if (!b->refine && !b->poly) {
@@ -303,13 +298,6 @@ void behavior_update(behavior *b, int *err)
       *err = ERR_CMD_LINE;
       return;
     }
-  }
-  if (b->jettison && b->nonodewritten && !b->quiet) {
-    // TODO: Warning: -j and -N switches are somewhat incompatible.
-    //       If any vertices are jettisoned, you will need the output
-    //       .node file to reconstruct the new node indices.
-    *err = ERR_CMD_LINE;
-    return;
   }
 }
 
@@ -448,9 +436,8 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
   b->vararea = b->fixedarea = b->usertest = 0;
   b->regionattrib = b->convex = b->weighted = b->jettison = 0;
   b->firstnumber = 1;
-  b->edgesout = b->neighbors = 0;
-  b->nobound = b->nopolywritten = b->nonodewritten = b->noelewritten = 0;
-  b->noiterationnum = 0;
+  b->neighbors = 0;
+  b->nobound = 0;
   b->noholes = b->noexact = 0;
   b->incremental = b->sweepline = 0;
   b->dwyer = 1;
@@ -558,23 +545,11 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
         if (argv[i][j] == 'z') {
           b->firstnumber = 0;
         }
-        if (argv[i][j] == 'e') {
-          b->edgesout = 1;
-	}
         if (argv[i][j] == 'n') {
           b->neighbors = 1;
 	}
         if (argv[i][j] == 'B') {
           b->nobound = 1;
-	}
-        if (argv[i][j] == 'P') {
-          b->nopolywritten = 1;
-	}
-        if (argv[i][j] == 'N') {
-          b->nonodewritten = 1;
-	}
-        if (argv[i][j] == 'E') {
-          b->noelewritten = 1;
 	}
         if (argv[i][j] == 'O') {
           b->noholes = 1;
@@ -641,11 +616,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
     b->offconstant = 0.475 * sqrt((1.0 + b->goodangle) / (1.0 - b->goodangle));
   }
   b->goodangle *= b->goodangle;
-  if (b->refine && b->noiterationnum) {
-    // TODO: Error: you cannot use the -I switch when refining a triangulation.
-    *err = ERR_CMD_LINE;
-    return;
-  }
   /* Be careful not to allocate space for element area constraints that */
   /*   will never be assigned any value (other than the default -1.0).  */
   if (!b->refine && !b->poly) {
@@ -662,14 +632,8 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
     b->weighted = 0;
     if (!b->quiet) {
       printf("Warning:  weighted triangulations (-w, -W) are incompatible\n");
-      printf("  with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.\n"
-             );
+      printf("  with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.\n");
     }
-  }
-  if (b->jettison && b->nonodewritten && !b->quiet) {
-    printf("Warning:  -j and -N switches are somewhat incompatible.\n");
-    printf("  If any vertices are jettisoned, you will need the output\n");
-    printf("  .node file to reconstruct the new node indices.");
   }
 }
 

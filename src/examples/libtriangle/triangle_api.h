@@ -74,9 +74,12 @@ extern "C" {
 	 * Copy mesh to triangleio struct.
 	 * @param ctx Pointer to context struct.
 	 * @param out Pointer to triangleio struct, containing the mesh.
+	 * @param edges If non-zero, write edges to triangleio.
+	 * @param neighbors If non-zero, write neighbors to triangleio.
 	 * @return Integer status code.
 	 */
-	EXPORT int triangle_mesh_copy(context* ctx, triangleio *out);
+	EXPORT int triangle_mesh_copy(context* ctx, triangleio *out,
+		int edges, int neighbors);
 	
 	/**
 	 * Compute mesh statistics.
@@ -157,7 +160,7 @@ extern "C" {
 	EXPORT int triangle_read_poly(FILE *file, triangleio *io);
 	
 	/**
-	 * Read poly file.
+	 * Read elements file.
 	 * @param file File pointer (to .ele file).
 	 * @param ctx Pointer to triangleio struct.
 	 * @return Integer status code.
