@@ -1169,11 +1169,11 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 					line_inter_x = line_p[1];
 					line_inter_y = line_p[2];
 				}else{
-					if (!b->quiet) {
-					  // for debugging (to make sure)
-					  printf("1) No intersection between two lines!\n");
-					  printf("(%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f)\n",myCircumcenter[0],myCircumcenter[1],vector_x,vector_y,linepnt1_x,linepnt1_y,linepnt2_x,linepnt2_y);
-					}
+#ifdef _DEBUG
+					// for debugging (to make sure)
+					printf("1) No intersection between two lines!\n");
+					printf("(%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f)\n",myCircumcenter[0],myCircumcenter[1],vector_x,vector_y,linepnt1_x,linepnt1_y,linepnt2_x,linepnt2_y);
+#endif
 				}
 			
 				//---------------------------------------------------------------------//
@@ -1438,11 +1438,11 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 					line_inter_x = line_p[1];
 					line_inter_y = line_p[2];
 				}else{
-					if (!b->quiet) {
-					  // for debugging (to make sure)
-					  printf("2) No intersection between two lines!\n");
-					  printf("(%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f)\n",myCircumcenter[0],myCircumcenter[1],vector_x,vector_y,linepnt1_x,linepnt1_y,linepnt2_x,linepnt2_y);
-					}
+#ifdef _DEBUG
+					// for debugging (to make sure)
+					printf("2) No intersection between two lines!\n");
+					printf("(%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f) (%.8f,%.8f)\n",myCircumcenter[0],myCircumcenter[1],vector_x,vector_y,linepnt1_x,linepnt1_y,linepnt2_x,linepnt2_y);
+#endif
 				}		
 				//---------------------------------------------------------------------//
 				/// check if there is a Voronoi vertex between before intersection ///

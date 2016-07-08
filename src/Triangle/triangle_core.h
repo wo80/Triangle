@@ -322,8 +322,6 @@ typedef struct behavior_t {
   int noholes, noexact, conformdel;
   int incremental, sweepline, dwyer;
   int splitseg;
-  int docheck;
-  int quiet;
   int usesegments;
   int order;
   int nobisect;

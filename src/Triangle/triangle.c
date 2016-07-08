@@ -292,12 +292,8 @@ void behavior_update(behavior *b, int *err)
   /*   and meshing.                                              */
   if (b->weighted && (b->poly || b->quality)) {
     b->weighted = 0;
-    if (!b->quiet) {
-      // TODO: Warning: weighted triangulations (-w, -W) are incompatible
-      //       with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.
-      *err = ERR_CMD_LINE;
-      return;
-    }
+    // TODO: Warning: weighted triangulations (-w, -W) are incompatible
+    //       with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.
   }
 }
 
@@ -442,7 +438,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
   b->incremental = b->sweepline = 0;
   b->dwyer = 1;
   b->splitseg = 0;
-  b->docheck = 0;
   b->nobisect = 0;
   b->conformdel = 0;
   b->steiner = -1;
@@ -452,7 +447,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
   b->maxangle = 0.0;
 #endif
   b->maxarea = -1.0;
-  b->quiet = 0;
 
   for (i = 0; i < argc; i++) {
       for (j = 0; argv[i][j] != '\0'; j++) {
@@ -600,9 +594,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
           b->docheck = 1;
         }
 #endif /* not REDUCED */
-        if (argv[i][j] == 'Q') {
-          b->quiet = 1;
-        }
       }
   }
   b->usesegments = b->poly || b->refine || b->quality || b->convex;
@@ -630,10 +621,8 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
   /*   and meshing.                                              */
   if (b->weighted && (b->poly || b->quality)) {
     b->weighted = 0;
-    if (!b->quiet) {
-      printf("Warning:  weighted triangulations (-w, -W) are incompatible\n");
-      printf("  with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.\n");
-    }
+    // TODO: Warning:  weighted triangulations (-w, -W) are incompatible
+    //       with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.
   }
 }
 
@@ -1630,9 +1619,6 @@ int checkmesh(mesh *m, behavior *b)
   /* Temporarily turn on exact arithmetic if it's off. */
   saveexact = b->noexact;
   b->noexact = 0;
-  if (!b->quiet) {
-    printf("  Checking consistency of mesh...\n");
-  }
   horrors = 0;
   /* Run through the list of triangles, checking each one. */
   traversalinit(&m->triangles);
@@ -1715,9 +1701,6 @@ int checkdelaunay(mesh *m, behavior *b)
   /* Temporarily turn on exact arithmetic if it's off. */
   saveexact = b->noexact;
   b->noexact = 0;
-  if (!b->quiet) {
-    printf("  Checking Delaunay property of mesh...\n");
-  }
   horrors = 0;
   /* Run through the list of triangles, checking each one. */
   traversalinit(&m->triangles);
@@ -4593,11 +4576,12 @@ long divconqdelaunay(mesh *m, behavior *b)
   for (j = 1; j < m->invertices; j++) {
     if ((sortarray[i][0] == sortarray[j][0])
         && (sortarray[i][1] == sortarray[j][1])) {
-      if (!b->quiet) {
+#ifdef _DEBUG
         printf(
 "Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
                sortarray[j][0], sortarray[j][1]);
-      }
+#endif
+	  // TODO: warning
       setvertextype(sortarray[j], UNDEADVERTEX);
       m->undeads++;
     } else {
@@ -4799,11 +4783,11 @@ long incrementaldelaunay(mesh *m, behavior *b)
     starttri.tri = m->dummytri;
     if (insertvertex(m, b, vertexloop, &starttri, (struct osub *) NULL, 0, 0, 0)
         == DUPLICATEVERTEX) {
-      if (!b->quiet) {
-        printf(
-"Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
-               vertexloop[0], vertexloop[1]);
-      }
+#ifdef _DEBUG
+      printf("Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
+             vertexloop[0], vertexloop[1]);
+#endif
+
       setvertextype(vertexloop, UNDEADVERTEX);
       m->undeads++;
     }
@@ -5292,11 +5276,11 @@ long sweeplinedelaunay(mesh *m, behavior *b)
     heapsize--;
     if ((firstvertex[0] == secondvertex[0]) &&
         (firstvertex[1] == secondvertex[1])) {
-      if (!b->quiet) {
+#ifdef _DEBUG
         printf(
 "Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
                secondvertex[0], secondvertex[1]);
-      }
+#endif
       setvertextype(secondvertex, UNDEADVERTEX);
       m->undeads++;
     }
@@ -5341,11 +5325,11 @@ long sweeplinedelaunay(mesh *m, behavior *b)
       nextvertex = (vertex) nextevent->eventptr;
       if ((nextvertex[0] == lastvertex[0]) &&
           (nextvertex[1] == lastvertex[1])) {
-        if (!b->quiet) {
+#ifdef _DEBUG
           printf(
 "Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
                  nextvertex[0], nextvertex[1]);
-        }
+#endif
         setvertextype(nextvertex, UNDEADVERTEX);
         m->undeads++;
         check4events = 0;
@@ -5460,22 +5444,8 @@ long delaunay(mesh *m, behavior *b)
   initializetrisubpools(m, b);
 
 #ifdef REDUCED
-  if (!b->quiet) {
-    printf(
-      "Constructing Delaunay triangulation by divide-and-conquer method.\n");
-  }
   hulledges = divconqdelaunay(m, b);
 #else /* not REDUCED */
-  if (!b->quiet) {
-    printf("Constructing Delaunay triangulation ");
-    if (b->incremental) {
-      printf("by incremental method.\n");
-    } else if (b->sweepline) {
-      printf("by sweepline method.\n");
-    } else {
-      printf("by divide-and-conquer method.\n");
-    }
-  }
   if (b->incremental) {
     hulledges = incrementaldelaunay(m, b);
   } else if (b->sweepline) {
@@ -5558,8 +5528,9 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
   m->inelements = elements;
   incorners = corners;
   if (incorners < 3) {
-    printf("Error:  Triangles must have at least 3 vertices.\n");
-    triexit(1);
+    // TODO: warning?
+    // Triangles must have at least 3 vertices.
+    return -1;
   }
   m->eextras = attribs;
 
@@ -5588,9 +5559,6 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
   vertexindex = 0;
   attribindex = 0;
 
-  if (!b->quiet) {
-    printf("Reconstructing mesh.\n");
-  }
   /* Allocate a temporary array that maps each vertex to some adjacent */
   /*   triangle.  I took care to allocate all the permanent memory for */
   /*   triangles and subsegments first.                                */
@@ -5612,9 +5580,8 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
       corner[j] = trianglelist[vertexindex++];
       if ((corner[j] < b->firstnumber) ||
           (corner[j] >= b->firstnumber + m->invertices)) {
-        printf("Error:  Triangle %ld has an invalid vertex index.\n",
-               elementnumber);
-        triexit(1);
+        // TODO: Error:  Triangle (elementnumber) has an invalid vertex index.
+        return -1;
       }
     }
 
@@ -5704,9 +5671,8 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
       for (j = 0; j < 2; j++) {
         if ((end[j] < b->firstnumber) ||
             (end[j] >= b->firstnumber + m->invertices)) {
-          printf("Error:  Segment %ld has an invalid vertex index.\n", 
-                 segmentnumber);
-          triexit(1);
+          // TODO: Error:  Segment (segmentnumber) has an invalid vertex index.
+          return -1;
         }
       }
 
@@ -6545,7 +6511,6 @@ void markhull(mesh *m, behavior *b)
 void formskeleton(mesh *m, behavior *b, int *segmentlist,
                   int *segmentmarkerlist, int numberofsegments, int *err)
 {
-  char polyfilename[6];
   int index;
   vertex endpoint1, endpoint2;
   int segmentmarkers;
@@ -6554,11 +6519,6 @@ void formskeleton(mesh *m, behavior *b, int *segmentlist,
   int i;
 
   if (b->poly) {
-    if (!b->quiet) {
-      printf("Recovering segments in Delaunay triangulation.\n");
-    }
-
-    strcpy_s(polyfilename, 6, "input");
     m->insegments = numberofsegments;
     segmentmarkers = segmentmarkerlist != (int *) NULL;
     index = 0;
@@ -6586,25 +6546,25 @@ void formskeleton(mesh *m, behavior *b, int *segmentlist,
 
       if ((end1 < b->firstnumber) ||
           (end1 >= b->firstnumber + m->invertices)) {
-        if (!b->quiet) {
-          printf("Warning:  Invalid first endpoint of segment %d in %s.\n",
-                 b->firstnumber + i, polyfilename);
-        }
+#ifdef _DEBUG
+          printf("Warning:  Invalid first endpoint of segment %d.\n",
+                 b->firstnumber + i);
+#endif
       } else if ((end2 < b->firstnumber) ||
                  (end2 >= b->firstnumber + m->invertices)) {
-        if (!b->quiet) {
-          printf("Warning:  Invalid second endpoint of segment %d in %s.\n",
-                 b->firstnumber + i, polyfilename);
-        }
+#ifdef _DEBUG
+          printf("Warning:  Invalid second endpoint of segment %d.\n",
+                 b->firstnumber + i);
+#endif
       } else {
         /* Find the vertices numbered `end1' and `end2'. */
         endpoint1 = getvertex(m, b, end1);
         endpoint2 = getvertex(m, b, end2);
         if ((endpoint1[0] == endpoint2[0]) && (endpoint1[1] == endpoint2[1])) {
-          if (!b->quiet) {
-            printf("Warning:  Endpoints of segment %d are coincident in %s.\n",
-                   b->firstnumber + i, polyfilename);
-          }
+#ifdef _DEBUG
+            printf("Warning:  Endpoints of segment %d are coincident.\n",
+                   b->firstnumber + i);
+#endif
         } else {
           insertsegment(m, b, endpoint1, endpoint2, boundmarker, err);
           // TODO: error
@@ -6972,10 +6932,6 @@ void carveholes(mesh *m, behavior *b, REAL *holelist, int holes,
   int i;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-  if (!(b->quiet || (b->noholes && b->convex))) {
-    printf("Removing unwanted triangles.\n");
-  }
-
   if (regions > 0) {
     /* Allocate storage for the triangles in which region points fall. */
     regiontris = (struct otri *) trimalloc(regions *
@@ -7071,17 +7027,6 @@ void carveholes(mesh *m, behavior *b, REAL *holelist, int holes,
   /* The virus pool should be empty now. */
 
   if (regions > 0) {
-    if (!b->quiet) {
-      if (b->regionattrib) {
-        if (b->vararea) {
-          printf("Spreading regional attributes and area constraints.\n");
-        } else {
-          printf("Spreading regional attributes.\n");
-        }
-      } else { 
-        printf("Spreading regional area constraints.\n");
-      }
-    }
     if (b->regionattrib && !b->refine) {
       /* Assign every triangle a regional attribute of zero. */
       traversalinit(&m->triangles);
@@ -7448,12 +7393,12 @@ void splittriangle(mesh *m, behavior *b,
     if (((newvertex[0] == borg[0]) && (newvertex[1] == borg[1])) ||
         ((newvertex[0] == bdest[0]) && (newvertex[1] == bdest[1])) ||
         ((newvertex[0] == bapex[0]) && (newvertex[1] == bapex[1]))) {
-      if (!b->quiet) {
-        printf(
-             "Warning:  New vertex (%.12g, %.12g) falls on existing vertex.\n",
-               newvertex[0], newvertex[1]);
-        errorflag = 1;
-      }
+#ifdef _DEBUG
+      printf(
+           "Warning:  New vertex (%.12g, %.12g) falls on existing vertex.\n",
+             newvertex[0], newvertex[1]);
+      errorflag = 1;
+#endif
       vertexdealloc(m, newvertex);
     } else {
       /* Interpolation of vertex attributes is done in insertvertex method. */
@@ -7493,21 +7438,23 @@ void splittriangle(mesh *m, behavior *b,
         vertexdealloc(m, newvertex);
       } else {                                 /* success == DUPLICATEVERTEX */
         /* Couldn't insert the new vertex because a vertex is already there. */
-        if (!b->quiet) {
-          printf(
-            "Warning:  New vertex (%.12g, %.12g) falls on existing vertex.\n",
-                 newvertex[0], newvertex[1]);
-          errorflag = 1;
-        }
+#ifdef _DEBUG
+        printf(
+          "Warning:  New vertex (%.12g, %.12g) falls on existing vertex.\n",
+               newvertex[0], newvertex[1]);
+        errorflag = 1;
+#endif
         vertexdealloc(m, newvertex);
       }
     }
     if (errorflag) {
+#ifdef _DEBUG
       printf("This probably means that I am trying to refine triangles\n");
       printf("  to a smaller size than can be accommodated by the finite\n");
       printf("  precision of floating point arithmetic.  (You can be\n");
       printf("  sure of this if I fail to terminate.)\n");
       precisionerror();
+#endif
     }
   }
 }
@@ -7528,9 +7475,6 @@ void enforcequality(mesh *m, behavior *b, int *err)
   struct badtriang *badtri;
   int i;
 
-  if (!b->quiet) {
-    printf("Adding Steiner points to enforce quality.\n");
-  }
   /* Initialize the pool of encroached subsegments. */
   poolinit(&m->badsubsegs, sizeof(struct badsubseg), BADSUBSEGPERBLOCK,
            BADSUBSEGPERBLOCK, 0);
@@ -7592,8 +7536,8 @@ void enforcequality(mesh *m, behavior *b, int *err)
   /*   and have no low-quality triangles.                                   */
 
   /* Might we have run out of Steiner points too soon? */
-  if (!b->quiet && b->conformdel && (m->badsubsegs.items > 0) &&
-      (m->steinerleft == 0)) {
+#ifdef _DEBUG
+  if (b->conformdel && (m->badsubsegs.items > 0) && (m->steinerleft == 0)) {
     printf("\nWarning:  I ran out of Steiner points, but the mesh has\n");
     if (m->badsubsegs.items == 1) {
       printf("  one encroached subsegment, and therefore might not be truly\n"
@@ -7606,6 +7550,7 @@ void enforcequality(mesh *m, behavior *b, int *err)
     printf("  try increasing the number of Steiner points (controlled by\n");
     printf("  the -S switch) slightly and try again.\n\n");
   }
+#endif
 }
 
 #endif /* not CDT_ONLY */
@@ -7630,9 +7575,6 @@ void highorder(mesh *m, behavior *b)
   triangle ptr;                         /* Temporary variable used by sym(). */
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  if (!b->quiet) {
-    printf("Adding vertices for second-order triangles.\n");
-  }
   /* The following line ensures that dead items in the pool of nodes    */
   /*   cannot be allocated for the extra nodes associated with high     */
   /*   order elements.  This ensures that the primary nodes (at the     */
@@ -7696,7 +7638,7 @@ void highorder(mesh *m, behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-void transfernodes(mesh *m, behavior *b, REAL *pointlist,
+int transfernodes(mesh *m, behavior *b, REAL *pointlist,
                    REAL *pointattriblist, int *pointmarkerlist,
                    int numberofpoints, int numberofpointattribs)
 {
@@ -7711,8 +7653,8 @@ void transfernodes(mesh *m, behavior *b, REAL *pointlist,
   m->nextras = numberofpointattribs;
   m->readnodefile = 0;
   if (m->invertices < 3) {
-    printf("Error:  Input must have at least three input vertices.\n");
-    triexit(1);
+    // TODO: Error:  Input must have at least three input vertices.
+    return -1;
   }
   if (m->nextras == 0) {
     b->weighted = 0;
@@ -7755,6 +7697,8 @@ void transfernodes(mesh *m, behavior *b, REAL *pointlist,
   /* Nonexistent x value used as a flag to mark circle events in sweepline */
   /*   Delaunay algorithm.                                                 */
   m->xminextreme = 10 * m->xmin - 9 * m->xmax;
+
+  return numberofpoints;
 }
 
 /*****************************************************************************/
@@ -7785,9 +7729,6 @@ void writenodes(mesh *m, behavior *b, REAL **pointlist,
     outvertices = m->vertices.items;
   }
 
-  if (!b->quiet) {
-    printf("Writing vertices.\n");
-  }
   /* Allocate memory for output vertices if necessary. */
   if (*pointlist == (REAL *) NULL) {
     *pointlist = (REAL *) trimalloc((int) (outvertices * 2 * sizeof(REAL)));
@@ -7877,9 +7818,6 @@ void writeelements(mesh *m, behavior *b,
   long elementnumber;
   int i;
 
-  if (!b->quiet) {
-    printf("Writing triangles.\n");
-  }
   /* Allocate memory for output triangles if necessary. */
   if (*trianglelist == (int *) NULL) {
     *trianglelist = (int *) trimalloc((int) (m->triangles.items *
@@ -7947,9 +7885,6 @@ void writepoly(mesh *m, behavior *b,
   vertex endpoint1, endpoint2;
   long subsegnumber;
 
-  if (!b->quiet) {
-    printf("Writing segments.\n");
-  }
   /* Allocate memory for output segments if necessary. */
   if (*segmentlist == (int *) NULL) {
     *segmentlist = (int *) trimalloc((int) (m->subsegs.items * 2 *
@@ -8003,9 +7938,6 @@ void writeedges(mesh *m, behavior *b,
   triangle ptr;                         /* Temporary variable used by sym(). */
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  if (!b->quiet) {
-    printf("Writing edges.\n");
-  }
   /* Allocate memory for edges if necessary. */
   if (*edgelist == (int *) NULL) {
     *edgelist = (int *) trimalloc((int) (m->edges * 2 * sizeof(int)));
@@ -8069,9 +8001,6 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
   int neighbor1, neighbor2, neighbor3;
   triangle ptr;                         /* Temporary variable used by sym(). */
 
-  if (!b->quiet) {
-    printf("Writing neighbors.\n");
-  }
   /* Allocate memory for neighbors if necessary. */
   if (*neighborlist == (int *) NULL) {
     *neighborlist = (int *) trimalloc((int) (m->triangles.items * 3 *

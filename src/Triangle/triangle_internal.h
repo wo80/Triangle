@@ -413,7 +413,7 @@ void highorder(mesh *m, behavior *b);
 /********* Array I/O routines begin here                              *********/
 /**                                                                         **/
 
-void transfernodes(mesh *m, behavior *b, REAL *pointlist,
+int transfernodes(mesh *m, behavior *b, REAL *pointlist,
                    REAL *pointattriblist, int *pointmarkerlist,
                    int numberofpoints, int numberofpointattribs);
 
