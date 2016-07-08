@@ -1633,8 +1633,10 @@ int checkmesh(mesh *m, behavior *b)
         /* Test if the triangle is flat or inverted. */
         apex(triangleloop, triapex);
         if (counterclockwise(m, b, triorg, tridest, triapex) <= 0.0) {
+#ifdef _DEBUG
           printf("  !! !! Inverted ");
           printtriangle(m, b, &triangleloop);
+#endif
           horrors++;
         }
       }
@@ -1645,6 +1647,7 @@ int checkmesh(mesh *m, behavior *b)
         sym(oppotri, oppooppotri);
         if ((triangleloop.tri != oppooppotri.tri)
             || (triangleloop.orient != oppooppotri.orient)) {
+#ifdef _DEBUG
           printf("  !! !! Asymmetric triangle-triangle bond:\n");
           if (triangleloop.tri == oppooppotri.tri) {
             printf("   (Right triangle, wrong orientation)\n");
@@ -1653,6 +1656,7 @@ int checkmesh(mesh *m, behavior *b)
           printtriangle(m, b, &triangleloop);
           printf("    Second (nonreciprocating) ");
           printtriangle(m, b, &oppotri);
+#endif
           horrors++;
         }
         /* Check that both triangles agree on the identities */
@@ -1660,12 +1664,14 @@ int checkmesh(mesh *m, behavior *b)
         org(oppotri, oppoorg);
         dest(oppotri, oppodest);
         if ((triorg != oppodest) || (tridest != oppoorg)) {
+#ifdef _DEBUG
           printf("  !! !! Mismatched edge coordinates between two triangles:\n"
                  );
           printf("    First mismatched ");
           printtriangle(m, b, &triangleloop);
           printf("    Second mismatched ");
           printtriangle(m, b, &oppotri);
+#endif
           horrors++;
         }
       }
@@ -1737,6 +1743,7 @@ int checkdelaunay(mesh *m, behavior *b)
       }
       if (shouldbedelaunay) {
         if (nonregular(m, b, triorg, tridest, triapex, oppoapex) > 0.0) {
+#ifdef _DEBUG
           if (!b->weighted) {
             printf("  !! !! Non-Delaunay pair of triangles:\n");
             printf("    First non-Delaunay ");
@@ -1749,6 +1756,7 @@ int checkdelaunay(mesh *m, behavior *b)
             printf("    Second non-regular ");
           }
           printtriangle(m, b, &oppotri);
+#endif
           horrors++;
         }
       }
@@ -5266,8 +5274,8 @@ long sweeplinedelaunay(mesh *m, behavior *b)
   heapsize--;
   do {
     if (heapsize == 0) {
-      printf("Error:  Input vertices are all identical.\n");
-      triexit(1);
+      // TODO: Error:  Input vertices are all identical.
+      return -1;
     }
     secondvertex = (vertex) eventheap[0]->eventptr;
     eventheap[0]->eventptr = (VOID *) freeevents;
@@ -7397,8 +7405,8 @@ void splittriangle(mesh *m, behavior *b,
       printf(
            "Warning:  New vertex (%.12g, %.12g) falls on existing vertex.\n",
              newvertex[0], newvertex[1]);
-      errorflag = 1;
 #endif
+      errorflag = 1;
       vertexdealloc(m, newvertex);
     } else {
       /* Interpolation of vertex attributes is done in insertvertex method. */
@@ -7442,8 +7450,8 @@ void splittriangle(mesh *m, behavior *b,
         printf(
           "Warning:  New vertex (%.12g, %.12g) falls on existing vertex.\n",
                newvertex[0], newvertex[1]);
-        errorflag = 1;
 #endif
+        errorflag = 1;
         vertexdealloc(m, newvertex);
       }
     }

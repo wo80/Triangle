@@ -173,6 +173,8 @@ int triangle_mesh_load(context* ctx, triangleio *in)
 		in->segmentlist, in->segmentmarkerlist,
 		in->numberofsegments);
 
+	// TODO: check for error (hullsize < 0)
+
 	/* Ensure that no vertex can be mistaken for a triangular bounding */
 	/*   box vertex in insertvertex().                                 */
 	m->infvertex1 = (vertex) NULL;
