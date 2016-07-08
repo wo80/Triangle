@@ -317,8 +317,8 @@ typedef struct behavior_t {
   int poly, refine, quality, vararea, fixedarea, usertest;
   int regionattrib, convex, weighted, jettison;
   int firstnumber;
-  int edgesout, neighbors;
-  int nobound, nopolywritten, nonodewritten, noelewritten, noiterationnum;
+  int neighbors;
+  int nobound;
   int noholes, noexact, conformdel;
   int incremental, sweepline, dwyer;
   int splitseg;

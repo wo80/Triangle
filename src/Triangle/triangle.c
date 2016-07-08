@@ -1617,9 +1617,7 @@ unsigned long randomnation(unsigned int choices)
 /*                                                                           */
 /*****************************************************************************/
 
-#ifndef REDUCED
-
-void checkmesh(mesh *m, behavior *b)
+int checkmesh(mesh *m, behavior *b)
 {
   struct otri triangleloop;
   struct otri oppotri, oppooppotri;
@@ -1688,20 +1686,12 @@ void checkmesh(mesh *m, behavior *b)
     }
     triangleloop.tri = triangletraverse(m);
   }
-  if (horrors == 0) {
-    if (!b->quiet) {
-      printf("  In my studied opinion, the mesh appears to be consistent.\n");
-    }
-  } else if (horrors == 1) {
-    printf("  !! !! !! !! Precisely one festering wound discovered.\n");
-  } else {
-    printf("  !! !! !! !! %d abominations witnessed.\n", horrors);
-  }
+
   /* Restore the status of exact arithmetic. */
   b->noexact = saveexact;
-}
 
-#endif /* not REDUCED */
+  return horrors;
+}
 
 /*****************************************************************************/
 /*                                                                           */
@@ -1709,9 +1699,7 @@ void checkmesh(mesh *m, behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-#ifndef REDUCED
-
-void checkdelaunay(mesh *m, behavior *b)
+int checkdelaunay(mesh *m, behavior *b)
 {
   struct otri triangleloop;
   struct otri oppotri;
@@ -1784,22 +1772,12 @@ void checkdelaunay(mesh *m, behavior *b)
     }
     triangleloop.tri = triangletraverse(m);
   }
-  if (horrors == 0) {
-    if (!b->quiet) {
-      printf(
-  "  By virtue of my perceptive intelligence, I declare the mesh Delaunay.\n");
-    }
-  } else if (horrors == 1) {
-    printf(
-         "  !! !! !! !! Precisely one terrifying transgression identified.\n");
-  } else {
-    printf("  !! !! !! !! %d obscenities viewed with horror.\n", horrors);
-  }
+
   /* Restore the status of exact arithmetic. */
   b->noexact = saveexact;
-}
 
-#endif /* not REDUCED */
+  return horrors;
+}
 
 /*****************************************************************************/
 /*                                                                           */
