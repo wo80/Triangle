@@ -295,11 +295,8 @@ typedef struct behavior_t {
 /*   weighted: 1 for -w switch, 2 for -W switch.  jettison: -j switch        */
 /*   firstnumber: inverse of -z switch.  All items are numbered starting     */
 /*     from `firstnumber'.                                                   */
-/*   edgesout: -e switch.                                                    */
-/*   neighbors: -n switch.  geomview: -g switch.                             */
+/*   neighbors: -n switch.                                                   */
 /*   nobound: -B switch.  nopolywritten: -P switch.                          */
-/*   nonodewritten: -N switch.  noelewritten: -E switch.                     */
-/*   noiterationnum: -I switch.  noholes: -O switch.                         */
 /*   noexact: -X switch.                                                     */
 /*   order: element order, specified after -o switch.                        */
 /*   nobisect: count of how often -Y switch is selected.                     */
@@ -308,7 +305,6 @@ typedef struct behavior_t {
 /*   dwyer: inverse of -l switch.                                            */
 /*   splitseg: -s switch.                                                    */
 /*   conformdel: -D switch.  docheck: -C switch.                             */
-/*   quiet: -Q switch.  verbose: count of how often -V switch is selected.   */
 /*   usesegments: -p, -r, -q, or -c switch; determines whether segments are  */
 /*     used at all.                                                          */
 /*                                                                           */

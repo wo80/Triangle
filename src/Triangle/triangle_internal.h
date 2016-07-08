@@ -159,9 +159,9 @@ unsigned long randomnation(unsigned int choices);
 /********* Mesh quality testing routines begin here                  *********/
 /**                                                                         **/
 
-void checkmesh(mesh *m, behavior *b);
+int checkmesh(mesh *m, behavior *b);
 
-void checkdelaunay(mesh *m, behavior *b);
+int checkdelaunay(mesh *m, behavior *b);
 
 #ifndef CDT_ONLY
 
