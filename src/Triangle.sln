@@ -12,6 +12,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtriangle", "examples\lib
 		{C83E3E42-C594-4379-BA06-5F4EFD41CDC7} = {C83E3E42-C594-4379-BA06-5F4EFD41CDC7}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "triangle-test", "examples\triangle-test\triangle-test.vcxproj", "{8F347C41-10B1-4E6F-90F4-471CD8A13B96}"
+	ProjectSection(ProjectDependencies) = postProject
+		{25F029ED-FF51-4055-A04E-4EF05A89DB88} = {25F029ED-FF51-4055-A04E-4EF05A89DB88}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -26,11 +31,16 @@ Global
 		{25F029ED-FF51-4055-A04E-4EF05A89DB88}.Debug|Win32.Build.0 = Debug|Win32
 		{25F029ED-FF51-4055-A04E-4EF05A89DB88}.Release|Win32.ActiveCfg = Release|Win32
 		{25F029ED-FF51-4055-A04E-4EF05A89DB88}.Release|Win32.Build.0 = Release|Win32
+		{8F347C41-10B1-4E6F-90F4-471CD8A13B96}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8F347C41-10B1-4E6F-90F4-471CD8A13B96}.Debug|Win32.Build.0 = Debug|Win32
+		{8F347C41-10B1-4E6F-90F4-471CD8A13B96}.Release|Win32.ActiveCfg = Release|Win32
+		{8F347C41-10B1-4E6F-90F4-471CD8A13B96}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{25F029ED-FF51-4055-A04E-4EF05A89DB88} = {102ACCD1-7321-4F15-8B5A-03834669F773}
+		{8F347C41-10B1-4E6F-90F4-471CD8A13B96} = {102ACCD1-7321-4F15-8B5A-03834669F773}
 	EndGlobalSection
 EndGlobal

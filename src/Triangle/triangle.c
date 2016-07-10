@@ -590,9 +590,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
           b->conformdel = 1;
         }
 #endif /* not CDT_ONLY */
-        if (argv[i][j] == 'C') {
-          b->docheck = 1;
-        }
 #endif /* not REDUCED */
       }
   }
