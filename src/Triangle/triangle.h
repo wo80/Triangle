@@ -372,51 +372,97 @@ struct memorypool {
 
 typedef struct behavior_t {
 
-/* Switches for the triangulator.                                            */
-/*   poly: -p switch.  refine: -r switch.                                    */
-/*   quality: -q switch.                                                     */
-/*     minangle: minimum angle bound, specified after -q switch.             */
-/*     goodangle: cosine squared of minangle.                                */
-/*     offconstant: constant used to place off-center Steiner points.        */
-/*   vararea: -a switch without number.                                      */
-/*   fixedarea: -a switch with number.                                       */
-/*     maxarea: maximum area bound, specified after -a switch.               */
-/*   usertest: -u switch.                                                    */
-/*   regionattrib: -A switch.  convex: -c switch.                            */
-/*   weighted: 1 for -w switch, 2 for -W switch.  jettison: -j switch        */
-/*   firstnumber: inverse of -z switch.  All items are numbered starting     */
-/*     from `firstnumber'.                                                   */
-/*   neighbors: -n switch.                                                   */
-/*   nobound: -B switch.  nopolywritten: -P switch.                          */
-/*   noexact: -X switch.                                                     */
-/*   order: element order, specified after -o switch.                        */
-/*   nobisect: count of how often -Y switch is selected.                     */
-/*   steiner: maximum number of Steiner points, specified after -S switch.   */
-/*   incremental: -i switch.  sweepline: -F switch.                          */
-/*   dwyer: inverse of -l switch.                                            */
-/*   splitseg: -s switch.                                                    */
-/*   conformdel: -D switch.  docheck: -C switch.                             */
-/*   usesegments: -p, -r, -q, or -c switch; determines whether segments are  */
-/*     used at all.                                                          */
-/*                                                                           */
-/* Read the instructions to find out the meaning of these switches.          */
+  /* Triangulate a Planar Straight Line Graph (-p switch). */
+  int poly;
 
-  int poly, refine, quality, vararea, fixedarea, usertest;
-  int regionattrib, convex, weighted, jettison;
+  /* Refine a previously generated mesh (-r switch). */
+  int refine;
+
+  /* Quality mesh generation (-q switch). */
+  int quality;
+
+  /* Apply a maximum triangle area constraint (-a switch without number). */
+  int vararea;
+
+  /* Apply a maximum triangle area constraint (-a switch with number). */
+  int fixedarea;
+
+  /* Apply a user-defined triangle constraint (-u switch). */
+  int usertest;
+
+  /* Apply attributes to identify triangles in certain regions. (-A switch). */
+  int regionattrib;
+
+  /* Enclose the convex hull with segments. (-c switch). */
+  int convex;
+
+  /* Weighted Delaunay triangulation (1 for -w switch) or regular triangulation */
+  /* ie. lower hull of a height field (2 for -W switch). */
+  int weighted;
+
+  /* Jettison unused vertices from output (-j switch). */
+  int jettison;
+
+  /* Number all items starting from zero or one (0 for -z switch). */
   int firstnumber;
+
+  /* Generate a list of triangle neighbors (-n switch). */
   int neighbors;
+
+  /* Suppresses output of boundary information (-B switch). */
   int nobound;
-  int noholes, noexact, conformdel;
-  int incremental, sweepline, dwyer;
+
+  /* Ignore holes (-O switch). */
+  int noholes;
+
+  /* Suppress use of exact arithmetic (-X switch). */
+  int noexact;
+
+  /* Conforming Delaunay: all triangles are truly Delaunay (-D switch). */
+  int conformdel;
+
+  /* Uses incremental method (-i switch). */
+  int incremental;
+
+  /* Uses Fortune's sweepline algorithm (-F switch). */
+  int sweepline;
+
+  /* Uses alternating cuts for divide-and-conquer (inverse of -l switch). */
+  int dwyer;
+
+  /* Force segments into mesh by splitting instead of using CDT (-s switch). */
   int splitseg;
+
+  /* Determines whether segments are used at all (-p, -r, -q, or -c switch). */
   int usesegments;
+
+  /* Element order (specified after -o switch). */
   int order;
+
+  /* Suppress boundary segment splitting (-Y switch). */
   int nobisect;
+
+  /* Maximum number of added Steiner points (specified after -S switch).   */
   int steiner;
-  REAL minangle, goodangle, offconstant;
+
+  /* Minimum angle bound (specified after -q switch). */
+  REAL minangle;
+
+  /* Cosine squared of minangle. */
+  REAL goodangle;
+
+  /* Constant used to place off-center Steiner points. */
+  REAL offconstant;
+
+  /* Maximum area bound (specified after -a switch). */
   REAL maxarea;
+
 #ifndef NO_ACUTE
-  REAL maxangle, maxgoodangle;
+  /* Maximum angle bound (specified after -U switch). */
+  REAL maxangle;
+
+  /* Cosine of maxangle. */
+  REAL maxgoodangle;
 #endif
 } behavior;                                     /* End of `struct behavior'. */
 
