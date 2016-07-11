@@ -409,7 +409,7 @@ typedef struct behavior_t {
   /* Generate a list of triangle neighbors (-n switch). */
   int neighbors;
 
-  /* Suppresses output of boundary information (-B switch). */
+  /* Suppress output of boundary information (-B switch). */
   int nobound;
 
   /* Ignore holes (-O switch). */
@@ -421,19 +421,19 @@ typedef struct behavior_t {
   /* Conforming Delaunay: all triangles are truly Delaunay (-D switch). */
   int conformdel;
 
-  /* Uses incremental method (-i switch). */
+  /* Use incremental method (-i switch). */
   int incremental;
 
-  /* Uses Fortune's sweepline algorithm (-F switch). */
+  /* Use Fortune's sweepline algorithm (-F switch). */
   int sweepline;
 
-  /* Uses alternating cuts for divide-and-conquer (inverse of -l switch). */
+  /* Use alternating cuts for divide-and-conquer (inverse of -l switch). */
   int dwyer;
 
   /* Force segments into mesh by splitting instead of using CDT (-s switch). */
   int splitseg;
 
-  /* Determines whether segments are used at all (-p, -r, -q, or -c switch). */
+  /* Determine whether segments are used at all (-p, -r, -q, or -c switch). */
   int usesegments;
 
   /* Element order (specified after -o switch). */

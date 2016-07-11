@@ -701,14 +701,10 @@ int file_readelements(FILE *file, triangleio *io)
 {
 	char inputline[INPUTLINESIZE];
 	char *stringptr;
-	int areaelements;
 	int inelements;
 	int eextras;
 
-	REAL area;
 	int incorners;
-	int firstnumber;
-	long elementnumber;
 	int i, j;
 
 	/* Read the triangles from an .ele file. */
@@ -742,23 +738,7 @@ int file_readelements(FILE *file, triangleio *io)
 		io->triangleattributelist = (REAL *)trimalloc(eextras * inelements * sizeof(REAL));
 	}
 
-	//if (vararea) {
-	//	/* Open an .area file, check for consistency with the .ele file. */
-	//	areafile = fopen(areafilename, "r");
-	//	if (areafile == (FILE *) NULL) {
-	//		return -1;
-	//	}
-	//	stringptr = readline(inputline, areafile);
-	//	areaelements = (int) strtol(stringptr, &stringptr, 0);
-	//	if (areaelements != inelements) {
-	//		return -1; // TODO: error: area file disagrees on number of triangles.
-	//	}
-	//}
-
-	firstnumber = 0;
-
 	/* Read the triangles from the .ele file. */
-	elementnumber = firstnumber;
 	for (i = 0; i < inelements; i++) {
 		/* Read triangle number and the triangle's three corners. */
 		stringptr = readline(inputline, file);
@@ -789,19 +769,48 @@ int file_readelements(FILE *file, triangleio *io)
 				io->triangleattributelist[eextras * i + j] = (REAL) strtod(stringptr, &stringptr);
 			}
 		}
+	}
 
-		//if (vararea) {
-		//	/* Read an area constraint from the .area file. */
-		//	stringptr = readline(inputline, areafile);
-		//	stringptr = findfield(stringptr);
-		//	if (*stringptr == '\0') {
-		//		area = -1.0;                      /* No constraint on this triangle. */
-		//	} else {
-		//		area = (REAL) strtod(stringptr, &stringptr);
-		//	}
-		//}
+	return 0;
+}
 
-		elementnumber++;
+/*****************************************************************************/
+/*                                                                           */
+/*  file_readelementsarea()  Read elements area from an .area file.          */
+/*                                                                           */
+/*****************************************************************************/
+
+int file_readelementsarea(FILE *file, triangleio *io, int numelements)
+{
+	char inputline[INPUTLINESIZE];
+	char *stringptr;
+	int areaelements;
+	int i;
+
+	/* Read the triangles area from an .area file. */
+	if (file == (FILE *) NULL) {
+		return -1;
+	}
+
+	/* Check for consistency with the .ele file. */
+	stringptr = readline(inputline, file);
+	areaelements = (int) strtol(stringptr, &stringptr, 0);
+	if (areaelements != numelements) {
+		return -1; // TODO: error: area file disagrees on number of triangles.
+	}
+
+	io->trianglearealist = (REAL *)trimalloc(numelements * sizeof(REAL));
+
+	/* Read the triangles from the .ele file. */
+	for (i = 0; i < numelements; i++) {
+		/* Read an area constraint from the .area file. */
+		stringptr = readline(inputline, file);
+		stringptr = findfield(stringptr);
+		if (*stringptr == '\0') {
+			io->trianglearealist[i] = -1.0; /* No constraint on this triangle. */
+		} else {
+			io->trianglearealist[i] = (REAL) strtod(stringptr, &stringptr);
+		}
 	}
 
 	return 0;

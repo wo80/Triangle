@@ -459,6 +459,8 @@ int file_readpoly(FILE *nodefile, triangleio *io);
 				   
 int file_readelements(FILE *nodefile, triangleio *io);
 
+int file_readelementsarea(FILE *file, triangleio *io, int numelements);
+
 /**                                                                         **/
 /********* File I/O routines end here                                *********/
 
