@@ -1,8 +1,7 @@
 #ifndef ACUTE_H
 #define ACUTE_H
 
-#include "triangle_config.h"
-#include "triangle_core.h"
+#include "triangle.h"
 
 typedef struct acutepool_t {
     int size;

@@ -1,8 +1,7 @@
 #ifndef PREDICATES_H
 #define PREDICATES_H
 
-#include "triangle_config.h"
-#include "triangle_core.h"
+#include "triangle.h"
 
 void exactinit();
 

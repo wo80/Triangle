@@ -75,7 +75,6 @@
     <ClInclude Include="predicates.h" />
     <ClInclude Include="triangle.h" />
     <ClInclude Include="triangle_config.h" />
-    <ClInclude Include="triangle_core.h" />
     <ClInclude Include="triangle_internal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
