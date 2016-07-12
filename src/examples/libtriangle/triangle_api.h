@@ -145,27 +145,29 @@ extern "C" {
 	
 	/**
 	 * Read nodes file.
-	 * @param file File pointer (to .node file).
-	 * @param ctx Pointer to triangleio struct.
+	 * @param filename File name (path to .node file).
+	 * @param io Pointer to triangleio struct.
+	 * @param firstnode Number of the first node (output).
 	 * @return Integer status code.
 	 */
-	EXPORT int triangle_read_nodes(FILE *file, triangleio *io);
+	EXPORT int triangle_read_nodes(const char* filename, triangleio *io, int *firstnode);
 	
 	/**
 	 * Read poly file.
-	 * @param file File pointer (to .poly file).
-	 * @param ctx Pointer to triangleio struct.
+	 * @param filename File name (path to .poly file).
+	 * @param io Pointer to triangleio struct.
+	 * @param firstnode Number of the first node (output).
 	 * @return Integer status code.
 	 */
-	EXPORT int triangle_read_poly(FILE *file, triangleio *io);
+	EXPORT int triangle_read_poly(const char* filename, triangleio *io, int *firstnode);
 	
 	/**
 	 * Read elements file.
-	 * @param file File pointer (to .ele file).
-	 * @param ctx Pointer to triangleio struct.
+	 * @param filename File name (path to .ele file).
+	 * @param io Pointer to triangleio struct.
 	 * @return Integer status code.
 	 */
-	EXPORT int triangle_read_elements(FILE *file, triangleio *io);
+	EXPORT int triangle_read_elements(const char* filename, triangleio *io);
 #endif /* NO_FILE_IO */
 
 #ifdef __cplusplus

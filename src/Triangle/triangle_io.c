@@ -383,12 +383,11 @@ char *findfield(char *string)
 /*                                                                           */
 /*****************************************************************************/
 
-int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices)
+int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices, int* firstnode)
 {
 	char inputline[INPUTLINESIZE];
 	char *stringptr;
 	REAL x, y;
-	int firstnode;
 	int nodemarkers;
 	int invertices;
 	int mesh_dim;
@@ -450,10 +449,7 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices)
 			return -1; // TODO: read error
 		}
 		if (i == 0) {
-			firstnode = (int) strtol(stringptr, &stringptr, 0);
-			if ((firstnode == 0) || (firstnode == 1)) {
-				//b->firstnumber = firstnode;
-			}
+			*firstnode = (int) strtol(stringptr, &stringptr, 0);
 		}
 		stringptr = findfield(stringptr);
 		if (*stringptr == '\0') {
@@ -498,12 +494,14 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 	int segmentmarkers;
 	int boundmarker;
 	int insegments;
-	int firstnumber;
 	int i;
 
 	/* Read the segments from a .poly file. */
 	/* Read number of segments and number of boundary markers. */
 	stringptr = readline(inputline, file);
+	if (stringptr != (char *) NULL) {
+		return -1; // TODO: read error
+	}
 	insegments = (int) strtol(stringptr, &stringptr, 0);
 	stringptr = findfield(stringptr);
 	if (*stringptr == '\0') {
@@ -512,8 +510,6 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 		segmentmarkers = (int) strtol(stringptr, &stringptr, 0);
 	}
 
-	/* If the input vertices are collinear, there is no triangulation, */
-	/*   so don't try to insert segments.                              */
 	if (invertices == 0) {
 		return - 1;
 	}
@@ -524,11 +520,13 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 		io->segmentmarkerlist = (int *)trimalloc(insegments * sizeof(int));
 	}
 
-	firstnumber = 0;
 	boundmarker = 0;
-	/* Read and insert the segments. */
+	/* Read the segments. */
 	for (i = 0; i < insegments; i++) {
 		stringptr = readline(inputline, file);
+		if (stringptr != (char *) NULL) {
+			return -1; // TODO: read error
+		}
 		stringptr = findfield(stringptr);
 		if (*stringptr == '\0') {
 			return -1; // TODO: error: Segment (firstnumber + i) has no endpoints.
@@ -549,19 +547,6 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 				io->segmentmarkerlist[i] = (int) strtol(stringptr, &stringptr, 0);
 			}
 		}
-
-		// TODO: check triangleio (postprocessing).
-		/*
-		if ((end1 < firstnumber) || (end1 >= firstnumber + invertices)) {
-		// TODO: Warning: Invalid first endpoint of segment (firstnumber + i).
-		} else if ((end2 < firstnumber) || (end2 >= firstnumber + invertices)) {
-		// TODO: Warning: Invalid second endpoint of segment (firstnumber + i).
-		} else {
-		if (end1 == end2) {
-		// TODO: Warning: Endpoints of segment (firstnumber + i) are coincident.
-		}
-		}
-		*/
 	}
 	return 0;
 }
@@ -665,13 +650,11 @@ int file_readholes_internal(FILE *file, triangleio *io)
 /*                                                                           */
 /*****************************************************************************/
 
-int file_readnodes(FILE *nodefile, triangleio *io)
+int file_readnodes(FILE *nodefile, triangleio *io, int *firstnode)
 {
 	int numvertices;
 
-	file_readnodes_internal(nodefile, io, &numvertices);
-
-	return 0;
+	return file_readnodes_internal(nodefile, io, &numvertices, firstnode);
 }
 
 /*****************************************************************************/
@@ -680,11 +663,11 @@ int file_readnodes(FILE *nodefile, triangleio *io)
 /*                                                                           */
 /*****************************************************************************/
 
-int file_readpoly(FILE *polyfile, triangleio *io)
+int file_readpoly(FILE *polyfile, triangleio *io, int *firstnode)
 {
 	int numvertices;
 
-	file_readnodes_internal(polyfile, io, &numvertices);
+	file_readnodes_internal(polyfile, io, &numvertices, firstnode);
 	file_readsegments_internal(polyfile, io, numvertices);
 	file_readholes_internal(polyfile, io);
 
@@ -714,6 +697,9 @@ int file_readelements(FILE *file, triangleio *io)
 	/* Read number of triangles, number of vertices per triangle, and */
 	/*   number of triangle attributes from .ele file.                */
 	stringptr = readline(inputline, file);
+	if (stringptr != (char *) NULL) {
+		return -1; // TODO: read error
+	}
 	inelements = (int) strtol(stringptr, &stringptr, 0);
 	stringptr = findfield(stringptr);
 	if (*stringptr == '\0') {
@@ -742,21 +728,15 @@ int file_readelements(FILE *file, triangleio *io)
 	for (i = 0; i < inelements; i++) {
 		/* Read triangle number and the triangle's three corners. */
 		stringptr = readline(inputline, file);
+		if (stringptr != (char *) NULL) {
+			return -1; // TODO: read error
+		}
 		for (j = 0; j < 3; j++) {
 			stringptr = findfield(stringptr);
 			if (*stringptr == '\0') {
 				return -1; // TODO: error: Triangle (elementnumber) is missing vertex (j + 1).
 			} else {
 				io->trianglelist[3 * i + j] = (int) strtol(stringptr, &stringptr, 0);
-
-				// TODO: check triangleio (postprocessing).
-				/*
-				if ((corner[j] < firstnumber) || (corner[j] >= firstnumber + invertices)) {
-				printf("Error:  Triangle %ld has an invalid vertex index.\n",
-				elementnumber);
-				triexit(1);
-				}
-				*/
 			}
 		}
 
@@ -794,6 +774,9 @@ int file_readelementsarea(FILE *file, triangleio *io, int numelements)
 
 	/* Check for consistency with the .ele file. */
 	stringptr = readline(inputline, file);
+	if (stringptr != (char *) NULL) {
+		return -1; // TODO: read error
+	}
 	areaelements = (int) strtol(stringptr, &stringptr, 0);
 	if (areaelements != numelements) {
 		return -1; // TODO: error: area file disagrees on number of triangles.
@@ -805,6 +788,9 @@ int file_readelementsarea(FILE *file, triangleio *io, int numelements)
 	for (i = 0; i < numelements; i++) {
 		/* Read an area constraint from the .area file. */
 		stringptr = readline(inputline, file);
+		if (stringptr != (char *) NULL) {
+			return -1; // TODO: read error
+		}
 		stringptr = findfield(stringptr);
 		if (*stringptr == '\0') {
 			io->trianglearealist[i] = -1.0; /* No constraint on this triangle. */

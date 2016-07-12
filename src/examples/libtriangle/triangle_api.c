@@ -312,18 +312,36 @@ int triangle_write_neighbors(context *ctx, FILE *file)
 	return file_writeneighbors(ctx->m, ctx->b, file);
 }
 
-int triangle_read_nodes(FILE *file, triangleio *io)
+int triangle_read_nodes(const char* filename, triangleio *io, int *firstnode)
 {
-	return file_readnodes(file, io);
+	FILE *file = fopen(filename, "r");
+
+	if (file == (FILE *)NULL) {
+		return -1;
+	}
+
+	return file_readnodes(file, io, firstnode);
 }
 
-int triangle_read_poly(FILE *file, triangleio *io)
+int triangle_read_poly(const char* filename, triangleio *io, int *firstnode)
 {
-	return file_readpoly(file, io);
+	FILE *file = fopen(filename, "r");
+
+	if (file == (FILE *)NULL) {
+		return -1;
+	}
+
+	return file_readpoly(file, io, firstnode);
 }
 
-int triangle_read_elements(FILE *file, triangleio *io)
+int triangle_read_elements(const char* filename, triangleio *io)
 {
+	FILE *file = fopen(filename, "r");
+
+	if (file == (FILE *)NULL) {
+		return -1;
+	}
+
 	return file_readelements(file, io);
 }
 
