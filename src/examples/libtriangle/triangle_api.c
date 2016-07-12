@@ -1,14 +1,13 @@
 
 #include "triangle_api.h"
+#include "triangle_helper.h"
 #include <triangle_internal.h>
 
 int triangle_behavior_parse(behavior *b, char *options)
 {
-	int result = 0;
+	parsecommandline(1, &options, b);
 
-	parsecommandline(1, &options, b, &result);
-
-	return result;
+	return check_behavior(b);
 }
 
 context* triangle_context_create()
@@ -24,7 +23,7 @@ context* triangle_context_create()
 	ctx->b = b;
 
 	/* Initialize default behavior values. */
-	parsecommandline(0, (char **)NULL, b, &result);
+	parsecommandline(0, (char **)NULL, b);
 
 	triangleinit(ctx->m);
 
@@ -314,35 +313,22 @@ int triangle_write_neighbors(context *ctx, FILE *file)
 
 int triangle_read_nodes(const char* filename, triangleio *io, int *firstnode)
 {
-	FILE *file = fopen(filename, "r");
-
-	if (file == (FILE *)NULL) {
-		return -1;
-	}
-
-	return file_readnodes(file, io, firstnode);
+	return file_readnodes(fopen(filename, "r"), io, firstnode);
 }
 
 int triangle_read_poly(const char* filename, triangleio *io, int *firstnode)
 {
-	FILE *file = fopen(filename, "r");
-
-	if (file == (FILE *)NULL) {
-		return -1;
-	}
-
-	return file_readpoly(file, io, firstnode);
+	return file_readpoly(fopen(filename, "r"), io, firstnode);
 }
 
 int triangle_read_elements(const char* filename, triangleio *io)
 {
-	FILE *file = fopen(filename, "r");
+	return file_readelements(fopen(filename, "r"), io);
+}
 
-	if (file == (FILE *)NULL) {
-		return -1;
-	}
-
-	return file_readelements(file, io);
+int triangle_read_area(const char* filename, triangleio *io, int elements)
+{
+	return file_readelementsarea(fopen(filename, "r"), io, elements);
 }
 
 #endif /* NO_FILE_IO */

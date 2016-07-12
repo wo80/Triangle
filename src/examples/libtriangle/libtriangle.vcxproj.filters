@@ -18,9 +18,15 @@
     <ClCompile Include="triangle_api.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="triangle_helper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="triangle_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="triangle_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

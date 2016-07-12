@@ -23,13 +23,17 @@
 /*   Not that it matters.                                                    */
 #define VOID void
 
-/* Error codes */
+/* Triangle status codes. */
 
-#define ERR_CMD_LINE 1
-#define ERR_SPLIT_ENC_SEGS 2
-#define ERR_FIND_DIRECTION 3
-#define ERR_SEG_INTERSECTION 4
-#define ERR_SEG_INSERT 5
+#define TRI_OK 0
+#define TRI_FAILURE (-1)
+#define TRI_FILE_OPEN (-2)
+#define TRI_FILE_READ (-3)
+#define TRI_OPTIONS (-4)
+#define TRI_FIND_DIRECTION (-5)
+#define TRI_SEG_SPLIT (-6)
+#define TRI_SEG_INTERSECT (-7)
+#define TRI_SEG_INSERT (-8)
 
 /* Set correct size for pointer alignment calculations */
 #if defined(_M_X64) || defined(__amd64__)

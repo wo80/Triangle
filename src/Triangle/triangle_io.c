@@ -26,15 +26,16 @@ int file_writenodes(mesh *m, behavior *b, FILE *nodefile)
 	int vertexnumber;
 	int i;
 
+	if (nodefile == (FILE *) NULL) {
+		return TRI_FILE_OPEN;
+	}
+
 	if (b->jettison) {
 		outvertices = m->vertices.items - m->undeads;
 	} else {
 		outvertices = m->vertices.items;
 	}
 
-	if (nodefile == (FILE *) NULL) {
-		return -1;
-	}
 	/* Number of vertices, number of dimensions, number of vertex attributes, */
 	/*   and number of boundary markers (zero or one).                        */
 	fprintf(nodefile, "%ld  %d  %d  %d\n", outvertices, m->mesh_dim,
@@ -64,7 +65,7 @@ int file_writenodes(mesh *m, behavior *b, FILE *nodefile)
 		}
 		vertexloop = vertextraverse(m);
 	}
-	return 0;
+	return TRI_OK;
 }
 
 /*****************************************************************************/
@@ -82,8 +83,9 @@ int file_writeelements(mesh *m, behavior *b, FILE *elefile)
 	int i;
 
 	if (elefile == (FILE *) NULL) {
-		return -1;
+		return TRI_FILE_OPEN;
 	}
+
 	/* Number of triangles, vertices per triangle, attributes per triangle. */
 	fprintf(elefile, "%ld  %d  %d\n", m->triangles.items,
 		(b->order + 1) * (b->order + 2) / 2, m->eextras);
@@ -118,7 +120,7 @@ int file_writeelements(mesh *m, behavior *b, FILE *elefile)
 		triangleloop.tri = triangletraverse(m);
 		elementnumber++;
 	}
-	return 0;
+	return TRI_OK;
 }
 
 /*****************************************************************************/
@@ -136,8 +138,9 @@ int file_writepoly(mesh *m, behavior *b, FILE *polyfile,
 	long subsegnumber;
 
 	if (polyfile == (FILE *) NULL) {
-		return -1;
+		return TRI_FILE_OPEN;
 	}
+
 	/* The zero indicates that the vertices are in a separate .node file. */
 	/*   Followed by number of dimensions, number of vertex attributes,   */
 	/*   and number of boundary markers (zero or one).                    */
@@ -187,7 +190,7 @@ int file_writepoly(mesh *m, behavior *b, FILE *polyfile,
 		}
 	}
 #endif /* not CDT_ONLY */
-	return 0;
+	return TRI_OK;
 }
 
 /*****************************************************************************/
@@ -206,8 +209,9 @@ int file_writeedges(mesh *m, behavior *b, FILE *edgefile)
 	subseg sptr;                      /* Temporary variable used by tspivot(). */
 
 	if (edgefile == (FILE *) NULL) {
-		return -1;
+		return TRI_FILE_OPEN;
 	}
+
 	/* Number of edges, number of boundary markers (zero or one). */
 	fprintf(edgefile, "%ld  %d\n", m->edges, 1 - b->nobound);
 
@@ -253,7 +257,7 @@ int file_writeedges(mesh *m, behavior *b, FILE *edgefile)
 		}
 		triangleloop.tri = triangletraverse(m);
 	}
-	return 0;
+	return TRI_OK;
 }
 
 int file_writeneighbors(mesh *m, behavior *b, FILE *neighborfile)
@@ -264,8 +268,9 @@ int file_writeneighbors(mesh *m, behavior *b, FILE *neighborfile)
 	triangle ptr;                         /* Temporary variable used by sym(). */
 
 	if (neighborfile == (FILE *) NULL) {
-		return -1;
+		return TRI_FILE_OPEN;
 	}
+
 	/* Number of triangles, three neighbors per triangle. */
 	fprintf(neighborfile, "%ld  %d\n", m->triangles.items, 3);
 
@@ -300,7 +305,7 @@ int file_writeneighbors(mesh *m, behavior *b, FILE *neighborfile)
 		triangleloop.tri = triangletraverse(m);
 		elementnumber++;
 	}
-	return 0;
+	return TRI_OK;
 }
 
 /**                                                                         **/
@@ -395,14 +400,14 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices, int* f
 	int i, j;
 
 	if (file == (FILE *) NULL) {
-		return -1; // TODO: read error: cannot access file.
+		return TRI_FILE_OPEN;
 	}
 
 	/* Read number of vertices, number of dimensions, number of vertex */
 	/*   attributes, and number of boundary markers.                   */
 	stringptr = readline(inputline, file);
 	if (stringptr != (char *) NULL) {
-		return -1; // TODO: read error
+		return TRI_FILE_READ;
 	}
 	invertices = (int) strtol(stringptr, &stringptr, 0);
 	stringptr = findfield(stringptr);
@@ -434,6 +439,8 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices, int* f
 		//b->weighted = 0;
 	}
 
+	*numvertices = invertices;
+
 	io->numberofpoints = invertices;
 	io->numberofpointattributes = nextras;
 	io->pointlist = (REAL *)trimalloc(2 * invertices * sizeof(REAL));
@@ -446,7 +453,7 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices, int* f
 	for (i = 0; i < invertices; i++) {
 		stringptr = readline(inputline, file);
 		if (stringptr != (char *) NULL) {
-			return -1; // TODO: read error
+			return TRI_FILE_READ;
 		}
 		if (i == 0) {
 			*firstnode = (int) strtol(stringptr, &stringptr, 0);
@@ -483,7 +490,7 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* numvertices, int* f
 		}
 	}
 
-	return 0;
+	return TRI_OK;
 }
 
 int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
@@ -496,11 +503,19 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 	int insegments;
 	int i;
 
+	if (file == (FILE *) NULL) {
+		return TRI_FILE_OPEN;
+	}
+
+	if (invertices == 0) {
+		return -1;
+	}
+
 	/* Read the segments from a .poly file. */
 	/* Read number of segments and number of boundary markers. */
 	stringptr = readline(inputline, file);
 	if (stringptr != (char *) NULL) {
-		return -1; // TODO: read error
+		return TRI_FILE_READ;
 	}
 	insegments = (int) strtol(stringptr, &stringptr, 0);
 	stringptr = findfield(stringptr);
@@ -508,10 +523,6 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 		segmentmarkers = 0;
 	} else {
 		segmentmarkers = (int) strtol(stringptr, &stringptr, 0);
-	}
-
-	if (invertices == 0) {
-		return - 1;
 	}
 
 	io->numberofsegments = insegments;
@@ -525,7 +536,7 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 	for (i = 0; i < insegments; i++) {
 		stringptr = readline(inputline, file);
 		if (stringptr != (char *) NULL) {
-			return -1; // TODO: read error
+			return TRI_FILE_READ;
 		}
 		stringptr = findfield(stringptr);
 		if (*stringptr == '\0') {
@@ -548,7 +559,7 @@ int file_readsegments_internal(FILE *file, triangleio *io, int invertices)
 			}
 		}
 	}
-	return 0;
+	return TRI_OK;
 }
 
 /*****************************************************************************/
@@ -567,10 +578,14 @@ int file_readholes_internal(FILE *file, triangleio *io)
 	int regions;
 	int i;
 
+	if (file == (FILE *) NULL) {
+		return TRI_FILE_OPEN;
+	}
+
 	/* Read the holes. */
 	stringptr = readline(inputline, file);
 	if (stringptr != (char *) NULL) {
-		return -1; // TODO: read error
+		return TRI_FILE_READ;
 	}
 	holes = (int) strtol(stringptr, &stringptr, 0);
 	if (holes > 0) {
@@ -579,7 +594,7 @@ int file_readholes_internal(FILE *file, triangleio *io)
 		for (i = 0; i < 2 * holes; i += 2) {
 			stringptr = readline(inputline, file);
 			if (stringptr != (char *) NULL) {
-				return -1; // TODO: read error
+				return TRI_FILE_READ;
 			}
 			stringptr = findfield(stringptr);
 			if (*stringptr == '\0') {
@@ -600,7 +615,7 @@ int file_readholes_internal(FILE *file, triangleio *io)
 	/* Read the area constraints. */
 	stringptr = readline(inputline, file);
 	if (stringptr != (char *) NULL) {
-		return -1; // TODO: read error
+		return TRI_FILE_READ;
 	}
 	regions = (int) strtol(stringptr, &stringptr, 0);
 	if (regions > 0) {
@@ -610,7 +625,7 @@ int file_readholes_internal(FILE *file, triangleio *io)
 		for (i = 0; i < regions; i++) {
 			stringptr = readline(inputline, file);
 			if (stringptr != (char *) NULL) {
-				return -1; // TODO: read error
+				return TRI_FILE_READ;
 			}
 			stringptr = findfield(stringptr);
 			if (*stringptr == '\0') {
@@ -641,7 +656,7 @@ int file_readholes_internal(FILE *file, triangleio *io)
 	}
 #endif /* not CDT_ONLY */
 
-	return 0;
+	return TRI_OK;
 }
 
 /*****************************************************************************/
@@ -665,13 +680,17 @@ int file_readnodes(FILE *nodefile, triangleio *io, int *firstnode)
 
 int file_readpoly(FILE *polyfile, triangleio *io, int *firstnode)
 {
-	int numvertices;
+	int numvertices, s;
 
-	file_readnodes_internal(polyfile, io, &numvertices, firstnode);
-	file_readsegments_internal(polyfile, io, numvertices);
-	file_readholes_internal(polyfile, io);
-
-	return 0;
+	s = file_readnodes_internal(polyfile, io, &numvertices, firstnode);
+	if (s != TRI_OK) {
+		return s;
+	}
+	s = file_readsegments_internal(polyfile, io, numvertices);
+	if (s != TRI_OK) {
+		return s;
+	}
+	return file_readholes_internal(polyfile, io);
 }
 
 /*****************************************************************************/
@@ -692,13 +711,14 @@ int file_readelements(FILE *file, triangleio *io)
 
 	/* Read the triangles from an .ele file. */
 	if (file == (FILE *) NULL) {
-		return -1;
+		return TRI_FILE_OPEN;
 	}
+
 	/* Read number of triangles, number of vertices per triangle, and */
 	/*   number of triangle attributes from .ele file.                */
 	stringptr = readline(inputline, file);
 	if (stringptr != (char *) NULL) {
-		return -1; // TODO: read error
+		return TRI_FILE_READ;
 	}
 	inelements = (int) strtol(stringptr, &stringptr, 0);
 	stringptr = findfield(stringptr);
@@ -729,7 +749,7 @@ int file_readelements(FILE *file, triangleio *io)
 		/* Read triangle number and the triangle's three corners. */
 		stringptr = readline(inputline, file);
 		if (stringptr != (char *) NULL) {
-			return -1; // TODO: read error
+			return TRI_FILE_READ;
 		}
 		for (j = 0; j < 3; j++) {
 			stringptr = findfield(stringptr);
@@ -751,7 +771,7 @@ int file_readelements(FILE *file, triangleio *io)
 		}
 	}
 
-	return 0;
+	return TRI_OK;
 }
 
 /*****************************************************************************/
@@ -769,13 +789,13 @@ int file_readelementsarea(FILE *file, triangleio *io, int numelements)
 
 	/* Read the triangles area from an .area file. */
 	if (file == (FILE *) NULL) {
-		return -1;
+		return TRI_FILE_OPEN;
 	}
 
 	/* Check for consistency with the .ele file. */
 	stringptr = readline(inputline, file);
 	if (stringptr != (char *) NULL) {
-		return -1; // TODO: read error
+		return TRI_FILE_READ;
 	}
 	areaelements = (int) strtol(stringptr, &stringptr, 0);
 	if (areaelements != numelements) {
@@ -789,7 +809,7 @@ int file_readelementsarea(FILE *file, triangleio *io, int numelements)
 		/* Read an area constraint from the .area file. */
 		stringptr = readline(inputline, file);
 		if (stringptr != (char *) NULL) {
-			return -1; // TODO: read error
+			return TRI_FILE_READ;
 		}
 		stringptr = findfield(stringptr);
 		if (*stringptr == '\0') {
@@ -799,7 +819,7 @@ int file_readelementsarea(FILE *file, triangleio *io, int numelements)
 		}
 	}
 
-	return 0;
+	return TRI_OK;
 }
 
 /**                                                                         **/

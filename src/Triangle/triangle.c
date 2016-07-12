@@ -423,7 +423,7 @@ void internalerror()
 /*                                                                           */
 /*****************************************************************************/
 
-void parsecommandline(int argc, char **argv, behavior *b, int *err)
+void parsecommandline(int argc, char **argv, behavior *b)
 {
   int i, j, k;
   char workstring[FILENAMESIZE];
@@ -507,11 +507,6 @@ void parsecommandline(int argc, char **argv, behavior *b, int *err)
             }
             workstring[k] = '\0';
             b->maxarea = (REAL) strtod(workstring, (char **) NULL);
-            if (b->maxarea <= 0.0) {
-              // TODO: Error:  Maximum area must be greater than zero.
-              *err = ERR_CMD_LINE;
-              return;
-	    }
 	  } else {
             b->vararea = 1;
 	  }
@@ -5825,7 +5820,7 @@ enum finddirectionresult finddirection(mesh *m, behavior *b,
     if (searchtri->tri == m->dummytri) {
       // TODO: Internal error: finddirection()
       // Unable to find a triangle leading from (startvertex) to (searchpoint).
-      *err = ERR_FIND_DIRECTION;
+      *err = TRI_FIND_DIRECTION;
 	  return WITHIN;
     }
     apex(*searchtri, leftvertex);
@@ -5839,7 +5834,7 @@ enum finddirectionresult finddirection(mesh *m, behavior *b,
     if (searchtri->tri == m->dummytri) {
       // TODO: Internal error: finddirection()
       // Unable to find a triangle leading from (startvertex) to (searchpoint).
-      *err = ERR_FIND_DIRECTION;
+      *err = TRI_FIND_DIRECTION;
 	  return WITHIN;
     }
     dest(*searchtri, rightvertex);
@@ -5907,7 +5902,7 @@ void segmentintersection(mesh *m, behavior *b,
   if (denom == 0.0) {
       // TODO: Internal error: segmentintersection()
       // Attempt to find intersection of parallel segments.
-      *err = ERR_SEG_INTERSECTION;
+      *err = TRI_SEG_INTERSECT;
 	  return;
   }
   split = (ey * etx - ex * ety) / denom;
@@ -5924,7 +5919,7 @@ void segmentintersection(mesh *m, behavior *b,
   if (success != SUCCESSFULVERTEX) {
       // TODO: Internal error: segmentintersection()
       // Failure to split a segment.
-      *err = ERR_SEG_INTERSECTION;
+      *err = TRI_SEG_INTERSECT;
 	  return;
   }
   /* Record a triangle whose origin is the new vertex. */
@@ -5961,7 +5956,7 @@ void segmentintersection(mesh *m, behavior *b,
              (rightvertex[1] != endpoint1[1])) {
       // TODO: Internal error: segmentintersection()
       // Topological inconsistency after splitting a segment.
-      *err = ERR_SEG_INTERSECTION;
+      *err = TRI_SEG_INTERSECT;
 	  return;
   }
   /* `splittri' should have destination endpoint1. */
@@ -6405,7 +6400,7 @@ void insertsegment(mesh *m, behavior *b,
     if (locate(m, b, endpoint1, &searchtri1) != ONVERTEX) {
       // TODO: Internal error: insertsegment()
       // Unable to locate PSLG vertex (endpoint1) in triangulation.
-      *err = ERR_SEG_INSERT;
+      *err = TRI_SEG_INSERT;
 	  return;
     }
   }
@@ -6437,7 +6432,7 @@ void insertsegment(mesh *m, behavior *b,
     if (locate(m, b, endpoint2, &searchtri2) != ONVERTEX) {
       // TODO: Internal error: insertsegment()
       // Unable to locate PSLG vertex (endpoint2) in triangulation.
-      *err = ERR_SEG_INSERT;
+      *err = TRI_SEG_INSERT;
 	  return;
     }
   }
@@ -7302,7 +7297,7 @@ void splitencsegs(mesh *m, behavior *b, int triflaws, int *err)
             ((newvertex[0] == edest[0]) && (newvertex[1] == edest[1]))) {
           // TODO: Precision error: splitencsegs()
           // Ran out of precision at (newvertex).
-          *err = ERR_SPLIT_ENC_SEGS;
+          *err = TRI_SEG_SPLIT;
 		  return;
         }
         /* Insert the splitting vertex.  This should always succeed. */
@@ -7311,7 +7306,7 @@ void splitencsegs(mesh *m, behavior *b, int triflaws, int *err)
         if ((success != SUCCESSFULVERTEX) && (success != ENCROACHINGVERTEX)) {
           // TODO: Internal error: splitencsegs()
           // Failure to split a segment.
-          *err = ERR_SPLIT_ENC_SEGS;
+          *err = TRI_SEG_SPLIT;
 		  return;
         }
         if (m->steinerleft > 0) {

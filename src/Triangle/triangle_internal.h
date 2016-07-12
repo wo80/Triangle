@@ -37,7 +37,7 @@ void trifree(VOID *memptr);
 
 void internalerror();
 
-void parsecommandline(int argc, char **argv, behavior *b, int *err);
+void parsecommandline(int argc, char **argv, behavior *b);
 
 /**                                                                         **/
 /********* User interaction routines begin here                      *********/
