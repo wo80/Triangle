@@ -27,13 +27,14 @@
 
 #define TRI_OK 0
 #define TRI_FAILURE (-1)
-#define TRI_FILE_OPEN (-2)
-#define TRI_FILE_READ (-3)
-#define TRI_OPTIONS (-4)
-#define TRI_FIND_DIRECTION (-5)
-#define TRI_SEG_SPLIT (-6)
-#define TRI_SEG_INTERSECT (-7)
-#define TRI_SEG_INSERT (-8)
+#define TRI_OPTIONS (-2)
+#define TRI_INPUT (-3)
+#define TRI_FIND_DIRECTION (-4)
+#define TRI_SEG_SPLIT (-5)
+#define TRI_SEG_INTERSECT (-6)
+#define TRI_SEG_INSERT (-7)
+#define TRI_FILE_OPEN (-8)
+#define TRI_FILE_READ (-9)
 
 /* Set correct size for pointer alignment calculations */
 #if defined(_M_X64) || defined(__amd64__)

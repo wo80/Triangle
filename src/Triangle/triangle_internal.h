@@ -17,7 +17,7 @@ int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area);
 
 void interpolate(vertex newvertex, vertex org, vertex dest, vertex apex, int nextras);
 
-void behavior_update(behavior *b, int *err);
+void behavior_update(behavior *b);
 
 /********* Memory allocation and program exit wrappers begin here    *********/
 /**                                                                         **/
@@ -333,14 +333,14 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
 
 enum finddirectionresult finddirection(mesh *m, behavior *b,
                                        struct otri *searchtri,
-                                       vertex searchpoint, int *err);
+                                       vertex searchpoint, int *status);
 
 void segmentintersection(mesh *m, behavior *b,
                          struct otri *splittri, struct osub *splitsubseg,
-                         vertex endpoint2, int *err);
+                         vertex endpoint2, int *status);
 
 int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
-                 vertex endpoint2, int newmark, int *err);
+                 vertex endpoint2, int newmark, int *status);
 
 #ifndef REDUCED
 #ifndef CDT_ONLY
@@ -355,15 +355,15 @@ void delaunayfixup(mesh *m, behavior *b,
                    struct otri *fixuptri, int leftside);
 
 void constrainededge(mesh *m, behavior *b,
-                     struct otri *starttri, vertex endpoint2, int newmark, int *err);
+                     struct otri *starttri, vertex endpoint2, int newmark, int *status);
 
 void insertsegment(mesh *m, behavior *b,
-                   vertex endpoint1, vertex endpoint2, int newmark, int *err);
+                   vertex endpoint1, vertex endpoint2, int newmark, int *status);
 
 void markhull(mesh *m, behavior *b);
 
 void formskeleton(mesh *m, behavior *b, int *segmentlist,
-                  int *segmentmarkerlist, int numberofsegments, int *err);
+                  int *segmentmarkerlist, int numberofsegments, int *status);
 
 /**                                                                         **/
 /********* Segment insertion ends here                               *********/
@@ -393,14 +393,14 @@ void tallyencs(mesh *m, behavior *b);
 
 void precisionerror();
 
-void splitencsegs(mesh *m, behavior *b, int triflaws, int *err);
+void splitencsegs(mesh *m, behavior *b, int triflaws, int *status);
 
 void tallyfaces(mesh *m, behavior *b);
 
 void splittriangle(mesh *m, behavior *b,
                    struct badtriang *badtri);
 
-void enforcequality(mesh *m, behavior *b, int *err);
+void enforcequality(mesh *m, behavior *b, int *status);
 
 #endif /* not CDT_ONLY */
 

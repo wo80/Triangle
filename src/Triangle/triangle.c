@@ -265,7 +265,7 @@ void interpolate(vertex newvertex, vertex org, vertex dest, vertex apex, int nex
 /*                                                                           */
 /*****************************************************************************/
 
-void behavior_update(behavior *b, int *err)
+void behavior_update(behavior *b)
 {
   b->usesegments = b->poly || b->refine || b->quality || b->convex;
   b->goodangle = cos(b->minangle * PI / 180.0);
@@ -292,8 +292,6 @@ void behavior_update(behavior *b, int *err)
   /*   and meshing.                                              */
   if (b->weighted && (b->poly || b->quality)) {
     b->weighted = 0;
-    // TODO: Warning: weighted triangulations (-w, -W) are incompatible
-    //       with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.
   }
 }
 
@@ -613,8 +611,6 @@ void parsecommandline(int argc, char **argv, behavior *b)
   /*   and meshing.                                              */
   if (b->weighted && (b->poly || b->quality)) {
     b->weighted = 0;
-    // TODO: Warning:  weighted triangulations (-w, -W) are incompatible
-    //       with PSLGs (-p) and meshing (-q, -a, -u).  Weights ignored.
   }
 }
 
@@ -3071,8 +3067,9 @@ enum insertvertexresult insertvertex(mesh *m, behavior *b,
 
     /* Interpolate attributes of new vertex. */
     if (attribs > 0 && m->nextras > 0) {
-      /* TODO: the new vertex lies on the segment (rightvertex, leftvertex), */
-      /*       so we should use line interpolation. */
+      /* TODO: vertex attribute interpolation */
+      /*   The new vertex lies on the segment (rightvertex, leftvertex), */
+      /*   so we could use line interpolation. */
       interpolate(newvertex, rightvertex, leftvertex, botvertex, m->nextras);
     }
 
@@ -4581,7 +4578,7 @@ long divconqdelaunay(mesh *m, behavior *b)
 "Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
                sortarray[j][0], sortarray[j][1]);
 #endif
-	  // TODO: warning
+      // TODO: warning UNDEADVERTEX
       setvertextype(sortarray[j], UNDEADVERTEX);
       m->undeads++;
     } else {
@@ -4787,7 +4784,7 @@ long incrementaldelaunay(mesh *m, behavior *b)
       printf("Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
              vertexloop[0], vertexloop[1]);
 #endif
-
+      // TODO: warning UNDEADVERTEX
       setvertextype(vertexloop, UNDEADVERTEX);
       m->undeads++;
     }
@@ -5266,8 +5263,8 @@ long sweeplinedelaunay(mesh *m, behavior *b)
   heapsize--;
   do {
     if (heapsize == 0) {
-      // TODO: Error:  Input vertices are all identical.
-      return -1;
+      /* Error:  Input vertices are all identical. */
+      return TRI_INPUT;
     }
     secondvertex = (vertex) eventheap[0]->eventptr;
     eventheap[0]->eventptr = (VOID *) freeevents;
@@ -5281,6 +5278,7 @@ long sweeplinedelaunay(mesh *m, behavior *b)
 "Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
                secondvertex[0], secondvertex[1]);
 #endif
+      // TODO: warning UNDEADVERTEX
       setvertextype(secondvertex, UNDEADVERTEX);
       m->undeads++;
     }
@@ -5330,6 +5328,7 @@ long sweeplinedelaunay(mesh *m, behavior *b)
 "Warning:  A duplicate vertex at (%.12g, %.12g) appeared and was ignored.\n",
                  nextvertex[0], nextvertex[1]);
 #endif
+        // TODO: warning UNDEADVERTEX
         setvertextype(nextvertex, UNDEADVERTEX);
         m->undeads++;
         check4events = 0;
@@ -5528,9 +5527,8 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
   m->inelements = elements;
   incorners = corners;
   if (incorners < 3) {
-    // TODO: warning?
-    // Triangles must have at least 3 vertices.
-    return -1;
+    /* Error:  Triangles must have at least 3 vertices. */
+    return TRI_INPUT;
   }
   m->eextras = attribs;
 
@@ -5581,7 +5579,7 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
       if ((corner[j] < b->firstnumber) ||
           (corner[j] >= b->firstnumber + m->invertices)) {
         // TODO: Error:  Triangle (elementnumber) has an invalid vertex index.
-        return -1;
+        return TRI_INPUT;
       }
     }
 
@@ -5672,7 +5670,7 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
         if ((end[j] < b->firstnumber) ||
             (end[j] >= b->firstnumber + m->invertices)) {
           // TODO: Error:  Segment (segmentnumber) has an invalid vertex index.
-          return -1;
+          return TRI_INPUT;
         }
       }
 
@@ -5786,7 +5784,7 @@ int reconstruct(mesh *m, behavior *b, int *trianglelist,
 
 enum finddirectionresult finddirection(mesh *m, behavior *b,
                                        struct otri *searchtri,
-                                       vertex searchpoint, int *err)
+                                       vertex searchpoint, int *status)
 {
   struct otri checktri;
   vertex startvertex;
@@ -5820,7 +5818,7 @@ enum finddirectionresult finddirection(mesh *m, behavior *b,
     if (searchtri->tri == m->dummytri) {
       // TODO: Internal error: finddirection()
       // Unable to find a triangle leading from (startvertex) to (searchpoint).
-      *err = TRI_FIND_DIRECTION;
+      *status = TRI_FIND_DIRECTION;
 	  return WITHIN;
     }
     apex(*searchtri, leftvertex);
@@ -5834,7 +5832,7 @@ enum finddirectionresult finddirection(mesh *m, behavior *b,
     if (searchtri->tri == m->dummytri) {
       // TODO: Internal error: finddirection()
       // Unable to find a triangle leading from (startvertex) to (searchpoint).
-      *err = TRI_FIND_DIRECTION;
+      *status = TRI_FIND_DIRECTION;
 	  return WITHIN;
     }
     dest(*searchtri, rightvertex);
@@ -5870,7 +5868,7 @@ enum finddirectionresult finddirection(mesh *m, behavior *b,
 
 void segmentintersection(mesh *m, behavior *b,
                          struct otri *splittri, struct osub *splitsubseg,
-                         vertex endpoint2, int *err)
+                         vertex endpoint2, int *status)
 {
   struct osub opposubseg;
   vertex endpoint1;
@@ -5902,7 +5900,7 @@ void segmentintersection(mesh *m, behavior *b,
   if (denom == 0.0) {
       // TODO: Internal error: segmentintersection()
       // Attempt to find intersection of parallel segments.
-      *err = TRI_SEG_INTERSECT;
+      *status = TRI_SEG_INTERSECT;
 	  return;
   }
   split = (ey * etx - ex * ety) / denom;
@@ -5919,7 +5917,7 @@ void segmentintersection(mesh *m, behavior *b,
   if (success != SUCCESSFULVERTEX) {
       // TODO: Internal error: segmentintersection()
       // Failure to split a segment.
-      *err = TRI_SEG_INTERSECT;
+      *status = TRI_SEG_INTERSECT;
 	  return;
   }
   /* Record a triangle whose origin is the new vertex. */
@@ -5944,9 +5942,8 @@ void segmentintersection(mesh *m, behavior *b,
 
   /* Inserting the vertex may have caused edge flips.  We wish to rediscover */
   /*   the edge connecting endpoint1 to the new intersection vertex.         */
-  collinear = finddirection(m, b, splittri, endpoint1, err);
-  // TODO: Error
-  if (*err > 0) return;
+  collinear = finddirection(m, b, splittri, endpoint1, status);
+  if (*status < 0) return;
 
   dest(*splittri, rightvertex);
   apex(*splittri, leftvertex);
@@ -5956,7 +5953,7 @@ void segmentintersection(mesh *m, behavior *b,
              (rightvertex[1] != endpoint1[1])) {
       // TODO: Internal error: segmentintersection()
       // Topological inconsistency after splitting a segment.
-      *err = TRI_SEG_INTERSECT;
+      *status = TRI_SEG_INTERSECT;
 	  return;
   }
   /* `splittri' should have destination endpoint1. */
@@ -5987,7 +5984,7 @@ void segmentintersection(mesh *m, behavior *b,
 /*****************************************************************************/
 
 int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
-                 vertex endpoint2, int newmark, int *err)
+                 vertex endpoint2, int newmark, int *status)
 {
   struct otri crosstri;
   struct osub crosssubseg;
@@ -5995,9 +5992,8 @@ int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
   enum finddirectionresult collinear;
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
-  collinear = finddirection(m, b, searchtri, endpoint2, err);
-  // TODO: error 
-  if (*err > 0) return -1;
+  collinear = finddirection(m, b, searchtri, endpoint2, status);
+  if (*status < 0) return -1;
 
   dest(*searchtri, rightvertex);
   apex(*searchtri, leftvertex);
@@ -6016,14 +6012,14 @@ int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
     lprevself(*searchtri);
     insertsubseg(m, b, searchtri, newmark);
     /* Insert the remainder of the segment. */
-    return scoutsegment(m, b, searchtri, endpoint2, newmark, err);
+    return scoutsegment(m, b, searchtri, endpoint2, newmark, status);
   } else if (collinear == RIGHTCOLLINEAR) {
     /* We've collided with a vertex between the segment's endpoints. */
     insertsubseg(m, b, searchtri, newmark);
     /* Make the collinear vertex be the triangle's origin. */
     lnextself(*searchtri);
     /* Insert the remainder of the segment. */
-    return scoutsegment(m, b, searchtri, endpoint2, newmark, err);
+    return scoutsegment(m, b, searchtri, endpoint2, newmark, status);
   } else {
     lnext(*searchtri, crosstri);
     tspivot(crosstri, crosssubseg);
@@ -6032,14 +6028,13 @@ int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
       return 0;
     } else {
       /* Insert a vertex at the intersection. */
-      segmentintersection(m, b, &crosstri, &crosssubseg, endpoint2, err);
-      // TODO: error 
-      if (*err > 0) return -1;
+      segmentintersection(m, b, &crosstri, &crosssubseg, endpoint2, status);
+      if (*status < 0) return -1;
 
       otricopy(crosstri, *searchtri);
       insertsubseg(m, b, searchtri, newmark);
       /* Insert the remainder of the segment. */
-      return scoutsegment(m, b, searchtri, endpoint2, newmark, err);
+      return scoutsegment(m, b, searchtri, endpoint2, newmark, status);
     }
   }
 }
@@ -6285,7 +6280,7 @@ void delaunayfixup(mesh *m, behavior *b,
 /*****************************************************************************/
 
 void constrainededge(mesh *m, behavior *b,
-                     struct otri *starttri, vertex endpoint2, int newmark, int *err)
+                     struct otri *starttri, vertex endpoint2, int newmark, int *status)
 {
   struct otri fixuptri, fixuptri2;
   struct osub crosssubseg;
@@ -6352,7 +6347,7 @@ void constrainededge(mesh *m, behavior *b,
           /* We've collided with a segment between endpoint1 and endpoint2. */
           collision = 1;
           /* Insert a vertex at the intersection. */
-          segmentintersection(m, b, &fixuptri, &crosssubseg, endpoint2, err);
+          segmentintersection(m, b, &fixuptri, &crosssubseg, endpoint2, status);
           done = 1;
         }
       }
@@ -6364,8 +6359,8 @@ void constrainededge(mesh *m, behavior *b,
   /*   segment connecting that vertex with endpoint2.                     */
   if (collision) {
     /* Insert the remainder of the segment. */
-    if (!scoutsegment(m, b, &fixuptri, endpoint2, newmark, err)) {
-      constrainededge(m, b, &fixuptri, endpoint2, newmark, err);
+    if (!scoutsegment(m, b, &fixuptri, endpoint2, newmark, status)) {
+      constrainededge(m, b, &fixuptri, endpoint2, newmark, status);
     }
   }
 }
@@ -6377,7 +6372,7 @@ void constrainededge(mesh *m, behavior *b,
 /*****************************************************************************/
 
 void insertsegment(mesh *m, behavior *b,
-                   vertex endpoint1, vertex endpoint2, int newmark, int *err)
+                   vertex endpoint1, vertex endpoint2, int newmark, int *status)
 {
   struct otri searchtri1, searchtri2;
   triangle encodedtri;
@@ -6400,7 +6395,7 @@ void insertsegment(mesh *m, behavior *b,
     if (locate(m, b, endpoint1, &searchtri1) != ONVERTEX) {
       // TODO: Internal error: insertsegment()
       // Unable to locate PSLG vertex (endpoint1) in triangulation.
-      *err = TRI_SEG_INSERT;
+      *status = TRI_SEG_INSERT;
 	  return;
     }
   }
@@ -6408,7 +6403,7 @@ void insertsegment(mesh *m, behavior *b,
   otricopy(searchtri1, m->recenttri);
   /* Scout the beginnings of a path from the first endpoint */
   /*   toward the second.                                   */
-  if (scoutsegment(m, b, &searchtri1, endpoint2, newmark, err)) {
+  if (scoutsegment(m, b, &searchtri1, endpoint2, newmark, status)) {
     /* The segment was easily inserted. */
     return;
   }
@@ -6432,7 +6427,7 @@ void insertsegment(mesh *m, behavior *b,
     if (locate(m, b, endpoint2, &searchtri2) != ONVERTEX) {
       // TODO: Internal error: insertsegment()
       // Unable to locate PSLG vertex (endpoint2) in triangulation.
-      *err = TRI_SEG_INSERT;
+      *status = TRI_SEG_INSERT;
 	  return;
     }
   }
@@ -6440,7 +6435,7 @@ void insertsegment(mesh *m, behavior *b,
   otricopy(searchtri2, m->recenttri);
   /* Scout the beginnings of a path from the second endpoint */
   /*   toward the first.                                     */
-  if (scoutsegment(m, b, &searchtri2, endpoint1, newmark, err)) {
+  if (scoutsegment(m, b, &searchtri2, endpoint1, newmark, status)) {
     /* The segment was easily inserted. */
     return;
   }
@@ -6457,7 +6452,7 @@ void insertsegment(mesh *m, behavior *b,
 #endif /* not CDT_ONLY */
 #endif /* not REDUCED */
     /* Insert the segment directly into the triangulation. */
-    constrainededge(m, b, &searchtri1, endpoint2, newmark, err);
+    constrainededge(m, b, &searchtri1, endpoint2, newmark, status);
 #ifndef REDUCED
 #ifndef CDT_ONLY
   }
@@ -6509,7 +6504,7 @@ void markhull(mesh *m, behavior *b)
 /*****************************************************************************/
 
 void formskeleton(mesh *m, behavior *b, int *segmentlist,
-                  int *segmentmarkerlist, int numberofsegments, int *err)
+                  int *segmentmarkerlist, int numberofsegments, int *status)
 {
   int index;
   vertex endpoint1, endpoint2;
@@ -6566,9 +6561,8 @@ void formskeleton(mesh *m, behavior *b, int *segmentlist,
                    b->firstnumber + i);
 #endif
         } else {
-          insertsegment(m, b, endpoint1, endpoint2, boundmarker, err);
-          // TODO: error
-          if (*err > 0) return;
+          insertsegment(m, b, endpoint1, endpoint2, boundmarker, status);
+          if (*status < 0) return;
         }
       }
     }
@@ -7138,7 +7132,7 @@ void precisionerror()
 
 #ifndef CDT_ONLY
 
-void splitencsegs(mesh *m, behavior *b, int triflaws, int *err)
+void splitencsegs(mesh *m, behavior *b, int triflaws, int *status)
 {
   struct otri enctri;
   struct otri testtri;
@@ -7297,7 +7291,7 @@ void splitencsegs(mesh *m, behavior *b, int triflaws, int *err)
             ((newvertex[0] == edest[0]) && (newvertex[1] == edest[1]))) {
           // TODO: Precision error: splitencsegs()
           // Ran out of precision at (newvertex).
-          *err = TRI_SEG_SPLIT;
+          *status = TRI_SEG_SPLIT;
 		  return;
         }
         /* Insert the splitting vertex.  This should always succeed. */
@@ -7306,7 +7300,7 @@ void splitencsegs(mesh *m, behavior *b, int triflaws, int *err)
         if ((success != SUCCESSFULVERTEX) && (success != ENCROACHINGVERTEX)) {
           // TODO: Internal error: splitencsegs()
           // Failure to split a segment.
-          *err = TRI_SEG_SPLIT;
+          *status = TRI_SEG_SPLIT;
 		  return;
         }
         if (m->steinerleft > 0) {
@@ -7470,7 +7464,7 @@ void splittriangle(mesh *m, behavior *b,
 
 #ifndef CDT_ONLY
 
-void enforcequality(mesh *m, behavior *b, int *err)
+void enforcequality(mesh *m, behavior *b, int *status)
 {
   struct badtriang *badtri;
   int i;
@@ -7489,9 +7483,8 @@ void enforcequality(mesh *m, behavior *b, int *err)
   tallyencs(m, b);
 
   /* Fix encroached subsegments without noting bad triangles. */
-  splitencsegs(m, b, 0, err);
-  // TODO: error
-  if (*err > 0) return;
+  splitencsegs(m, b, 0, status);
+  if (*status < 0) return;
 
   /* At this point, if we haven't run out of Steiner points, the */
   /*   triangulation should be (conforming) Delaunay.            */
@@ -7522,9 +7515,8 @@ void enforcequality(mesh *m, behavior *b, int *err)
         enqueuebadtriang(m, b, badtri);
         /* Fix any encroached subsegments that resulted. */
         /*   Record any new bad triangles that result.   */
-        splitencsegs(m, b, 1, err);
-        // TODO: error
-        if (*err > 0) return;
+        splitencsegs(m, b, 1, status);
+        if (*status < 0) return;
       } else {
         /* Return the bad triangle to the pool. */
         pooldealloc(&m->badtriangles, (VOID *) badtri);
@@ -7653,8 +7645,8 @@ int transfernodes(mesh *m, behavior *b, REAL *pointlist,
   m->nextras = numberofpointattribs;
   m->readnodefile = 0;
   if (m->invertices < 3) {
-    // TODO: Error:  Input must have at least three input vertices.
-    return -1;
+    /* Error:  Input must have at least three input vertices. */
+    return TRI_INPUT;
   }
   if (m->nextras == 0) {
     b->weighted = 0;
@@ -8017,7 +8009,7 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
   subsegs = (int *) trimalloc((int) (m->triangles.items * sizeof(int)));
 
   /* Number the triangles by overwriting the first subseg pointer
-   * with an integer triangle id. */
+   * with an integer id. */
   
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
