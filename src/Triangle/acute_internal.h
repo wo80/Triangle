@@ -21,9 +21,8 @@ int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b,
 			                int numpoints, REAL *points, REAL *newloc);
 int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b, 
 			             int numpoints, REAL *points, REAL *newloc);
-int polygonAngles(mesh *m, behavior *b,int numpoints, REAL *points);
-int testPolygonAngle(mesh *m, behavior *b, 
-				REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
+int polygonAngles(behavior *b,int numpoints, REAL *points);
+int testPolygonAngle(behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
 void lineLineIntersection(REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, REAL x4, REAL y4 , REAL *p);
 int halfPlaneIntersection(int numvertices, REAL *convexPoly, REAL x1, REAL y1, REAL x2, REAL y2);
 int splitConvexPolygon(int numvertices,REAL *convexPoly, REAL x1, REAL y1, REAL x2, REAL y2, REAL *polys[]);
@@ -33,7 +32,7 @@ void findPolyCentroid(int numpoints, REAL *points, REAL *centroid);
 void circleLineIntersection (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, REAL r , REAL *p);
 int chooseCorrectPoint (REAL x1, REAL y1, REAL x2, REAL y2, REAL x3, REAL y3, int isObtuse );
 void pointBetweenPoints(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y, REAL *p);
-int testTriangleAngle(mesh *m, behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
+int testTriangleAngle(behavior *b, REAL *x1, REAL *y1, REAL *x2, REAL *y2, REAL *x3, REAL *y3 );
 REAL minDistanceToNeigbor(mesh *m, behavior *b, REAL newlocX, REAL newlocY, struct otri *searchtri);
 
 #endif /* ACUTE_INTERNAL_H */

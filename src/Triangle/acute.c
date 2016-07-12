@@ -502,7 +502,7 @@ void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
 					// if it is between circumcenter and intersection	
 					// if it returns 1.0 this means we have a voronoi vertex within feasible region
 					if(fabs(voronoiOrInter[0] - 1.0) <= compConst){
-						if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
+						if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
 							// go back to circumcenter
 							dxFirstSuggestion = dx;
 							dyFirstSuggestion = dy;							
@@ -514,7 +514,7 @@ void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
 						}
 												
 					}else{ // there is no voronoi vertex between intersection point and circumcenter
-						if(testTriangleAngle(m, b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &inter_x, &inter_y) != 0){
+						if(testTriangleAngle(b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &inter_x, &inter_y) != 0){
 						// if it is inside feasible region, then insert v2				
 							// apply perturbation
 							// find the distance between circumcenter and intersection point
@@ -529,7 +529,7 @@ void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
 							// now calculate the new intersection point which is perturbated towards the circumcenter
 							inter_x = inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 							inter_y = inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-							if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
+							if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
 								// go back to circumcenter
 								dxFirstSuggestion = dx;
 								dyFirstSuggestion = dy; 	 						
@@ -617,7 +617,7 @@ void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
 					// if it is between circumcenter and intersection	
 					// if it returns 1.0 this means we have a voronoi vertex within feasible region
 					if(fabs(voronoiOrInter[0] - 1.0) <= compConst){
-						if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
+						if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
 							// go back to circumcenter
 							dxSecondSuggestion = dx;
 							dySecondSuggestion = dy;
@@ -630,7 +630,7 @@ void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
 						}
 												
 					}else{ // there is no voronoi vertex between intersection point and circumcenter
-						if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){
+						if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){
 						// if it is inside feasible region, then insert v2				
 							// apply perturbation
 							// find the distance between circumcenter and intersection point
@@ -645,7 +645,7 @@ void findNewSPLocationWithoutMaxAngle(mesh *m, behavior *b,
 							// now calculate the new intersection point which is perturbated towards the circumcenter
 							inter_x = inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 							inter_y = inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-							if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
+							if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
 								// go back to circumcenter
 								dxSecondSuggestion = dx;
 								dySecondSuggestion = dy; 		
@@ -758,7 +758,6 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 	// for finding neighbor
 	struct otri neighborotri;
 	REAL thirdPoint[2];
-	int neighborNotFound = -1;
 	// for keeping the vertices of the neighbor triangle
 	vertex neighborvertex_1;
 	vertex neighborvertex_2;
@@ -1200,7 +1199,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								(smallestAngleCorner[0]-line_inter_x) + 
 								(smallestAngleCorner[1]-line_inter_y) *
 								(smallestAngleCorner[1]-line_inter_y) ))  
-								&& (testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_first, &petal_slab_inter_y_first) != 0) 
+								&& (testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_first, &petal_slab_inter_y_first) != 0) 
 								&& minDistanceToNeigbor(m, b, petal_slab_inter_x_first, petal_slab_inter_y_first,&neighborotri) > minDistanceToNeigbor(m, b, line_inter_x, line_inter_y,&neighborotri)){
 	// 							
 								/// check the neighbor's vertices also, which one if better
@@ -1209,7 +1208,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								dxFirstSuggestion = petal_slab_inter_x_first - torg[0];
 								dyFirstSuggestion = petal_slab_inter_y_first - torg[1];	
 							}else{ // slab intersection point is further away
-								if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){											
+								if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){											
 									// apply perturbation
 									// find the distance between circumcenter and intersection point
 									d = sqrt((line_inter_x - myCircumcenter[0]) * (line_inter_x - myCircumcenter[0]) + 
@@ -1223,7 +1222,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 									// now calculate the new intersection point which is perturbated towards the circumcenter
 									line_inter_x = line_inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 									line_inter_y = line_inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-									if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
+									if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
 										// go back to circumcenter
 										dxFirstSuggestion = dx;
 										dyFirstSuggestion = dy; 
@@ -1248,7 +1247,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 						//------------------------------------------------------//
 						}else{
 							/// NOW APPLY A BREADTH-FIRST SEARCH ON THE VORONOI
-							if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
+							if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
 								// go back to circumcenter
 								dxFirstSuggestion = dx;
 								dyFirstSuggestion = dy;
@@ -1277,14 +1276,14 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								(smallestAngleCorner[0]-line_inter_x) + 
 								(smallestAngleCorner[1]-line_inter_y) *
 								(smallestAngleCorner[1]-line_inter_y) ))  
-								&& (testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_first, &petal_slab_inter_y_first) != 0)
+								&& (testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_first, &petal_slab_inter_y_first) != 0)
 								&& minDistanceToNeigbor(m, b, petal_slab_inter_x_first, petal_slab_inter_y_first,&neighborotri) > minDistanceToNeigbor(m, b, line_inter_x, line_inter_y,&neighborotri) ){
 								//slab and petal intersection is advised
 								dxFirstSuggestion  = petal_slab_inter_x_first - torg[0];
 								dyFirstSuggestion = petal_slab_inter_y_first - torg[1];			
 								
 							}else{ // slab intersection point is further away							
-								if(testTriangleAngle(m, b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &line_inter_x, &line_inter_y) != 0){			
+								if(testTriangleAngle(b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &line_inter_x, &line_inter_y) != 0){			
 									// apply perturbation
 									// find the distance between circumcenter and intersection point
 									d = sqrt((line_inter_x - myCircumcenter[0]) * (line_inter_x - myCircumcenter[0]) + 
@@ -1298,7 +1297,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 									// now calculate the new intersection point which is perturbated towards the circumcenter
 									line_inter_x = line_inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 									line_inter_y = line_inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-									if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
+									if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
 										// go back to circumcenter
 										dxFirstSuggestion = dx;
 										dyFirstSuggestion = dy; 
@@ -1322,7 +1321,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 						
 						}else{						
 							
-							if(testTriangleAngle(m, b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &inter_x, &inter_y) != 0){
+							if(testTriangleAngle(b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &inter_x, &inter_y) != 0){
 								//printf("testtriangle returned false! bad triangle\n");	
 								// if it is inside feasible region, then insert v2				
 								// apply perturbation
@@ -1338,7 +1337,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								// now calculate the new intersection point which is perturbated towards the circumcenter
 								inter_x = inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 								inter_y = inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-								if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
+								if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
 									// go back to circumcenter
 									dxFirstSuggestion = dx;
 									dyFirstSuggestion = dy; 
@@ -1467,7 +1466,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								(smallestAngleCorner[0]-line_inter_x) + 
 								(smallestAngleCorner[1]-line_inter_y) *
 								(smallestAngleCorner[1]-line_inter_y) ))  
-								&& (testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_second, &petal_slab_inter_y_second) != 0)
+								&& (testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_second, &petal_slab_inter_y_second) != 0)
 								&& minDistanceToNeigbor(m, b, petal_slab_inter_x_second, petal_slab_inter_y_second,&neighborotri) > minDistanceToNeigbor(m, b, line_inter_x, line_inter_y,&neighborotri)){							
 								// slab and petal intersection is advised
 								dxSecondSuggestion = petal_slab_inter_x_second - torg[0];
@@ -1475,7 +1474,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								
 								
 							}else{ // slab intersection point is further away	
-								if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){											
+								if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){											
 									// apply perturbation
 									// find the distance between circumcenter and intersection point
 									d = sqrt((line_inter_x - myCircumcenter[0]) * (line_inter_x - myCircumcenter[0]) + 
@@ -1489,7 +1488,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 									// now calculate the new intersection point which is perturbated towards the circumcenter
 									line_inter_x = line_inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 									line_inter_y = line_inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-									if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
+									if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
 										// go back to circumcenter
 										dxSecondSuggestion = dx;
 										dySecondSuggestion = dy; 
@@ -1512,7 +1511,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 							}
 						//------------------------------------------------------//
 						}else{
-							if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
+							if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &neighborCircumcenter[0], &neighborCircumcenter[1]) != 0){
 								// go back to circumcenter
 								dxSecondSuggestion = dx;
 								dySecondSuggestion = dy;
@@ -1539,14 +1538,14 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								(smallestAngleCorner[0]-line_inter_x) + 
 								(smallestAngleCorner[1]-line_inter_y) *
 								(smallestAngleCorner[1]-line_inter_y) ))  
-								&& (testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_second, &petal_slab_inter_y_second) != 0)
+								&& (testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &petal_slab_inter_x_second, &petal_slab_inter_y_second) != 0)
 								&& minDistanceToNeigbor(m, b, petal_slab_inter_x_second, petal_slab_inter_y_second,&neighborotri) > minDistanceToNeigbor(m, b, line_inter_x, line_inter_y,&neighborotri)){
 								// slab and petal intersection is advised
 								dxSecondSuggestion  = petal_slab_inter_x_second - torg[0];
 								dySecondSuggestion = petal_slab_inter_y_second - torg[1];	
 																
 							}else{ // slab intersection point is further away							;
-								if(testTriangleAngle(m, b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &line_inter_x, &line_inter_y) != 0){				
+								if(testTriangleAngle(b, &largestAngleCorner[0], &largestAngleCorner[1], &middleAngleCorner[0], &middleAngleCorner[1], &line_inter_x, &line_inter_y) != 0){				
 									// apply perturbation
 									// find the distance between circumcenter and intersection point
 									d = sqrt((line_inter_x - myCircumcenter[0]) * (line_inter_x - myCircumcenter[0]) + 
@@ -1560,7 +1559,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 									// now calculate the new intersection point which is perturbated towards the circumcenter
 									line_inter_x = line_inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 									line_inter_y = line_inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-									if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
+									if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &line_inter_x, &line_inter_y) != 0){							
 										// go back to circumcenter
 										dxSecondSuggestion = dx;
 										dySecondSuggestion = dy; 
@@ -1583,7 +1582,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 						//------------------------------------------------------//
 						
 						}else{						
-							if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){
+							if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){
 							// if it is inside feasible region, then insert v2				
 								// apply perturbation
 								// find the distance between circumcenter and intersection point
@@ -1598,7 +1597,7 @@ void findNewSPLocationWithMaxAngle(mesh *m, behavior *b,
 								// now calculate the new intersection point which is perturbated towards the circumcenter
 								inter_x = inter_x + ax * pertConst * sqrt(shortestEdgeDist);
 								inter_y = inter_y + ay * pertConst * sqrt(shortestEdgeDist);
-								if(testTriangleAngle(m, b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
+								if(testTriangleAngle(b, &middleAngleCorner[0], &middleAngleCorner[1], &largestAngleCorner[0], &largestAngleCorner[1], &inter_x, &inter_y) != 0){							
 									// go back to circumcenter
 									dxSecondSuggestion = dx;
 									dySecondSuggestion = dy; 
@@ -1902,7 +1901,7 @@ int doSmoothing(mesh *m, behavior *b,
 // 	m->counterclockcount--;
 	// INTERSECTION OF PETALS
 	// first check whether the star angles are appropriate for relocation
-	if(numpoints_p != 0 && polygonAngles(m,b,numpoints_p,points_p)== 0){
+	if(numpoints_p != 0 && polygonAngles(b,numpoints_p,points_p)== 0){
 		//newLocFound = getPetalIntersection(m, b, numpoints_p, points_p, newloc);
 		//newLocFound = getPetalIntersectionBruteForce(m, b,numpoints_p, points_p, newloc,torg[0],torg[1]);
 		if(b->maxangle == 0.0){
@@ -1942,7 +1941,7 @@ int doSmoothing(mesh *m, behavior *b,
 // 	m->counterclockcount--;
 	// INTERSECTION OF PETALS
 	// first check whether the star angles are appropriate for relocation
-	if(numpoints_q != 0 && polygonAngles(m,b,numpoints_q,points_q)== 0){
+	if(numpoints_q != 0 && polygonAngles(b,numpoints_q,points_q)== 0){
 		//newLocFound = getPetalIntersection(m, b,numpoints_q, points_q, newloc);
 		//newLocFound = getPetalIntersectionBruteForce(m, b,numpoints_q, points_q, newloc,tapex[0],tapex[1]);
 		if(b->maxangle == 0.0){
@@ -1983,7 +1982,7 @@ int doSmoothing(mesh *m, behavior *b,
 // 	m->counterclockcount--;
 	// INTERSECTION OF PETALS
 	// first check whether the star angles are appropriate for relocation
-	if(numpoints_r != 0 && polygonAngles(m,b,numpoints_r,points_r)== 0){
+	if(numpoints_r != 0 && polygonAngles(b,numpoints_r,points_r)== 0){
 		//newLocFound = getPetalIntersection(m, b,numpoints_r, points_r, newloc);
 		//newLocFound = getPetalIntersectionBruteForce(m, b,numpoints_r, points_r, newloc,tdest[0],tdest[1]);
 		if(b->maxangle == 0.0){
@@ -2250,8 +2249,6 @@ int getNeighborsVertex(mesh *m, struct otri badotri,
 //---------------------------------------------------------------------------------//
 int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b, 
 			    int numpoints, REAL *points, REAL *newloc){
-    REAL total_x = 0;
-    REAL total_y = 0;
     REAL x0, y0, x1, y1, x2, y2;
     //REAL compConst = 0.01; // for comparing real numbers
     
@@ -2492,8 +2489,6 @@ int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b,
 //---------------------------------------------------------------------------------//
 int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b, 
 			    int numpoints, REAL *points, REAL *newloc){
-    REAL total_x = 0;
-    REAL total_y = 0;
     REAL x0, y0, x1, y1, x2, y2;
     //REAL compConst = 0.01; // for comparing real numbers
     
@@ -2851,11 +2846,11 @@ int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b,
 	if(b->maxangle != 0.0){
 		numBadTriangle = 0;
 		for(j= 0; j < numpoints *2-2; j = j+2){
-			if(testTriangleAngle(m,b,&newloc[0],&newloc[1], &points[j], &points[j+1], &points[j+2], &points[j+3] )){
+			if(testTriangleAngle(b,&newloc[0],&newloc[1], &points[j], &points[j+1], &points[j+2], &points[j+3] )){
 				numBadTriangle++; 
 			}
 		}
-		if(testTriangleAngle(m,b, &newloc[0],&newloc[1], &points[0], &points[1], &points[numpoints*2-2], &points[numpoints*2-1] )){
+		if(testTriangleAngle(b, &newloc[0],&newloc[1], &points[0], &points[1], &points[numpoints*2-2], &points[numpoints*2-1] )){
 			numBadTriangle++;
 		}
 		
@@ -2883,11 +2878,11 @@ int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b,
 				}			
 				numBadTriangle = 0;
 				for(j= 0; j < numpoints *2-2; j = j+2){
-					if(testTriangleAngle(m,b,&newloc[0],&newloc[1], &points[j], &points[j+1], &points[j+2], &points[j+3] )){
+					if(testTriangleAngle(b,&newloc[0],&newloc[1], &points[j], &points[j+1], &points[j+2], &points[j+3] )){
 						numBadTriangle++; 
 					}
 				}
-				if(testTriangleAngle(m,b, &newloc[0],&newloc[1], &points[0], &points[1], &points[numpoints*2-2], &points[numpoints*2-1] )){
+				if(testTriangleAngle(b, &newloc[0],&newloc[1], &points[0], &points[1], &points[numpoints*2-2], &points[numpoints*2-1] )){
 					numBadTriangle++;
 				}
 				
@@ -2920,19 +2915,19 @@ int getWedgeIntersectionWithMaxAngle(mesh *m, behavior *b,
 // polygonAngles()
 // Return 0 if the polygon has angles greater than 2*minangle
 //---------------------------------------------------------------------------------//
-int polygonAngles(mesh *m, behavior *b,int numpoints, REAL *points){
+int polygonAngles(behavior *b,int numpoints, REAL *points){
 	int i;
 	for(i = 0; i < numpoints; i++){
 		if(i == numpoints-1){
-			if( testPolygonAngle(m,b, &points[i*2], &points[i*2+1], &points[0], &points[1], &points[2], &points[3]) ){
+			if( testPolygonAngle(b, &points[i*2], &points[i*2+1], &points[0], &points[1], &points[2], &points[3]) ){
 				return 1;	// one of the inner angles is less than required
 			}
 		}else if(i == numpoints-2){
-			if( testPolygonAngle(m,b, &points[i*2], &points[i*2+1], &points[(i+1)*2], &points[(i+1)*2+1], &points[0], &points[1]) ){
+			if( testPolygonAngle(b, &points[i*2], &points[i*2+1], &points[(i+1)*2], &points[(i+1)*2+1], &points[0], &points[1]) ){
 				return 1;	// one of the inner angles is less than required
 			}
 		}else{
-			if( testPolygonAngle(m,b, &points[i*2], &points[i*2+1], &points[(i+1)*2], &points[(i+1)*2+1], &points[(i+2)*2], &points[(i+2)*2+1]) ){
+			if( testPolygonAngle(b, &points[i*2], &points[i*2+1], &points[(i+1)*2], &points[(i+1)*2+1], &points[(i+2)*2], &points[(i+2)*2+1]) ){
 				return 1;	// one of the inner angles is less than required
 			}
 		}
@@ -2946,7 +2941,7 @@ int polygonAngles(mesh *m, behavior *b,int numpoints, REAL *points){
 // tests to see if it satisfies the minimum angle condition for relocation 
 // Returns 1, if it is a BAD polygon corner, returns 0 if it is a GOOD polygon corner
 //---------------------------------------------------------------------------------//
-int testPolygonAngle(mesh *m, behavior *b, 
+int testPolygonAngle(behavior *b, 
 				REAL *x1, REAL *y1,
 				REAL *x2, REAL *y2,
 				REAL *x3, REAL *y3 ){
@@ -3333,7 +3328,6 @@ void lineLineSegmentIntersection(
 // Returns the centroid of a given polygon 
 //---------------------------------------------------------------------------------//
 void findPolyCentroid(int numpoints, REAL *points, REAL *centroid){
-	REAL area = 0.0;
 	int i;
 	centroid[0] = 0.0;	centroid[1] = 0.0;
 
@@ -3496,7 +3490,7 @@ void pointBetweenPoints(REAL x1, REAL y1, REAL x2, REAL y2, REAL x, REAL y, REAL
 // tests a triangle to see if it satisfies the minimum and/or maximum angle condition 
 // Returns 1, if it is a BAD triangle, returns 0 if it is a GOOD triangle
 //---------------------------------------------------------------------------------//
-int testTriangleAngle(mesh *m, behavior *b, 
+int testTriangleAngle(behavior *b, 
 				REAL *x1, REAL *y1,
 				REAL *x2, REAL *y2,
 				REAL *x3, REAL *y3 )
