@@ -388,7 +388,7 @@ char *findfield(char *string)
 /*                                                                           */
 /*****************************************************************************/
 
-int file_readnodes_internal(FILE *file, triangleio *io, int* firstnode)
+int file_readnodes_internal(FILE *file, triangleio *io, int poly, int* firstnode)
 {
 	char inputline[INPUTLINESIZE];
 	char *stringptr;
@@ -429,6 +429,15 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* firstnode)
 		nodemarkers = (int) strtol(stringptr, &stringptr, 0);
 	}
 
+	io->numberofpoints = invertices;
+	
+	if (poly && (invertices == 0)) {
+		/* In case we are reading a .poly file, but the vertices are stored in a */
+		/* separate .node file, return OK so reading of .poly file can continue. */
+		io->numberofpoints = 0;
+		return TRI_OK;
+	}
+
 	if (invertices < 3) {
 		return -1; // TODO: error: Input must have at least three input vertices.
 	}
@@ -438,8 +447,6 @@ int file_readnodes_internal(FILE *file, triangleio *io, int* firstnode)
 	if (nextras == 0) {
 		//b->weighted = 0;
 	}
-
-	io->numberofpoints = invertices;
 	io->numberofpointattributes = nextras;
 	io->pointlist = (REAL *)trimalloc(2 * invertices * sizeof(REAL));
 	
@@ -503,16 +510,10 @@ int file_readsegments_internal(FILE *file, triangleio *io)
 	int segmentmarkers;
 	int boundmarker;
 	int insegments;
-	int invertices;
 	int i;
 
 	if (file == (FILE *) NULL) {
 		return TRI_FILE_OPEN;
-	}
-
-	invertices = io->numberofpoints;
-	if (invertices == 0) {
-		return -1;
 	}
 
 	/* Read the segments from a .poly file. */
@@ -671,7 +672,7 @@ int file_readholes_internal(FILE *file, triangleio *io)
 
 int file_readnodes(FILE *nodefile, triangleio *io, int *firstnode)
 {
-	return file_readnodes_internal(nodefile, io, firstnode);
+	return file_readnodes_internal(nodefile, io, 0, firstnode);
 }
 
 /*****************************************************************************/
@@ -684,7 +685,7 @@ int file_readpoly(FILE *polyfile, triangleio *io, int *firstnode)
 {
 	int s;
 
-	s = file_readnodes_internal(polyfile, io, firstnode);
+	s = file_readnodes_internal(polyfile, io, 1, firstnode);
 	if (s != TRI_OK) {
 		return s;
 	}
