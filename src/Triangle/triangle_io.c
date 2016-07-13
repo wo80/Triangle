@@ -739,6 +739,9 @@ int file_readelements(FILE *file, triangleio *io)
 	} else {
 		eextras = (int) strtol(stringptr, &stringptr, 0);
 	}
+	
+	/* We don't care if higher order elements are stored in the file. */
+	io->numberofcorners = 3;
 
 	io->numberoftriangles = inelements;
 	io->trianglelist = (int *)trimalloc(3 * inelements * sizeof(int));

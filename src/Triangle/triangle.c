@@ -7641,7 +7641,6 @@ int transfernodes(mesh *m, behavior *b, REAL *pointlist,
   m->invertices = numberofpoints;
   m->mesh_dim = 2;
   m->nextras = numberofpointattribs;
-  m->readnodefile = 0;
   if (m->invertices < 3) {
     /* Error:  Input must have at least three input vertices. */
     return TRI_INPUT;
