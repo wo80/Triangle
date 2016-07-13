@@ -85,6 +85,16 @@ int triangle_mesh_statistics(context* ctx, statistics *s)
 	return 0;
 }
 
+int triangle_check_mesh(context *ctx)
+{
+	return checkmesh(ctx->m, ctx->b);
+}
+	
+int triangle_check_delaunay(context *ctx)
+{
+	return checkdelaunay(ctx->m, ctx->b);
+}
+
 int triangle_mesh_create(context* ctx, triangleio *in)
 {
 	mesh *m = ctx->m;
@@ -95,7 +105,7 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 	status = transfernodes(m, b, in->pointlist, in->pointattributelist,
 		in->pointmarkerlist, in->numberofpoints,
 		in->numberofpointattributes);
-	
+
 	if (status < 0) {
 		return status;
 	}
@@ -146,7 +156,7 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 
 	/* Calculate the number of edges. */
 	m->edges = (3l * m->triangles.items + m->hullsize) / 2l;
-	
+
 	if (b->order > 1) {
 		highorder(m, b); /* Promote elements to higher polynomial order. */
 	}
@@ -226,17 +236,17 @@ int triangle_mesh_refine(context* ctx)
 		if (status < 0) {
 			return status;
 		}
-	}
 
-	/* Calculate the number of edges. */
-	m->edges = (3l * m->triangles.items + m->hullsize) / 2l;
+		/* Calculate the number of edges. */
+		m->edges = (3l * m->triangles.items + m->hullsize) / 2l;
+	}
 #endif
 
 	return status;
 }
 
 int triangle_mesh_copy(context* ctx, triangleio *out,
-	int edges, int neighbors)
+					   int edges, int neighbors)
 {
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
@@ -332,7 +342,7 @@ int triangle_read_nodes(const char* filename, triangleio *io, int *firstnode)
 
 	status = file_readnodes(file, io, firstnode);
 
-    fclose(file);
+	fclose(file);
 
 	return status;
 }
@@ -348,7 +358,7 @@ int triangle_read_poly(const char* filename, triangleio *io, int *firstnode)
 
 	status = file_readpoly(file, io, firstnode);
 
-    fclose(file);
+	fclose(file);
 
 	return status;
 }
@@ -364,7 +374,7 @@ int triangle_read_elements(const char* filename, triangleio *io)
 
 	status = file_readelements(file, io);
 
-    fclose(file);
+	fclose(file);
 
 	return status;
 }
@@ -380,7 +390,7 @@ int triangle_read_area(const char* filename, triangleio *io)
 
 	status = file_readelementsarea(file, io);
 
-    fclose(file);
+	fclose(file);
 
 	return status;
 }

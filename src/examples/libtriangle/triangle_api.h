@@ -96,6 +96,20 @@ extern "C" {
 	 * @return Integer status code.
 	 */
 	EXPORT int triangle_mesh_quality(context *ctx, quality *q);
+	
+	/**
+	 * Check the mesh for topological consistency.
+	 * @param ctx Pointer to context struct.
+	 * @return Number of elements that failed the test.
+	 */
+	EXPORT int triangle_check_mesh(context *ctx);
+	
+	/**
+	 * Check if the mesh is (constrained) Delaunay.
+	 * @param ctx Pointer to context struct.
+	 * @return Number of elements that failed the test.
+	 */
+	EXPORT int triangle_check_delaunay(context *ctx);
 
 #ifndef NO_FILE_IO
 	/**
