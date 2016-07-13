@@ -12,8 +12,6 @@ int triangle_behavior_parse(behavior *b, char *options)
 
 context* triangle_context_create()
 {
-	int result = 0;
-
 	mesh *m = malloc(sizeof *m);
 	behavior *b = malloc(sizeof *b);
 
@@ -92,12 +90,16 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
 
-	int result = 0;
+	int status = 0;
 
-	transfernodes(m, b, in->pointlist, in->pointattributelist,
+	status = transfernodes(m, b, in->pointlist, in->pointattributelist,
 		in->pointmarkerlist, in->numberofpoints,
 		in->numberofpointattributes);
 	
+	if (status < 0) {
+		return status;
+	}
+
 	m->steinerleft = b->steiner;
 	m->hullsize = delaunay(m, b); /* Triangulate the vertices. */
 
@@ -112,10 +114,9 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 
 		/* Insert PSLG segments and/or convex hull segments. */
 		formskeleton(m, b, in->segmentlist,
-			in->segmentmarkerlist, in->numberofsegments, &result);
-		if (result > 0) {
-			triangledeinit(m, b); /* TODO: triangledeinit ok? */
-			return result;
+			in->segmentmarkerlist, in->numberofsegments, &status);
+		if (status < 0) {
+			return status;
 		}
 	}
 
@@ -136,18 +137,21 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 #ifndef CDT_ONLY
 	if (b->quality && (m->triangles.items > 0)) {
 		/* Enforce angle and area constraints. */
-		enforcequality(m, b, &result);           
-		if (result > 0) {
-			triangledeinit(m, b); /* TODO: triangledeinit ok? */
-			return result;
+		enforcequality(m, b, &status);           
+		if (status < 0) {
+			return status;
 		}
 	}
 #endif
 
 	/* Calculate the number of edges. */
 	m->edges = (3l * m->triangles.items + m->hullsize) / 2l;
+	
+	if (b->order > 1) {
+		highorder(m, b); /* Promote elements to higher polynomial order. */
+	}
 
-	return result;
+	return status;
 }
 
 int triangle_mesh_load(context* ctx, triangleio *in)
@@ -155,15 +159,19 @@ int triangle_mesh_load(context* ctx, triangleio *in)
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
 
-	int result = 0;
+	int status = 0;
 
 	//if (!b->refine) {
 	//   ... don't need to check. calling this method implies the option.
 	//}
 
-	transfernodes(m, b, in->pointlist, in->pointattributelist,
+	status = transfernodes(m, b, in->pointlist, in->pointattributelist,
 		in->pointmarkerlist, in->numberofpoints,
 		in->numberofpointattributes);
+
+	if (status < 0) {
+		return status;
+	}
 
 	/* Read and reconstruct a mesh. */
 	m->hullsize = reconstruct(m, b, in->trianglelist,
@@ -173,7 +181,9 @@ int triangle_mesh_load(context* ctx, triangleio *in)
 		in->segmentlist, in->segmentmarkerlist,
 		in->numberofsegments);
 
-	// TODO: check for error (hullsize < 0)
+	if (m->hullsize < 0l) {
+		return (int) m->hullsize;
+	}
 
 	/* Ensure that no vertex can be mistaken for a triangular bounding */
 	/*   box vertex in insertvertex().                                 */
@@ -199,7 +209,7 @@ int triangle_mesh_load(context* ctx, triangleio *in)
 	/* Calculate the number of edges. */
 	m->edges = (3l * m->triangles.items + m->hullsize) / 2l;
 
-	return result;
+	return status;
 }
 
 int triangle_mesh_refine(context* ctx)
@@ -207,15 +217,14 @@ int triangle_mesh_refine(context* ctx)
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
 
-	int result = 0;
+	int status = 0;
 
 #ifndef CDT_ONLY
 	if (b->quality && (m->triangles.items > 0)) {
 		/* Enforce angle and area constraints. */
-		enforcequality(m, b, &result);           
-		if (result > 0) {
-			triangledeinit(m, b); /* TODO: triangledeinit ok? */
-			return result;
+		enforcequality(m, b, &status);           
+		if (status < 0) {
+			return status;
 		}
 	}
 
@@ -223,7 +232,7 @@ int triangle_mesh_refine(context* ctx)
 	m->edges = (3l * m->triangles.items + m->hullsize) / 2l;
 #endif
 
-	return result;
+	return status;
 }
 
 int triangle_mesh_copy(context* ctx, triangleio *out,
@@ -232,7 +241,7 @@ int triangle_mesh_copy(context* ctx, triangleio *out,
 	mesh *m = ctx->m;
 	behavior *b = ctx->b;
 
-	int result = 0;
+	int status = 0;
 
 	if (b->jettison) {
 		out->numberofpoints = m->vertices.items - m->undeads;
@@ -280,7 +289,7 @@ int triangle_mesh_copy(context* ctx, triangleio *out,
 		writeneighbors(m, b, &out->neighborlist);
 	}
 
-	return result;
+	return status;
 }
 
 #ifndef NO_FILE_IO
