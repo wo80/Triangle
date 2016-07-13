@@ -421,9 +421,9 @@ void internalerror()
 /*                                                                           */
 /*****************************************************************************/
 
-void parsecommandline(int argc, char **argv, behavior *b)
+void parsecommandline(char *options, behavior *b)
 {
-  int i, j, k;
+  int i, k;
   char workstring[FILENAMESIZE];
 
   b->poly = b->refine = b->quality = 0;
@@ -446,145 +446,143 @@ void parsecommandline(int argc, char **argv, behavior *b)
 #endif
   b->maxarea = -1.0;
 
-  for (i = 0; i < argc; i++) {
-      for (j = 0; argv[i][j] != '\0'; j++) {
-        if (argv[i][j] == 'p') {
-          b->poly = 1;
-	}
+  for (i = 0; options[i] != '\0'; i++) {
+    if (options[i] == 'p') {
+      b->poly = 1;
+    }
 #ifndef CDT_ONLY
-        if (argv[i][j] == 'r') {
-          b->refine = 1;
-	}
-        if (argv[i][j] == 'q') {
-          b->quality = 1;
-          if (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
-              (argv[i][j + 1] == '.')) {
-            k = 0;
-            while (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
-                   (argv[i][j + 1] == '.')) {
-              j++;
-              workstring[k] = argv[i][j];
-              k++;
-            }
-            workstring[k] = '\0';
-            b->minangle = (REAL) strtod(workstring, (char **) NULL);
-	  } else {
-            b->minangle = 20.0;
-	  }
-	}
-#ifndef NO_ACUTE
-	if (argv[i][j] == 'U') {
-		b->quality = 1;
-		if (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
-			(argv[i][j + 1] == '.')) {
-			k = 0;
-			while (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
-				(argv[i][j + 1] == '.')) {
-				j++;
-				workstring[k] = argv[i][j];
-				k++;
-			}
-			workstring[k] = '\0';
-			b->maxangle = (REAL) strtod(workstring, (char **) NULL);
-		} else {
-			b->maxangle = 140.0;
-		}
-	}
-#endif
-        if (argv[i][j] == 'a') {
-          b->quality = 1;
-          if (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
-              (argv[i][j + 1] == '.')) {
-            b->fixedarea = 1;
-            k = 0;
-            while (((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) ||
-                   (argv[i][j + 1] == '.')) {
-              j++;
-              workstring[k] = argv[i][j];
-              k++;
-            }
-            workstring[k] = '\0';
-            b->maxarea = (REAL) strtod(workstring, (char **) NULL);
-	  } else {
-            b->vararea = 1;
-	  }
-	}
-        if (argv[i][j] == 'u') {
-          b->quality = 1;
-          b->usertest = 1;
+    if (options[i] == 'r') {
+      b->refine = 1;
+    }
+    if (options[i] == 'q') {
+      b->quality = 1;
+      if (((options[i + 1] >= '0') && (options[i + 1] <= '9')) ||
+          (options[i + 1] == '.')) {
+        k = 0;
+        while (((options[i + 1] >= '0') && (options[i + 1] <= '9')) ||
+               (options[i + 1] == '.')) {
+          i++;
+          workstring[k] = options[i];
+          k++;
         }
-#endif /* not CDT_ONLY */
-        if (argv[i][j] == 'A') {
-          b->regionattrib = 1;
-        }
-        if (argv[i][j] == 'c') {
-          b->convex = 1;
-        }
-        if (argv[i][j] == 'w') {
-          b->weighted = 1;
-        }
-        if (argv[i][j] == 'W') {
-          b->weighted = 2;
-        }
-        if (argv[i][j] == 'j') {
-          b->jettison = 1;
-        }
-        if (argv[i][j] == 'z') {
-          b->firstnumber = 0;
-        }
-        if (argv[i][j] == 'n') {
-          b->neighbors = 1;
-	}
-        if (argv[i][j] == 'B') {
-          b->nobound = 1;
-	}
-        if (argv[i][j] == 'O') {
-          b->noholes = 1;
-	}
-        if (argv[i][j] == 'X') {
-          b->noexact = 1;
-	}
-        if (argv[i][j] == 'o') {
-          if (argv[i][j + 1] == '2') {
-            j++;
-            b->order = 2;
-          }
-	}
-#ifndef CDT_ONLY
-        if (argv[i][j] == 'Y') {
-          b->nobisect++;
-	}
-        if (argv[i][j] == 'S') {
-          b->steiner = 0;
-          while ((argv[i][j + 1] >= '0') && (argv[i][j + 1] <= '9')) {
-            j++;
-            b->steiner = b->steiner * 10 + (int) (argv[i][j] - '0');
-          }
-        }
-#endif /* not CDT_ONLY */
-#ifndef REDUCED
-        if (argv[i][j] == 'i') {
-          b->incremental = 1;
-        }
-        if (argv[i][j] == 'F') {
-          b->sweepline = 1;
-        }
-#endif /* not REDUCED */
-        if (argv[i][j] == 'l') {
-          b->dwyer = 0;
-        }
-#ifndef REDUCED
-#ifndef CDT_ONLY
-        if (argv[i][j] == 's') {
-          b->splitseg = 1;
-        }
-        if ((argv[i][j] == 'D') || (argv[i][j] == 'L')) {
-          b->quality = 1;
-          b->conformdel = 1;
-        }
-#endif /* not CDT_ONLY */
-#endif /* not REDUCED */
+        workstring[k] = '\0';
+        b->minangle = (REAL) strtod(workstring, (char **) NULL);
+      } else {
+        b->minangle = 20.0;
       }
+    }
+#ifndef NO_ACUTE
+    if (options[i] == 'U') {
+      b->quality = 1;
+      if (((options[i + 1] >= '0') && (options[i + 1] <= '9')) ||
+          (options[i + 1] == '.')) {
+        k = 0;
+        while (((options[i + 1] >= '0') && (options[i + 1] <= '9')) ||
+            (options[i + 1] == '.')) {
+          i++;
+          workstring[k] = options[i];
+          k++;
+        }
+        workstring[k] = '\0';
+        b->maxangle = (REAL) strtod(workstring, (char **) NULL);
+      } else {
+        b->maxangle = 140.0;
+      }
+    }
+#endif
+    if (options[i] == 'a') {
+      b->quality = 1;
+      if (((options[i + 1] >= '0') && (options[i + 1] <= '9')) ||
+          (options[i + 1] == '.')) {
+        b->fixedarea = 1;
+        k = 0;
+        while (((options[i + 1] >= '0') && (options[i + 1] <= '9')) ||
+               (options[i + 1] == '.')) {
+          i++;
+          workstring[k] = options[i];
+          k++;
+        }
+        workstring[k] = '\0';
+        b->maxarea = (REAL) strtod(workstring, (char **) NULL);
+      } else {
+        b->vararea = 1;
+      }
+    }
+    if (options[i] == 'u') {
+      b->quality = 1;
+      b->usertest = 1;
+    }
+#endif /* not CDT_ONLY */
+    if (options[i] == 'A') {
+      b->regionattrib = 1;
+    }
+    if (options[i] == 'c') {
+      b->convex = 1;
+    }
+    if (options[i] == 'w') {
+      b->weighted = 1;
+    }
+    if (options[i] == 'W') {
+      b->weighted = 2;
+    }
+    if (options[i] == 'j') {
+      b->jettison = 1;
+    }
+    if (options[i] == 'z') {
+      b->firstnumber = 0;
+    }
+    if (options[i] == 'n') {
+      b->neighbors = 1;
+    }
+    if (options[i] == 'B') {
+      b->nobound = 1;
+    }
+    if (options[i] == 'O') {
+      b->noholes = 1;
+    }
+    if (options[i] == 'X') {
+      b->noexact = 1;
+    }
+    if (options[i] == 'o') {
+      if (options[i + 1] == '2') {
+        i++;
+        b->order = 2;
+      }
+    }
+#ifndef CDT_ONLY
+    if (options[i] == 'Y') {
+      b->nobisect++;
+    }
+    if (options[i] == 'S') {
+      b->steiner = 0;
+      while ((options[i + 1] >= '0') && (options[i + 1] <= '9')) {
+        i++;
+        b->steiner = b->steiner * 10 + (int) (options[i] - '0');
+      }
+    }
+#endif /* not CDT_ONLY */
+#ifndef REDUCED
+    if (options[i] == 'i') {
+      b->incremental = 1;
+    }
+    if (options[i] == 'F') {
+      b->sweepline = 1;
+    }
+#endif /* not REDUCED */
+    if (options[i] == 'l') {
+      b->dwyer = 0;
+    }
+#ifndef REDUCED
+#ifndef CDT_ONLY
+    if (options[i] == 's') {
+      b->splitseg = 1;
+    }
+    if ((options[i] == 'D') || (options[i] == 'L')) {
+      b->quality = 1;
+      b->conformdel = 1;
+    }
+#endif /* not CDT_ONLY */
+#endif /* not REDUCED */
   }
   b->usesegments = b->poly || b->refine || b->quality || b->convex;
   b->goodangle = cos(b->minangle * PI / 180.0);

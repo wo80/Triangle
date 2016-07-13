@@ -5,7 +5,7 @@
 
 int triangle_behavior_parse(behavior *b, char *options)
 {
-	parsecommandline(1, &options, b);
+	parsecommandline(options, b);
 
 	return check_behavior(b);
 }
@@ -23,7 +23,7 @@ context* triangle_context_create()
 	ctx->b = b;
 
 	/* Initialize default behavior values. */
-	parsecommandline(0, (char **)NULL, b);
+	parsecommandline("\0", b);
 
 	triangleinit(ctx->m);
 
@@ -97,7 +97,8 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 	transfernodes(m, b, in->pointlist, in->pointattributelist,
 		in->pointmarkerlist, in->numberofpoints,
 		in->numberofpointattributes);
-
+	
+	m->steinerleft = b->steiner;
 	m->hullsize = delaunay(m, b); /* Triangulate the vertices. */
 
 	/* Ensure that no vertex can be mistaken for a triangular bounding */
@@ -313,22 +314,66 @@ int triangle_write_neighbors(context *ctx, FILE *file)
 
 int triangle_read_nodes(const char* filename, triangleio *io, int *firstnode)
 {
-	return file_readnodes(fopen(filename, "r"), io, firstnode);
+	int status;
+	FILE *file = fopen(filename, "r");
+
+	if (file == (FILE *) NULL) {
+		return TRI_FILE_OPEN;
+	}
+
+	status = file_readnodes(file, io, firstnode);
+
+    fclose(file);
+
+	return status;
 }
 
 int triangle_read_poly(const char* filename, triangleio *io, int *firstnode)
 {
-	return file_readpoly(fopen(filename, "r"), io, firstnode);
+	int status;
+	FILE *file = fopen(filename, "r");
+
+	if (file == (FILE *) NULL) {
+		return TRI_FILE_OPEN;
+	}
+
+	status = file_readpoly(file, io, firstnode);
+
+    fclose(file);
+
+	return status;
 }
 
 int triangle_read_elements(const char* filename, triangleio *io)
 {
-	return file_readelements(fopen(filename, "r"), io);
+	int status;
+	FILE *file = fopen(filename, "r");
+
+	if (file == (FILE *) NULL) {
+		return TRI_FILE_OPEN;
+	}
+
+	status = file_readelements(file, io);
+
+    fclose(file);
+
+	return status;
 }
 
-int triangle_read_area(const char* filename, triangleio *io, int elements)
+int triangle_read_area(const char* filename, triangleio *io)
 {
-	return file_readelementsarea(fopen(filename, "r"), io, elements);
+	int status;
+	FILE *file = fopen(filename, "r");
+
+	if (file == (FILE *) NULL) {
+		return TRI_FILE_OPEN;
+	}
+
+	status = file_readelementsarea(file, io);
+
+    fclose(file);
+
+	return status;
 }
 
 #endif /* NO_FILE_IO */

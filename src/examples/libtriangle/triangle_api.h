@@ -173,10 +173,9 @@ extern "C" {
 	 * Read area file.
 	 * @param filename File name (path to .area file).
 	 * @param io Pointer to triangleio struct.
-	 * @param elements Number of expected elements.
 	 * @return Integer status code.
 	 */
-	EXPORT int triangle_read_area(const char* filename, triangleio *io, int elements);
+	EXPORT int triangle_read_area(const char* filename, triangleio *io);
 #endif /* NO_FILE_IO */
 
 #ifdef __cplusplus

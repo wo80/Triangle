@@ -37,7 +37,7 @@ void trifree(VOID *memptr);
 
 void internalerror();
 
-void parsecommandline(int argc, char **argv, behavior *b);
+void parsecommandline(char *options, behavior *b);
 
 /**                                                                         **/
 /********* User interaction routines begin here                      *********/
@@ -459,7 +459,7 @@ int file_readpoly(FILE *nodefile, triangleio *io, int *firstnode);
 				   
 int file_readelements(FILE *nodefile, triangleio *io);
 
-int file_readelementsarea(FILE *file, triangleio *io, int numelements);
+int file_readelementsarea(FILE *file, triangleio *io);
 
 /**                                                                         **/
 /********* File I/O routines end here                                *********/
