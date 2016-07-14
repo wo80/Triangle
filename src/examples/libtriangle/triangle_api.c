@@ -82,6 +82,11 @@ int triangle_mesh_statistics(context* ctx, statistics *s)
 		m->flipstackers.maxitems * m->flipstackers.itembytes +
 		m->splaynodes.maxitems * m->splaynodes.itembytes;
 
+	s->rect.xmin = m->xmin;
+	s->rect.ymin = m->ymin;
+	s->rect.xmax = m->xmax;
+	s->rect.ymax = m->ymax;
+
 	return 0;
 }
 

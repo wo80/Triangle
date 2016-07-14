@@ -25,6 +25,12 @@ extern "C" {
 		int subsegs;
 		int edges;
 		int memory;
+		struct rect_t {
+			REAL xmin;
+			REAL ymin;
+			REAL xmax;
+			REAL ymax;
+		} rect;
 	} statistics;
 	
 	/**
