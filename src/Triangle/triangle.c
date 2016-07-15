@@ -7376,7 +7376,12 @@ void splittriangle(mesh *m, behavior *b,
     /* Create a new vertex at the triangle's circumcenter. */
     newvertex = (vertex) poolalloc(&m->vertices);
 #ifndef NO_ACUTE
-    findNewSPLocation(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1, badotri);
+	if (b->fixedarea || b->vararea) {
+      // TODO: Acute fails for certain area constraints.
+      findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
+	} else {
+      findNewSPLocation(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1, badotri);
+	}
 #else
     findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
 #endif
