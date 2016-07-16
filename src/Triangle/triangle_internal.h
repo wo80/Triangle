@@ -286,23 +286,23 @@ int rightofhyperbola(mesh *m, struct otri *fronttri, vertex newsite);
 
 REAL circletop(mesh *m, vertex pa, vertex pb, vertex pc, REAL ccwabc);
 
-void check4deadevent(otri *checktri, struct event **freeevents,
+void check4deadevent(struct otri *checktri, struct event **freeevents,
                      struct event **eventheap, int *heapsize);
 
 struct splaynode *splay(mesh *m, struct splaynode *splaytree,
                         vertex searchpoint, struct otri *searchtri);
 
 struct splaynode *splayinsert(mesh *m, struct splaynode *splayroot,
-                              otri *newkey, vertex searchpoint);
+                              struct otri *newkey, vertex searchpoint);
 
 struct splaynode *circletopinsert(mesh *m, behavior *b,
                                   struct splaynode *splayroot,
-                                  otri *newkey,
+                                  struct otri *newkey,
                                   vertex pa, vertex pb, vertex pc, REAL topy);
 
 struct splaynode *frontlocate(mesh *m, struct splaynode *splayroot,
-                              otri *bottommost, vertex searchvertex,
-                              otri *searchtri, int *farright);
+                              struct otri *bottommost, vertex searchvertex,
+                              struct otri *searchtri, int *farright);
 
 long sweeplinedelaunay(mesh *m, behavior *b);
 
@@ -345,8 +345,8 @@ int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
 #ifndef REDUCED
 #ifndef CDT_ONLY
 
-void conformingedge(mesh *m, behavior *b,
-                    vertex endpoint1, vertex endpoint2, int newmark);
+void conformingedge(mesh *m, behavior *b, vertex endpoint1, vertex endpoint2,
+                    int newmark, int *status);
 
 #endif /* not CDT_ONLY */
 #endif /* not REDUCED */

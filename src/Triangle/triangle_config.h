@@ -33,8 +33,9 @@
 #define TRI_SEG_SPLIT (-5)
 #define TRI_SEG_INTERSECT (-6)
 #define TRI_SEG_INSERT (-7)
-#define TRI_FILE_OPEN (-8)
-#define TRI_FILE_READ (-9)
+#define TRI_SEG_SCOUT (-8)
+#define TRI_FILE_OPEN (-9)
+#define TRI_FILE_READ (-10)
 
 /* Set correct size for pointer alignment calculations */
 #if defined(_M_X64) || defined(__amd64__)
@@ -72,7 +73,7 @@
 /*   generating an object library (triangle.o) by defining the TRILIBRARY    */
 /*   symbol.                                                                 */
 
-#define REDUCED
+/* #define REDUCED */
 /* #define CDT_ONLY */
 
 /* On some machines, my exact arithmetic routines might be defeated by the   */

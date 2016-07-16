@@ -5991,7 +5991,7 @@ int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
   collinear = finddirection(m, b, searchtri, endpoint2, status);
-  if (*status < 0) return -1;
+  if (*status < 0) return TRI_SEG_SCOUT;
 
   dest(*searchtri, rightvertex);
   apex(*searchtri, leftvertex);
@@ -6027,7 +6027,7 @@ int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
     } else {
       /* Insert a vertex at the intersection. */
       segmentintersection(m, b, &crosstri, &crosssubseg, endpoint2, status);
-      if (*status < 0) return -1;
+      if (*status < 0) return TRI_SEG_SCOUT;
 
       otricopy(crosstri, *searchtri);
       insertsubseg(m, b, searchtri, newmark);
@@ -6059,8 +6059,8 @@ int scoutsegment(mesh *m, behavior *b, struct otri *searchtri,
 #ifndef REDUCED
 #ifndef CDT_ONLY
 
-void conformingedge(mesh *m, behavior *b,
-                    vertex endpoint1, vertex endpoint2, int newmark)
+void conformingedge(mesh *m, behavior *b, vertex endpoint1, vertex endpoint2,
+                    int newmark, int *status)
 {
   struct otri searchtri1, searchtri2;
   struct osub brokensubseg;
@@ -6110,18 +6110,23 @@ void conformingedge(mesh *m, behavior *b,
   /*   respectively.  First, we must get `searchtri2' out of the way so it  */
   /*   won't be invalidated during the insertion of the first half of the   */
   /*   segment.                                                             */
-  finddirection(m, b, &searchtri2, endpoint2);
-  if (!scoutsegment(m, b, &searchtri1, endpoint1, newmark)) {
+  finddirection(m, b, &searchtri2, endpoint2, status);
+  if (*status < 0) {
+    return;
+  }
+  if (!scoutsegment(m, b, &searchtri1, endpoint1, newmark, status)) {
+    if (*status < 0) return;
     /* The origin of searchtri1 may have changed if a collision with an */
     /*   intervening vertex on the segment occurred.                    */
     org(searchtri1, midvertex1);
-    conformingedge(m, b, midvertex1, endpoint1, newmark);
+    conformingedge(m, b, midvertex1, endpoint1, newmark, status);
   }
-  if (!scoutsegment(m, b, &searchtri2, endpoint2, newmark)) {
+  if (!scoutsegment(m, b, &searchtri2, endpoint2, newmark, status)) {
+    if (*status < 0) return;
     /* The origin of searchtri2 may have changed if a collision with an */
     /*   intervening vertex on the segment occurred.                    */
     org(searchtri2, midvertex2);
-    conformingedge(m, b, midvertex2, endpoint2, newmark);
+    conformingedge(m, b, midvertex2, endpoint2, newmark, status);
   }
 }
 
@@ -6445,7 +6450,7 @@ void insertsegment(mesh *m, behavior *b,
 #ifndef CDT_ONLY
   if (b->splitseg) {
     /* Insert vertices to force the segment into the triangulation. */
-    conformingedge(m, b, endpoint1, endpoint2, newmark);
+    conformingedge(m, b, endpoint1, endpoint2, newmark, status);
   } else {
 #endif /* not CDT_ONLY */
 #endif /* not REDUCED */
@@ -7376,12 +7381,12 @@ void splittriangle(mesh *m, behavior *b,
     /* Create a new vertex at the triangle's circumcenter. */
     newvertex = (vertex) poolalloc(&m->vertices);
 #ifndef NO_ACUTE
-	if (b->fixedarea || b->vararea) {
+    if (b->fixedarea || b->vararea) {
       // TODO: Acute fails for certain area constraints.
       findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
-	} else {
+    } else {
       findNewSPLocation(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1, badotri);
-	}
+    }
 #else
     findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
 #endif
