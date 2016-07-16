@@ -65,6 +65,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="acute.c" />
+    <ClCompile Include="eps_writer.c" />
     <ClCompile Include="predicates.c" />
     <ClCompile Include="triangle.c" />
     <ClCompile Include="triangle_io.c" />
@@ -72,6 +73,7 @@
   <ItemGroup>
     <ClInclude Include="acute.h" />
     <ClInclude Include="acute_internal.h" />
+    <ClInclude Include="eps_writer.h" />
     <ClInclude Include="predicates.h" />
     <ClInclude Include="triangle.h" />
     <ClInclude Include="triangle_config.h" />

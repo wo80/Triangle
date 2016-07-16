@@ -453,6 +453,8 @@ int file_writeedges(mesh *m, behavior *b, FILE *edgefile);
 
 int file_writeneighbors(mesh *m, behavior *b, FILE *neighborfile);
 
+int file_write_eps(mesh* m, behavior *b, FILE *file);
+
 int file_readnodes(FILE *nodefile, triangleio *io, int *firstnode);
 				   
 int file_readpoly(FILE *nodefile, triangleio *io, int *firstnode);

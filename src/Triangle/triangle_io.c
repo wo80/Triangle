@@ -1,6 +1,7 @@
 
 #include "triangle.h"
 #include "triangle_internal.h"
+#include "eps_writer.h"
 
 // Defined in triangle.c
 extern int plus1mod3[3];
@@ -305,6 +306,46 @@ int file_writeneighbors(mesh *m, behavior *b, FILE *neighborfile)
 		triangleloop.tri = triangletraverse(m);
 		elementnumber++;
 	}
+	return TRI_OK;
+}
+
+int file_write_eps(mesh* m, behavior *b, FILE *file)
+{
+	rect ps;
+	rect clip;
+	rect ms;
+
+	if (file == (FILE *) NULL) {
+		return -1;
+	}
+
+	// EPS page metrics
+	ps.xmin = 36.0;
+	ps.ymin = 126.0;
+	ps.xmax = 576.0;
+	ps.ymax = 666.0;
+
+	// EPS page clip metrics
+	clip.xmin = 18.0;
+	clip.ymin = 108.0;
+	clip.xmax = 594.0;
+	clip.ymax = 684.0;
+
+	// Mesh metrics
+	ms.xmin = m->xmin;
+	ms.ymin = m->ymin;
+	ms.xmax = m->xmax;
+	ms.ymax = m->ymax;
+
+	eps_update_metrics(&ps, &clip, &ms);
+
+	eps_write_header(file, "mesh.eps", &ps);
+	eps_draw_clip(file, &ps, &clip);
+	eps_draw_edges(file, m, &ps, &ms);
+	eps_draw_segments(file, m, &ps, &ms);
+	eps_draw_points(file, m, &ps, &ms);
+	eps_write_trailer(file);
+
 	return TRI_OK;
 }
 

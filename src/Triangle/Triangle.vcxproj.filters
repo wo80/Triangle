@@ -27,6 +27,9 @@
     <ClCompile Include="triangle_io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="eps_writer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="triangle.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="acute_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eps_writer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

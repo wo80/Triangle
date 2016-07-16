@@ -570,6 +570,14 @@ typedef struct quality_t {
 	int aspecttable[16];
 } quality;
 
+	
+typedef struct rect_t {
+	REAL xmin;
+	REAL ymin;
+	REAL xmax;
+	REAL ymax;
+} rect;
+
 /*****************************************************************************/
 /*                                                                           */
 /*  Mesh manipulation primitives.  Each triangle contains three pointers to  */
