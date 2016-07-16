@@ -25,12 +25,7 @@ extern "C" {
 		int subsegs;
 		int edges;
 		int memory;
-		struct rect_t {
-			REAL xmin;
-			REAL ymin;
-			REAL xmax;
-			REAL ymax;
-		} rect;
+		rect bounds;
 	} statistics;
 	
 	/**
@@ -162,6 +157,14 @@ extern "C" {
 	 * @return Integer status code.
 	 */
 	EXPORT int triangle_write_neighbors(context *ctx, FILE *file);
+	
+	/**
+	 * Write mesh to encapsulated postscript file.
+	 * @param ctx Pointer to context struct.
+	 * @param file File pointer (to .eps file).
+	 * @return Integer status code.
+	 */
+	EXPORT int triangle_write_eps(context *ctx, FILE *file);
 	
 	/**
 	 * Read nodes file.

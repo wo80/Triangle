@@ -1,6 +1,7 @@
 
 #include "triangle_api.h"
 #include "triangle_helper.h"
+
 #include <triangle_internal.h>
 
 int triangle_behavior_parse(behavior *b, char *options)
@@ -82,10 +83,10 @@ int triangle_mesh_statistics(context* ctx, statistics *s)
 		m->flipstackers.maxitems * m->flipstackers.itembytes +
 		m->splaynodes.maxitems * m->splaynodes.itembytes;
 
-	s->rect.xmin = m->xmin;
-	s->rect.ymin = m->ymin;
-	s->rect.xmax = m->xmax;
-	s->rect.ymax = m->ymax;
+	s->bounds.xmin = m->xmin;
+	s->bounds.ymin = m->ymin;
+	s->bounds.xmax = m->xmax;
+	s->bounds.ymax = m->ymax;
 
 	return 0;
 }
@@ -334,6 +335,11 @@ int triangle_write_edges(context *ctx, FILE *file)
 int triangle_write_neighbors(context *ctx, FILE *file)
 {
 	return file_writeneighbors(ctx->m, ctx->b, file);
+}
+
+int triangle_write_eps(context *ctx, FILE *file)
+{
+	return file_write_eps(ctx->m, ctx->b, file);
 }
 
 int triangle_read_nodes(const char* filename, triangleio *io, int *firstnode)
