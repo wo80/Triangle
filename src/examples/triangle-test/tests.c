@@ -98,7 +98,6 @@ int test_mesh_copy(context *ctx)
 	result &= (out.numberofsegments == 4);
 	result &= (out.numberofedges == 5);
 	result &= (out.numberofregions == 1);
-	result &= (out.errorcode == 0);
 
 	triangleio_free(&out);
 

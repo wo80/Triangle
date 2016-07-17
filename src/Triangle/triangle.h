@@ -87,8 +87,6 @@ typedef struct triangleio_t {
 	int *edgemarkerlist;
 
 	int numberofedges;
-
-	int errorcode;
 } triangleio;
 
 

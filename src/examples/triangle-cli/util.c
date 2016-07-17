@@ -467,7 +467,6 @@ void reset_triangleio(triangleio *io)
 	io->edgelist = (int *) NULL;
 	io->edgemarkerlist = (int *) NULL;
 	io->numberofedges = 0;
-	io->errorcode = 0;
 }
 
 void free_triangleio(triangleio *io)
@@ -556,20 +555,20 @@ int write_elements(context *ctx, char *filename, int argc, char **argv) {
 
 int write_poly(context *ctx, char *filename, triangleio *in,
 			   int argc, char **argv) {
-				   FILE *file;
-				   int status = 0;
+	FILE *file;
+	int status = 0;
 
-				   file = fopen(filename, "w");
-				   if (file == (FILE *) NULL) {
-					   return -1;
-				   }
+	file = fopen(filename, "w");
+	if (file == (FILE *) NULL) {
+		return -1;
+	}
 
-				   status = triangle_write_poly(ctx, file, in->holelist, in->numberofholes,
-					   in->regionlist, in->numberofregions);
+	status = triangle_write_poly(ctx, file, in->holelist, in->numberofholes,
+		in->regionlist, in->numberofregions);
 
-				   finishfile(file, argc, argv);
+	finishfile(file, argc, argv);
 
-				   return status;
+	return status;
 }
 
 int write_edges(context *ctx, char *filename, int argc, char **argv) {

@@ -32,7 +32,6 @@ void triangleio_reset(triangleio *io)
 	io->edgelist = (int *) NULL;
 	io->edgemarkerlist = (int *) NULL;
 	io->numberofedges = 0;
-	io->errorcode = 0;
 }
 
 void triangleio_free(triangleio *io)
