@@ -19,11 +19,11 @@ The Triangle repository contains the following directory structure:
 
 The static library code is based on the following sources:
 
-- Triangle (version 1.6), released 07/28/2005
-  Copyright 1993, 1995, 1997, 1998, 2002, 2005 Jonathan Richard Shewchuk
+- Triangle (version 1.6), released 07/28/2005  
+  Copyright 1993, 1995, 1997, 1998, 2002, 2005 Jonathan Richard Shewchuk  
   http://www.cs.cmu.edu/~quake/triangle.html
-- aCute (version 1.0), released 06/15/2009
-  Copyright Hale Erten, Alper Üngör
+- aCute (version 1.0), released 06/15/2009  
+  Copyright Hale Erten, Alper Üngör  
   https://www.cise.ufl.edu/~ungor/aCute/download.html
 
 A Visual Studio solution (*Triangle.sln*) can be found in the `src` directory (you can use [Microsoft Visual Studio Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) to compile all projects). No platform specific code is used, so all projects should as well compile on Linux or Mac.
