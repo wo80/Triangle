@@ -90,7 +90,19 @@ int triangle_mesh_statistics(context* ctx, statistics *s)
 		s->subsegs = 0;
 	}
 
-	s->memory = m->vertices.maxitems * m->vertices.itembytes +
+	s->bounds.xmin = m->xmin;
+	s->bounds.ymin = m->ymin;
+	s->bounds.xmax = m->xmax;
+	s->bounds.ymax = m->ymax;
+
+	return 0;
+}
+
+int triangle_memory(context* ctx)
+{
+	mesh *m = ctx->m;
+
+	return m->vertices.maxitems * m->vertices.itembytes +
 		m->triangles.maxitems * m->triangles.itembytes +
 		m->subsegs.maxitems * m->subsegs.itembytes +
 		m->viri.maxitems * m->viri.itembytes +
@@ -98,13 +110,6 @@ int triangle_mesh_statistics(context* ctx, statistics *s)
 		m->badtriangles.maxitems * m->badtriangles.itembytes +
 		m->flipstackers.maxitems * m->flipstackers.itembytes +
 		m->splaynodes.maxitems * m->splaynodes.itembytes;
-
-	s->bounds.xmin = m->xmin;
-	s->bounds.ymin = m->ymin;
-	s->bounds.xmax = m->xmax;
-	s->bounds.ymax = m->ymax;
-
-	return 0;
 }
 
 int triangle_check_mesh(context *ctx)

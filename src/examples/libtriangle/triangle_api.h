@@ -24,7 +24,6 @@ extern "C" {
 		int hullsize;
 		int subsegs;
 		int edges;
-		int memory;
 		rect bounds;
 	} statistics;
 	
@@ -105,6 +104,13 @@ extern "C" {
 	 */
 	EXPORT int triangle_mesh_statistics(context *ctx, statistics *s);
 	
+	/**
+	 * Get approximate value of allocated bytes.
+	 * @param ctx Pointer to context struct.
+	 * @return Number of bytes.
+	 */
+	EXPORT int triangle_memory(context* ctx);
+
 	/**
 	 * Compute mesh quality statistics.
 	 * @param ctx Pointer to context struct.
