@@ -379,10 +379,10 @@ typedef struct behavior_t {
   /* Quality mesh generation (-q switch). */
   int quality;
 
-  /* Apply a maximum triangle area constraint (-a switch without number). */
+  /* Apply an area constraint per triangle (-a switch without number). */
   int vararea;
 
-  /* Apply a maximum triangle area constraint (-a switch with number). */
+  /* Apply a global maximum triangle area constraint (-a switch with number). */
   int fixedarea;
 
   /* Apply a user-defined triangle constraint (-u switch). */

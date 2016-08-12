@@ -9,6 +9,9 @@
 /********* User-defined triangle evaluation routine begins here      *********/
 /**                                                                         **/
 
+/**
+ * Determine if a triangle is unsuitable, and thus must be further refined.
+ */
 int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area);
 
 
@@ -37,6 +40,9 @@ void trifree(VOID *memptr);
 
 void internalerror();
 
+/**
+ * Read the command line, identify switches and set up options.
+ */
 void parsecommandline(char *options, behavior *b);
 
 /**                                                                         **/
@@ -45,8 +51,14 @@ void parsecommandline(char *options, behavior *b);
 /********* Debugging routines begin here                             *********/
 /**                                                                         **/
 
+/**
+ * Print out the details of an oriented triangle.
+ */
 void printtriangle(mesh *m, behavior *b, struct otri *t);
 
+/**
+ * Print out the details of an oriented subsegment.
+ */
 void printsubseg(mesh *m, behavior *b, struct osub *s);
 
 /**                                                                         **/
@@ -55,23 +67,51 @@ void printsubseg(mesh *m, behavior *b, struct osub *s);
 /********* Memory management routines begin here                     *********/
 /**                                                                         **/
 
+/**
+ * Set all of a pool's fields to zero.
+ */
 void poolzero(struct memorypool *pool);
 
+/**
+ * Deallocate all items in a pool.
+ */
 void poolrestart(struct memorypool *pool);
 
+/**
+ * Initialize a pool of memory for allocation of items.
+ */
 void poolinit(struct memorypool *pool, int bytecount, int itemcount,
               int firstitemcount, int alignment);
 
+/**
+ * Free to the operating system all memory taken by a pool.
+ */
 void pooldeinit(struct memorypool *pool);
 
+/**
+ * Allocate space for an item.
+ */
 VOID *poolalloc(struct memorypool *pool);
 
+/**
+ * Deallocate space for an item.
+ */
 void pooldealloc(struct memorypool *pool, VOID *dyingitem);
 
+/**
+ * Prepare to traverse the entire list of items.
+ */
 void traversalinit(struct memorypool *pool);
 
+/**
+ * Find the next item in the list.
+ */
 VOID *traverse(struct memorypool *pool);
 
+/**
+ * Initialize the triangle that fills "outer space" and the
+ * omnipresent subsegment.
+ */
 void dummyinit(mesh *m, behavior *b, int trianglebytes,
                int subsegbytes);
 
@@ -111,45 +151,6 @@ void makesubseg(mesh *m, struct osub *newsubseg);
 
 /**                                                                         **/
 /********* Constructors end here                                     *********/
-
-/********* Geometric primitives begin here                           *********/
-/**                                                                         **/
-
-void exactinit();
-
-int fast_expansion_sum_zeroelim(int elen, REAL *e, int flen, REAL *f, REAL *h);
-
-int scale_expansion_zeroelim(int elen, REAL *e, REAL b, REAL *h);
-
-REAL estimate(int elen, REAL *e);
-
-REAL counterclockwiseadapt(vertex pa, vertex pb, vertex pc, REAL detsum);
-
-REAL counterclockwise(mesh *m, behavior *b,
-                      vertex pa, vertex pb, vertex pc);
-
-REAL incircleadapt(vertex pa, vertex pb, vertex pc, vertex pd, REAL permanent);
-
-REAL incircle(mesh *m, behavior *b,
-              vertex pa, vertex pb, vertex pc, vertex pd);
-
-REAL orient3dadapt(vertex pa, vertex pb, vertex pc, vertex pd,
-                   REAL aheight, REAL bheight, REAL cheight, REAL dheight,
-                   REAL permanent);
-
-REAL orient3d(mesh *m, behavior *b,
-              vertex pa, vertex pb, vertex pc, vertex pd,
-              REAL aheight, REAL bheight, REAL cheight, REAL dheight);
-
-REAL nonregular(mesh *m, behavior *b,
-                vertex pa, vertex pb, vertex pc, vertex pd);
-
-void findcircumcenter(mesh *m, behavior *b,
-                      vertex torg, vertex tdest, vertex tapex,
-                      vertex circumcenter, REAL *xi, REAL *eta, int offcenter);
-
-/**                                                                         **/
-/********* Geometric primitives end here                             *********/
 
 void triangleinit(mesh *m);
 

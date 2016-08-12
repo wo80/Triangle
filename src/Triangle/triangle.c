@@ -7697,7 +7697,7 @@ int transfernodes(mesh *m, behavior *b, REAL *pointlist,
   /*   Delaunay algorithm.                                                 */
   m->xminextreme = 10 * m->xmin - 9 * m->xmax;
 
-  return numberofpoints;
+  return TRI_OK;
 }
 
 /*****************************************************************************/

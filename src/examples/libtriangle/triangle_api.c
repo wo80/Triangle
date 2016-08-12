@@ -4,13 +4,6 @@
 
 #include <triangle_internal.h>
 
-int triangle_behavior_parse(behavior *b, char *options)
-{
-	parsecommandline(options, b);
-
-	return check_behavior(b);
-}
-
 context* triangle_context_create()
 {
 	mesh *m = malloc(sizeof *m);
@@ -42,14 +35,37 @@ context* triangle_context_create()
 	return ctx;
 }
 
-VOID triangle_context_destroy(context* ctx)
+void triangle_context_destroy(context* ctx)
 {
 	triangledeinit(ctx->m, ctx->b);
 
 	free(ctx->b);
 	free(ctx->m);
 
-	// TODO: free(ctx)
+	//free(ctx);
+}
+
+int triangle_context_options(context* ctx, char *options)
+{
+	behavior *b = ctx->b;
+
+	parsecommandline(options, b);
+
+	return check_behavior(b);
+}
+
+void triangle_context_get_behavior(context* ctx, behavior *out)
+{
+	*out = *ctx->b;
+}
+	
+int triangle_context_set_behavior(context* ctx, behavior *in)
+{
+	*ctx->b = *in;
+
+	behavior_update(ctx->b);
+
+	return check_behavior(in);
 }
 
 int triangle_mesh_quality(context* ctx, quality *q)
@@ -306,6 +322,11 @@ int triangle_mesh_copy(context* ctx, triangleio *out,
 	}
 
 	return status;
+}
+
+void triangle_free(VOID *memptr)
+{
+  free(memptr);
 }
 
 #ifndef NO_FILE_IO

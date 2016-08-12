@@ -38,15 +38,30 @@ extern "C" {
 	 * Destroy a context struct.
 	 * @param ctx Pointer to context struct.
 	 */
-	EXPORT VOID triangle_context_destroy(context* ctx);
+	EXPORT void triangle_context_destroy(context* ctx);
 	
 	/**
 	 * Parse Triangle options string.
-	 * @param b Pointer to behavior struct.
+	 * @param ctx Pointer to context struct.
 	 * @param options String containing Triangle options.
 	 * @return Integer status code.
 	 */
-	EXPORT int triangle_behavior_parse(behavior *b, char *options);
+	EXPORT int triangle_context_options(context* ctx, char *options);
+	
+	/**
+	 * Copy the context behavior to given behavior struct.
+	 * @param ctx Pointer to context struct.
+	 * @param out Pointer to input behavior struct.
+	 */
+	EXPORT void triangle_context_get_behavior(context* ctx, behavior *out);
+	
+	/**
+	 * Copy given behavior to the context behavior struct.
+	 * @param ctx Pointer to context struct.
+	 * @param in Pointer to output behavior struct.
+	 * @return Integer status code.
+	 */
+	EXPORT int triangle_context_set_behavior(context* ctx, behavior *in);
 	
 	/**
 	 * Triangulate an input polygon.
@@ -111,6 +126,12 @@ extern "C" {
 	 * @return Number of elements that failed the test.
 	 */
 	EXPORT int triangle_check_delaunay(context *ctx);
+	
+	/**
+	 * Free memory that was allocated for triangleio structure.
+	 * @param io Pointer to triangleio struct.
+	 */
+	EXPORT void triangle_free(VOID *memptr);
 
 #ifndef NO_FILE_IO
 	/**
