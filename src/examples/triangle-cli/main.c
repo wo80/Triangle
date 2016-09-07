@@ -18,15 +18,15 @@ int main(int argc, char **argv)
 	parsecommandline_legacy(argc, argv, &lb);
 
 	ctx = triangle_context_create();
-	b = ctx->b;
 
 	reset_triangleio(&in);
 
 	/* At this point argc is guaranteed to be > 1. */
 	if (argv[1][0] == '-') {
-		triangle_behavior_parse(b, argv[1] + 1);
+		triangle_context_options(ctx, argv[1] + 1);
 	}
 
+	b = ctx->b;
 	check_behavior(b, &lb);
 
 	if (b->poly) {
