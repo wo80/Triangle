@@ -134,8 +134,8 @@ extern "C" {
 	EXPORT int triangle_check_delaunay(context *ctx);
 	
 	/**
-	 * Free memory that was allocated for triangleio structure.
-	 * @param io Pointer to triangleio struct.
+	 * Free memory that was allocated by triangle.
+	 * @param memptr Pointer to native memory.
 	 */
 	EXPORT void triangle_free(VOID *memptr);
 

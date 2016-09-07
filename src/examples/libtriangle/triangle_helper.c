@@ -1,6 +1,18 @@
 
 #include "triangle_helper.h"
 
+int check_context(context* ctx)
+{
+	if (ctx == NULL) {
+		return TRI_FAILURE;
+	}
+	if (ctx->b == NULL || ctx->m == NULL) {
+		return TRI_FAILURE;
+	}
+
+	return TRI_OK;
+}
+
 int check_behavior(behavior* b)
 {
 	if (b->fixedarea && b->maxarea <= 0.0) {

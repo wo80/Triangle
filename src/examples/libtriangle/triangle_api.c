@@ -37,6 +37,10 @@ context* triangle_context_create()
 
 void triangle_context_destroy(context* ctx)
 {
+	if (check_context(ctx) < 0) {
+		return;
+	}
+
 	triangledeinit(ctx->m, ctx->b);
 
 	free(ctx->b);
@@ -47,20 +51,30 @@ void triangle_context_destroy(context* ctx)
 
 int triangle_context_options(context* ctx, char *options)
 {
-	behavior *b = ctx->b;
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
 
-	parsecommandline(options, b);
+	parsecommandline(options, ctx->b);
 
-	return check_behavior(b);
+	return check_behavior(ctx->b);
 }
 
 void triangle_context_get_behavior(context* ctx, behavior *out)
 {
+	if (check_context(ctx) < 0) {
+		return;
+	}
+
 	*out = *ctx->b;
 }
-	
+
 int triangle_context_set_behavior(context* ctx, behavior *in)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	*ctx->b = *in;
 
 	behavior_update(ctx->b);
@@ -70,13 +84,24 @@ int triangle_context_set_behavior(context* ctx, behavior *in)
 
 int triangle_mesh_quality(context* ctx, quality *q)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return quality_statistics(ctx->m, ctx->b, q);
 }
 
 int triangle_mesh_statistics(context* ctx, statistics *s)
 {
-	mesh *m = ctx->m;
-	behavior *b = ctx->b;
+	mesh *m;
+	behavior *b;
+
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
+	m = ctx->m;
+	b = ctx->b;
 
 	s->vertices = m->vertices.items;
 	s->undeads = m->undeads;
@@ -100,7 +125,13 @@ int triangle_mesh_statistics(context* ctx, statistics *s)
 
 int triangle_memory(context* ctx)
 {
-	mesh *m = ctx->m;
+	mesh *m;
+
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
+	m = ctx->m;
 
 	return m->vertices.maxitems * m->vertices.itembytes +
 		m->triangles.maxitems * m->triangles.itembytes +
@@ -114,20 +145,40 @@ int triangle_memory(context* ctx)
 
 int triangle_check_mesh(context *ctx)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return checkmesh(ctx->m, ctx->b);
 }
-	
+
 int triangle_check_delaunay(context *ctx)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return checkdelaunay(ctx->m, ctx->b);
 }
 
 int triangle_mesh_create(context* ctx, triangleio *in)
 {
-	mesh *m = ctx->m;
-	behavior *b = ctx->b;
+	mesh *m;
+	behavior *b;
 
 	int status = 0;
+
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
+	m = ctx->m;
+	b = ctx->b;
+
+	/* Mesh already created. */
+	if (m->triangles.items > 0) {
+		return TRI_FAILURE;
+	}
 
 	status = transfernodes(m, b, in->pointlist, in->pointattributelist,
 		in->pointmarkerlist, in->numberofpoints,
@@ -193,10 +244,22 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 
 int triangle_mesh_load(context* ctx, triangleio *in)
 {
-	mesh *m = ctx->m;
-	behavior *b = ctx->b;
+	mesh *m;
+	behavior *b;
 
 	int status = 0;
+
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
+	m = ctx->m;
+	b = ctx->b;
+	
+	/* Mesh already created. */
+	if (m->triangles.items > 0) {
+		return TRI_FAILURE;
+	}
 
 	//if (!b->refine) {
 	//   ... don't need to check. calling this method implies the option.
@@ -251,10 +314,17 @@ int triangle_mesh_load(context* ctx, triangleio *in)
 
 int triangle_mesh_refine(context* ctx)
 {
-	mesh *m = ctx->m;
-	behavior *b = ctx->b;
+	mesh *m;
+	behavior *b;
 
 	int status = 0;
+
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
+	m = ctx->m;
+	b = ctx->b;
 
 #ifndef CDT_ONLY
 	if (b->quality && (m->triangles.items > 0)) {
@@ -275,10 +345,17 @@ int triangle_mesh_refine(context* ctx)
 int triangle_mesh_copy(context* ctx, triangleio *out,
 					   int edges, int neighbors)
 {
-	mesh *m = ctx->m;
-	behavior *b = ctx->b;
+	mesh *m;
+	behavior *b;
 
 	int status = 0;
+
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
+	m = ctx->m;
+	b = ctx->b;
 
 	if (b->jettison) {
 		out->numberofpoints = m->vertices.items - m->undeads;
@@ -331,40 +408,64 @@ int triangle_mesh_copy(context* ctx, triangleio *out,
 
 void triangle_free(VOID *memptr)
 {
-  free(memptr);
+	free(memptr);
 }
 
 #ifndef NO_FILE_IO
 
 int triangle_write_nodes(context *ctx, FILE *file)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return file_writenodes(ctx->m, ctx->b, file);
 }
 
 int triangle_write_elements(context *ctx, FILE *file)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return file_writeelements(ctx->m, ctx->b, file);
 }
 
 int triangle_write_poly(context *ctx, FILE *file,
 						REAL *holelist, int holes, REAL *regionlist, int regions)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return file_writepoly(ctx->m, ctx->b, file,
 		holelist, holes, regionlist, regions);
 }
 
 int triangle_write_edges(context *ctx, FILE *file)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return file_writeedges(ctx->m, ctx->b, file);
 }
 
 int triangle_write_neighbors(context *ctx, FILE *file)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return file_writeneighbors(ctx->m, ctx->b, file);
 }
 
 int triangle_write_eps(context *ctx, FILE *file)
 {
+	if (check_context(ctx) < 0) {
+		return TRI_NULL;
+	}
+
 	return file_write_eps(ctx->m, ctx->b, file);
 }
 

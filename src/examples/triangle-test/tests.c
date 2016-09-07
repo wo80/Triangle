@@ -26,25 +26,28 @@ int test_context_create_destroy()
 
 int test_behavior_parse()
 {
-	behavior b;
+	context *ctx = triangle_context_create();
+	behavior *b;
 	
 	int result = SUCCESS;
 	
-	triangle_behavior_parse(&b, "prq25U100a2.5lcznYYS100");
+	triangle_context_options(ctx, "prq25U100a2.5lcznYYS100");
 
-	result &= b.poly;
-	result &= b.refine;
-	result &= b.quality;
-	result &= (b.minangle == 25.0);
-	result &= (b.maxangle == 100.0);
-	result &= b.fixedarea;
-	result &= (b.maxarea == 2.5);
-	result &= !b.dwyer;
-	result &= b.convex;
-	result &= (b.firstnumber == 0);
-	result &= b.neighbors;
-	result &= (b.nobisect == 2);
-	result &= (b.steiner == 100);
+	b = ctx->b;
+
+	result &= b->poly;
+	result &= b->refine;
+	result &= b->quality;
+	result &= (b->minangle == 25.0);
+	result &= (b->maxangle == 100.0);
+	result &= b->fixedarea;
+	result &= (b->maxarea == 2.5);
+	result &= !b->dwyer;
+	result &= b->convex;
+	result &= (b->firstnumber == 0);
+	result &= b->neighbors;
+	result &= (b->nobisect == 2);
+	result &= (b->steiner == 100);
 	
 	return result;
 }
@@ -58,7 +61,7 @@ int test_mesh_create(context *ctx)
 
 	create_rectangle(&in, 0.0, 10.0, 1.0, 0.0);
 
-	triangle_behavior_parse(ctx->b, "pczAn");
+	triangle_context_options(ctx, "pczAn");
 
 	triangle_mesh_create(ctx, &in);
 
@@ -164,7 +167,7 @@ int test_mesh_load_refine(context *ctx)
 
 	create_rectangle_mesh(&in, 0.0, 10.0, 1.0, 0.0);
 	
-	triangle_behavior_parse(ctx->b, "prazBP");
+	triangle_context_options(ctx, "prazBP");
 
 	triangle_mesh_load(ctx, &in);
 
