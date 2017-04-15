@@ -26,11 +26,11 @@ The static library code is based on the following sources:
   Copyright Hale Erten, Alper Üngör  
   https://www.cise.ufl.edu/~ungor/aCute/download.html
 
-A Visual Studio solution (*Triangle.sln*) can be found in the `src` directory (you can use [Microsoft Visual Studio Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) edition to compile all projects). No platform specific code is used, so all projects should as well compile on Linux or Mac.
+A Visual Studio solution (*Triangle.sln*) can be found in the `src` directory (you can use [Microsoft Visual Studio Community](https://www.visualstudio.com/vs/community/) edition to compile all projects). No platform specific code is used, so all projects should as well compile on Linux or Mac.
 
 If you don't want to use the aCute extension, add `NO_ACUTE` to preprocessor definitions.
 
-##Changes
+## Changes ##
 
 Changes to Triangle:
 
@@ -54,6 +54,6 @@ Changes to aCute:
 
 Please refer to the commit history if you need a complete changelog.
 
-##License
+## License ##
 
 Please note that although both Triangle and aCute are freely available to researchers, they may not be sold or included in commercial products without a license. Make sure to take a look at the original [README](https://github.com/wo80/Triangle/tree/master/src/Triangle) included in the Triangle source dir.
