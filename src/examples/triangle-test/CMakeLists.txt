@@ -5,3 +5,7 @@ add_executable(triangle-test
    )
 
 target_link_libraries(triangle-test PRIVATE triangle::libtriangle)
+
+add_test(
+   NAME triangle-test
+   COMMAND triangle-test)

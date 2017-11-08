@@ -7,5 +7,10 @@ project(Triangle
 
 option(TRIANGLE_ENABLE_ACUTE "Enable the aCute extension." ON)
 
+option(BUILD_TESTING "Enable unit tests." ON)
+if(BUILD_TESTING)
+   enable_testing()
+endif()
+
 add_subdirectory(Triangle)
 add_subdirectory(examples)
