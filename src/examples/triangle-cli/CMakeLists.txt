@@ -4,4 +4,4 @@ add_executable(triangle-cli
    )
 set_target_properties(triangle-cli PROPERTIES OUTPUT_NAME triangle)
 
-target_link_libraries(triangle-cli PRIVATE triangle::triangle)
+target_link_libraries(triangle-cli PRIVATE triangle::libtriangle)
