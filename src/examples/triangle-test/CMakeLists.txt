@@ -4,7 +4,7 @@ add_executable(triangle-test
    util.c
    )
 
-target_link_libraries(triangle-test PRIVATE triangle::libtriangle)
+target_link_libraries(triangle-test PRIVATE Triangle::libtriangle)
 
 add_test(
    NAME triangle-test

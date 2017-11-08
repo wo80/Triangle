@@ -14,3 +14,31 @@ endif()
 
 add_subdirectory(Triangle)
 add_subdirectory(examples)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+   "${CMAKE_CURRENT_BINARY_DIR}/Triangle/TriangleConfigVersion.cmake"
+   VERSION ${Triangle_VERSION}
+   COMPATIBILITY AnyNewerVersion
+   )
+
+export(EXPORT TriangleTargets
+   FILE "${CMAKE_CURRENT_BINARY_DIR}/Triangle/TriangleTargets.cmake"
+   NAMESPACE Triangle::
+   )
+configure_file(cmake/TriangleConfig.cmake
+   "${CMAKE_CURRENT_BINARY_DIR}/Triangle/TriangleConfig.cmake"
+   COPYONLY
+   )
+install(EXPORT TriangleTargets
+   FILE TriangleTargets.cmake
+   NAMESPACE Triangle::
+   DESTINATION lib/cmake/Triangle
+   )
+install(
+   FILES
+   cmake/TriangleConfig.cmake
+   "${CMAKE_CURRENT_BINARY_DIR}/Triangle/TriangleConfigVersion.cmake"
+   DESTINATION lib/cmake/Triangle
+   COMPONENT Devel
+   )

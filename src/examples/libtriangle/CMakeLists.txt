@@ -10,11 +10,11 @@ add_library(libtriangle SHARED
    triangle_api.c
    triangle_helper.c
    )
-add_library(triangle::libtriangle ALIAS libtriangle)
+add_library(Triangle::libtriangle ALIAS libtriangle)
 
 target_link_libraries(libtriangle
    PRIVATE
-   triangle::triangle
+   Triangle::triangle
    )
 target_include_directories(libtriangle
    PUBLIC
@@ -31,11 +31,19 @@ include(GenerateExportHeader)
 generate_export_header(libtriangle BASE_NAME triangle)
 
 install(
+   TARGETS libtriangle
+   EXPORT TriangleTargets
+   LIBRARY DESTINATION lib
+   ARCHIVE DESTINATION lib
+   RUNTIME DESTINATION bin
+   INCLUDES DESTINATION include
+   )
+
+install(
    FILES
    triangle_api.h
    triangle_helper.h
    ${CMAKE_CURRENT_BINARY_DIR}/triangle_export.h
-   ${CMAKE_CURRENT_BINARY_DIR}/triangle.h
    DESTINATION include
    COMPONENT Devel
    )

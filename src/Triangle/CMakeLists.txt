@@ -8,7 +8,7 @@ add_library(triangle
    triangle.c
    triangle_io.c
    )
-add_library(triangle::triangle ALIAS triangle)
+add_library(Triangle::triangle ALIAS triangle)
 
 set_target_properties(triangle
    PROPERTIES
@@ -27,3 +27,26 @@ if(NOT DEFINED TRIANGLE_ENABLE_ACUTE)
 else()
    message(STATUS "Building with aCute...")
 endif()
+
+set_property(TARGET triangle PROPERTY VERSION ${Triangle_VERSION})
+set_property(TARGET triangle PROPERTY SOVERSION 1)
+
+install(
+   TARGETS triangle
+   EXPORT TriangleTargets
+   LIBRARY DESTINATION lib
+   ARCHIVE DESTINATION lib
+   RUNTIME DESTINATION bin
+   INCLUDES DESTINATION include
+   )
+
+install(
+   FILES
+   acute.h
+   eps_writer.h
+   predicates.h
+   triangle_config.h
+   triangle.h
+   DESTINATION include
+   COMPONENT Devel
+   )

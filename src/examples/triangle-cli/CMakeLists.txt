@@ -4,4 +4,14 @@ add_executable(triangle-cli
    )
 set_target_properties(triangle-cli PROPERTIES OUTPUT_NAME triangle)
 
-target_link_libraries(triangle-cli PRIVATE triangle::libtriangle)
+target_link_libraries(triangle-cli PRIVATE Triangle::libtriangle)
+
+install(
+   TARGETS triangle-cli
+   EXPORT TriangleTargets
+   LIBRARY DESTINATION lib
+   ARCHIVE DESTINATION lib
+   RUNTIME DESTINATION bin
+   INCLUDES DESTINATION include
+   COMPONENT bin
+   )
