@@ -31,6 +31,8 @@ endif()
 set_property(TARGET triangle PROPERTY VERSION ${Triangle_VERSION})
 set_property(TARGET triangle PROPERTY SOVERSION 1)
 
+configure_file(triangle_version.h.in ${CMAKE_CURRENT_BINARY_DIR}/triangle_version.h @ONLY)
+
 install(
    TARGETS triangle
    EXPORT TriangleTargets
@@ -47,6 +49,7 @@ install(
    predicates.h
    triangle_config.h
    triangle.h
+   ${CMAKE_CURRENT_BINARY_DIR}/triangle_version.h
    DESTINATION include
    COMPONENT Devel
    )
