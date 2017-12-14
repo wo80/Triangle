@@ -85,7 +85,7 @@ if (tristatus != TRI_OK) handle_error();
 ----
 Copyright (c) 2017 Johannes Zarl-Zierl.
 
-SPDX-License-Identifier: GFDL-1.3
-License-Filename: LICENSES/fdl-1.3.txt
+SPDX-License-Identifier: CC-BY-SA-4.0
+License-Filename: LICENSES/cc-by-sa-4.0.txt
 
-Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.3 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+This document is distributed under the Creative Commons Attribution Share Alike 4.0 license.
