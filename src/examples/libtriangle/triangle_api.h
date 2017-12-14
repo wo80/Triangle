@@ -2,11 +2,13 @@
 #define TRIANGLE_API_H
 
 #include <triangle.h>
+#include <triangle_export.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#define EXPORT __declspec(dllexport)
+//#define EXPORT __declspec(dllexport)
+#define EXPORT TRIANGLE_EXPORT
 
 #ifdef __cplusplus
 extern "C" {
