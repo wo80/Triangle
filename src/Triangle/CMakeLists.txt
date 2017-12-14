@@ -21,7 +21,7 @@ target_include_directories(triangle
    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>
    )
 
-if(NOT DEFINED TRIANGLE_ENABLE_ACUTE)
+if(NOT TRIANGLE_ENABLE_ACUTE)
    message(STATUS "Building without aCute...")
    target_compile_options(triangle PRIVATE -DNO_ACUTE)
 else()
