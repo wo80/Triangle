@@ -39,7 +39,7 @@ add_library(triangle-api SHARED
 add_library(Triangle::triangle-api ALIAS triangle-api)
 
 target_link_libraries(triangle-api
-   PRIVATE
+	PUBLIC
    Triangle::triangle
    )
 target_include_directories(triangle-api
