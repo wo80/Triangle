@@ -1,7 +1,7 @@
 #ifndef TRIANGLE_INTERNAL_H
 #define TRIANGLE_INTERNAL_H
 
-#include "triangle.h"
+#include "../triangle.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -17,6 +17,7 @@ set_target_properties(triangle
 target_link_libraries(triangle PRIVATE -lm)
 target_include_directories(triangle
    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>
+	PRIVATE private
    )
 
 if(NOT TRIANGLE_ENABLE_ACUTE)
@@ -45,6 +46,7 @@ target_include_directories(triangle-api
    PUBLIC
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
    $<INSTALL_INTERFACE:include>
+	PRIVATE private
    )
 
 set_property(TARGET triangle-api PROPERTY VERSION ${Triangle_VERSION})
@@ -73,10 +75,9 @@ install(
    #predicates.h
    triangle_config.h
    triangle.h
-   ${CMAKE_CURRENT_BINARY_DIR}/triangle_version.h
 	# triangle-api
    triangle_api.h
-   triangle_helper.h
+   ${CMAKE_CURRENT_BINARY_DIR}/triangle_version.h
    ${CMAKE_CURRENT_BINARY_DIR}/triangle_export.h
    DESTINATION include
    COMPONENT Devel
