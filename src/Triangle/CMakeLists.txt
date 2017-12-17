@@ -1,6 +1,4 @@
-# the libraries in this directory are not meant for direct consumption
-# (e.g. there are no proper export definitions)
-
+# triangle ist the legacy interface:
 add_library(triangle
    acute.c
    eps_writer.c
@@ -23,7 +21,7 @@ target_include_directories(triangle
 
 if(NOT TRIANGLE_ENABLE_ACUTE)
    message(STATUS "Building without aCute...")
-   target_compile_options(triangle PRIVATE -DNO_ACUTE)
+	target_compile_options(triangle PUBLIC -DNO_ACUTE)
 else()
    message(STATUS "Building with aCute...")
 endif()
@@ -31,10 +29,35 @@ endif()
 set_property(TARGET triangle PROPERTY VERSION ${Triangle_VERSION})
 set_property(TARGET triangle PROPERTY SOVERSION 1)
 
+# triangle-api is the "modern" interface:
+# force shared library for now, because otherwise check_behavior is defined and clashes with another define in triangle-cli
+add_library(triangle-api SHARED
+   triangle_api.c
+   triangle_helper.c
+   )
+add_library(Triangle::triangle-api ALIAS triangle-api)
+
+target_link_libraries(triangle-api
+   PRIVATE
+   Triangle::triangle
+   )
+target_include_directories(triangle-api
+   PUBLIC
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+   $<INSTALL_INTERFACE:include>
+   )
+
+set_property(TARGET triangle-api PROPERTY VERSION ${Triangle_VERSION})
+set_property(TARGET triangle-api PROPERTY SOVERSION 1)
+set_property(TARGET triangle-api PROPERTY C_VISIBILITY_PRESET hidden)
+
 configure_file(triangle_version.h.in ${CMAKE_CURRENT_BINARY_DIR}/triangle_version.h @ONLY)
 
+include(GenerateExportHeader)
+generate_export_header(triangle-api BASE_NAME triangle)
+
 install(
-   TARGETS triangle
+   TARGETS triangle triangle-api
    EXPORT TriangleTargets
    LIBRARY DESTINATION lib
    ARCHIVE DESTINATION lib
@@ -44,12 +67,17 @@ install(
 
 install(
    FILES
-   acute.h
-   eps_writer.h
-   predicates.h
+	# triangle
+	#acute.h
+   #eps_writer.h
+   #predicates.h
    triangle_config.h
    triangle.h
    ${CMAKE_CURRENT_BINARY_DIR}/triangle_version.h
+	# triangle-api
+   triangle_api.h
+   triangle_helper.h
+   ${CMAKE_CURRENT_BINARY_DIR}/triangle_export.h
    DESTINATION include
    COMPONENT Devel
    )
