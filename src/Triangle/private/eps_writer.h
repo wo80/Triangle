@@ -1,7 +1,7 @@
 #ifndef EPS_WRITER_H
 #define EPS_WRITER_H
 
-#include "triangle.h"
+#include "../triangle.h"
 
 #define rint(x) ((int)((x)+0.5))  /* MSC does not have rint() function */
 

@@ -39,7 +39,9 @@ int test_behavior_parse()
 	result &= b->refine;
 	result &= b->quality;
 	result &= (b->minangle == 25.0);
-	result &= (b->maxangle == 100.0);
+#ifndef NO_ACUTE
+    result &= (b->maxangle == 100.0);
+#endif
 	result &= b->fixedarea;
 	result &= (b->maxarea == 2.5);
 	result &= !b->dwyer;

@@ -1,7 +1,7 @@
 #ifndef TRIANGLE_HELPER_H
 #define TRIANGLE_HELPER_H
 
-#include "triangle_api.h"
+#include "../triangle_api.h"
 
 int check_context(context* c);
 int check_behavior(behavior* b);
