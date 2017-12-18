@@ -27,6 +27,8 @@ The static library code is based on the following sources:
 
 If you don't want to use the aCute extension, add `NO_ACUTE` to preprocessor definitions.
 
+A brief [porting guide](https://github.com/wo80/Triangle/wiki/Porting-Guide) for the new API is available in the wiki.
+
 ## Changes ##
 
 Changes to Triangle:
