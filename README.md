@@ -12,8 +12,7 @@ The main goal of this project is to turn Triangle into a re-usable library and t
 
 The Triangle repository contains the following directory structure:
 
-    src/Triangle                 Static library (original Triangle and aCute code)
-    src/examples/libtriangle     Dynamic library code (new Triangle C API)
+    src/Triangle                 Original Triangle and aCute code and new Triangle C API
     src/examples/triangle-cli    Command-line interface
     src/examples/triangle-test   Simple test program
 
