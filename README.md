@@ -26,8 +26,6 @@ The static library code is based on the following sources:
   Copyright Hale Erten, Alper Üngör  
   https://www.cise.ufl.edu/~ungor/aCute/download.html
 
-A Visual Studio solution (*Triangle.sln*) can be found in the `src` directory (you can use [Microsoft Visual Studio Community](https://www.visualstudio.com/vs/community/) edition to compile all projects). No platform specific code is used, so all projects should as well compile on Linux or Mac.
-
 If you don't want to use the aCute extension, add `NO_ACUTE` to preprocessor definitions.
 
 ## Changes ##
