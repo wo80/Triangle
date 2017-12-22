@@ -6,6 +6,7 @@
 #include "util.h"
 
 #include "triangle_config.h"
+#include "triangle_version.h"
 
 /*****************************************************************************/
 /*                                                                           */
@@ -84,7 +85,7 @@ void syntax()
 
 void info()
 {
-	printf("Triangle (version 1.6)\n");
+	printf("Triangle (version " TRIANGLE_VERSION ")\n");
 	printf("A Two-Dimensional Quality Mesh Generator and Delaunay Triangulator.\n");
 	printf("\n");
 	printf("Copyright 1993, 1995, 1997, 1998, 2002, 2005 Jonathan Richard Shewchuk\n");
