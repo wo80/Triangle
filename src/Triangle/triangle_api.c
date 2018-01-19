@@ -403,6 +403,10 @@ int triangle_mesh_copy(context* ctx, triangleio *out,
 		writeneighbors(m, b, &out->neighborlist);
 	}
 
+	if (out->pointmarkerlist != NULL) {
+		restore_pointmarkers(ctx, out->pointmarkerlist);
+	}
+
 	return status;
 }
 

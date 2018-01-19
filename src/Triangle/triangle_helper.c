@@ -72,3 +72,25 @@ int check_triangleio(triangleio* io, int firstnumber)
 
 	return TRI_OK;
 }
+
+int restore_pointmarkers(context* ctx, int *pointmarkers)
+{
+	mesh *m;
+	behavior *b;
+	vertex vertexloop;
+	int vertexnumber;
+
+	m = ctx->m;
+	b = ctx->b;
+
+	traversalinit(&m->vertices);
+	vertexnumber = 0;
+	vertexloop = vertextraverse(m);
+	while (vertexloop != (vertex)NULL) {
+		if (!b->jettison || (vertextype(vertexloop) != UNDEADVERTEX)) {
+			setvertexmark(vertexloop, pointmarkers[vertexnumber]);
+			vertexnumber++;
+		}
+		vertexloop = vertextraverse(m);
+	}
+}
