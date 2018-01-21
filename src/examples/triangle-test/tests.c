@@ -51,6 +51,7 @@ int test_behavior_parse()
 	result &= (b->nobisect == 2);
 	result &= (b->steiner == 100);
 	
+	triangle_context_destroy(ctx);
 	return result;
 }
 
