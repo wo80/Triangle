@@ -1,5 +1,6 @@
 
 #include "triangle_helper.h"
+#include "triangle_internal.h"
 
 int check_context(context* ctx)
 {
