@@ -1539,7 +1539,7 @@ void makesubseg(mesh *m, struct osub *newsubseg)
 /*                                                                           */
 /*****************************************************************************/
 
-void triangleinit(mesh *m, behavior *b)
+void triangleinit(mesh *m)
 {
   poolzero(&m->vertices);
   poolzero(&m->triangles);
