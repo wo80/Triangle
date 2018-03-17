@@ -549,7 +549,6 @@ int file_readsegments_internal(FILE *file, triangleio *io)
 	char *stringptr;
 
 	int segmentmarkers;
-	int boundmarker;
 	int insegments;
 	int i;
 
@@ -577,7 +576,6 @@ int file_readsegments_internal(FILE *file, triangleio *io)
 		io->segmentmarkerlist = (int *)trimalloc(insegments * sizeof(int));
 	}
 
-	boundmarker = 0;
 	/* Read the segments. */
 	for (i = 0; i < insegments; i++) {
 		stringptr = readline(inputline, file);
