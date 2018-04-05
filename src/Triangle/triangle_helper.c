@@ -74,7 +74,7 @@ int check_triangleio(triangleio* io, int firstnumber)
 	return TRI_OK;
 }
 
-int restore_pointmarkers(context* ctx, int *pointmarkers)
+void restore_pointmarkers(context* ctx, int *pointmarkers)
 {
 	mesh *m;
 	behavior *b;
