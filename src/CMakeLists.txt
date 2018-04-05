@@ -6,7 +6,7 @@ project(Triangle
    )
 
 option(TRIANGLE_ENABLE_ACUTE "Enable the aCute extension." ON)
-
+option(BUILD_SHARED_LIBS "Build libraries as shared libraries." ON)
 option(BUILD_TESTING "Enable unit tests." ON)
 if(BUILD_TESTING)
    enable_testing()
