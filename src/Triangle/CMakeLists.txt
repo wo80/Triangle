@@ -31,8 +31,7 @@ set_property(TARGET triangle PROPERTY VERSION ${Triangle_VERSION})
 set_property(TARGET triangle PROPERTY SOVERSION 1)
 
 # triangle-api is the "modern" interface:
-# force shared library for now, because otherwise check_behavior is defined and clashes with another define in triangle-cli
-add_library(triangle-api SHARED
+add_library(triangle-api
    triangle_api.c
    triangle_helper.c
    )

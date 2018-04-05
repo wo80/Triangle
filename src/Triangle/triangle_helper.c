@@ -2,7 +2,7 @@
 #include "triangle_helper.h"
 #include "triangle_internal.h"
 
-int check_context(context* ctx)
+int triangle_check_context(context* ctx)
 {
 	if (ctx == NULL) {
 		return TRI_FAILURE;
@@ -14,7 +14,7 @@ int check_context(context* ctx)
 	return TRI_OK;
 }
 
-int check_behavior(behavior* b)
+int triangle_check_behavior(behavior* b)
 {
 	if (b->fixedarea && b->maxarea <= 0.0) {
 		return TRI_OPTIONS;
@@ -22,7 +22,7 @@ int check_behavior(behavior* b)
 	return TRI_OK;
 }
 
-int check_triangleio(triangleio* io, int firstnumber)
+int triangle_check_triangleio(triangleio* io, int firstnumber)
 {
 	int i;
 	int a, b, c;
@@ -74,7 +74,7 @@ int check_triangleio(triangleio* io, int firstnumber)
 	return TRI_OK;
 }
 
-void restore_pointmarkers(context* ctx, int *pointmarkers)
+void triangle_restore_pointmarkers(context* ctx, int *pointmarkers)
 {
 	mesh *m;
 	behavior *b;
