@@ -326,41 +326,26 @@ void behavior_update(behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef EXTERNAL_TEST
+/*****************************************************************************/
+/*  Symbol EXTERNAL_TEST was removed. Function 'triunsuitable' can now be    */
+/*  can now by assigning the 'triunsuitable_user_func' function ptr.         */
+/*  Please note that the user function is only used if the 'u' program       */
+/*  is set.                                                                  */
+/*****************************************************************************/
 
-int triunsuitable();
+int (*triunsuitable_user_func)(vertex, vertex, vertex, REAL) = NULL;
 
-#else /* not EXTERNAL_TEST */
+void triangle_set_triunsuitable_user_func(int(*func)(vertex, vertex, vertex, REAL))
+{
+  triunsuitable_user_func = func;
+}
 
 int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area)
 {
-  REAL dxoa, dxda, dxod;
-  REAL dyoa, dyda, dyod;
-  REAL oalen, dalen, odlen;
-  REAL maxlen;
-
-  dxoa = triorg[0] - triapex[0];
-  dyoa = triorg[1] - triapex[1];
-  dxda = tridest[0] - triapex[0];
-  dyda = tridest[1] - triapex[1];
-  dxod = triorg[0] - tridest[0];
-  dyod = triorg[1] - tridest[1];
-  /* Find the squares of the lengths of the triangle's three edges. */
-  oalen = dxoa * dxoa + dyoa * dyoa;
-  dalen = dxda * dxda + dyda * dyda;
-  odlen = dxod * dxod + dyod * dyod;
-  /* Find the square of the length of the longest edge. */
-  maxlen = (dalen > oalen) ? dalen : oalen;
-  maxlen = (odlen > maxlen) ? odlen : maxlen;
-
-  if (maxlen > 0.05 * (triorg[0] * triorg[0] + triorg[1] * triorg[1]) + 0.02) {
-    return 1;
-  } else {
-    return 0;
-  }
+  if (triunsuitable_user_func)
+    return triunsuitable_user_func(triorg, tridest, triapex, area);
+  return 0;
 }
-
-#endif /* not EXTERNAL_TEST */
 
 /**                                                                         **/
 /**                                                                         **/
@@ -7381,7 +7366,7 @@ void splittriangle(mesh *m, behavior *b,
     /* Create a new vertex at the triangle's circumcenter. */
     newvertex = (vertex) poolalloc(&m->vertices);
 #ifndef NO_ACUTE
-    if (b->fixedarea || b->vararea) {
+    if (b->fixedarea || b->vararea || b->usertest) {
       // TODO: Acute fails for certain area constraints.
       findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
     } else {
