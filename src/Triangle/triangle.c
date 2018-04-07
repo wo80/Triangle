@@ -7628,7 +7628,7 @@ void highorder(mesh *m, behavior *b)
   }
 }
 
-/********* File I/O routines begin here                              *********/
+/********* Array I/O routines begin here                             *********/
 /**                                                                         **/
 /**                                                                         **/
 
@@ -7702,7 +7702,7 @@ int transfernodes(mesh *m, behavior *b, REAL *pointlist,
 
 /*****************************************************************************/
 /*                                                                           */
-/*  writenodes()   Number the vertices and write them to a .node file.       */
+/*  writenodes()   Number the vertices and write them to arrays.             */
 /*                                                                           */
 /*  To save memory, the vertex numbers are written over the boundary markers */
 /*  after the vertices are written to a file.                                */
@@ -7800,7 +7800,7 @@ void numbernodes(mesh *m, behavior *b)
 
 /*****************************************************************************/
 /*                                                                           */
-/*  writeelements()   Write the triangles to an .ele file.                   */
+/*  writeelements()   Write the triangles to arrays.                         */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -7870,7 +7870,7 @@ void writeelements(mesh *m, behavior *b,
 
 /*****************************************************************************/
 /*                                                                           */
-/*  writepoly()   Write the segments and holes to a .poly file.              */
+/*  writepoly()   Write the segments and holes to arrays.                    */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -7920,7 +7920,7 @@ void writepoly(mesh *m, behavior *b,
 
 /*****************************************************************************/
 /*                                                                           */
-/*  writeedges()   Write the edges to an .edge file.                         */
+/*  writeedges()   Write the edges to arrays.                                */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -7988,6 +7988,12 @@ void writeedges(mesh *m, behavior *b,
     triangleloop.tri = triangletraverse(m);
   }
 }
+
+/*****************************************************************************/
+/*                                                                           */
+/*  writeneighbors()   Write the list of neighbours to an array.             */
+/*                                                                           */
+/*****************************************************************************/
 
 void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 {
@@ -8069,7 +8075,7 @@ void writeneighbors(mesh *m, behavior *b, int **neighborlist)
 
 /**                                                                         **/
 /**                                                                         **/
-/********* File I/O routines end here                                *********/
+/********* Array I/O routines end here                               *********/
 
 
 /*****************************************************************************/
