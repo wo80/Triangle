@@ -8109,13 +8109,6 @@ int quality_statistics(mesh *m, behavior *b, quality *q)
   int acutebiggest;
   int i, ii, j, k;
 
-  if (q->angletable == NULL) {
-    return -1;
-  }
-  if (q->aspecttable == NULL) {
-    return -1;
-  }
-
   radconst = PI / 18.0;
   degconst = 180.0 / PI;
   for (i = 0; i < 8; i++) {

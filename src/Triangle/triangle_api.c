@@ -37,7 +37,7 @@ context* triangle_context_create()
 
 void triangle_context_destroy(context* ctx)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return;
 	}
 
@@ -51,18 +51,18 @@ void triangle_context_destroy(context* ctx)
 
 int triangle_context_options(context* ctx, char *options)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
 	parsecommandline(options, ctx->b);
 
-	return check_behavior(ctx->b);
+	return triangle_check_behavior(ctx->b);
 }
 
 void triangle_context_get_behavior(context* ctx, behavior *out)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return;
 	}
 
@@ -71,7 +71,7 @@ void triangle_context_get_behavior(context* ctx, behavior *out)
 
 int triangle_context_set_behavior(context* ctx, behavior *in)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -79,12 +79,12 @@ int triangle_context_set_behavior(context* ctx, behavior *in)
 
 	behavior_update(ctx->b);
 
-	return check_behavior(in);
+	return triangle_check_behavior(in);
 }
 
 int triangle_mesh_quality(context* ctx, quality *q)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -96,7 +96,7 @@ int triangle_mesh_statistics(context* ctx, statistics *s)
 	mesh *m;
 	behavior *b;
 
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -127,7 +127,7 @@ int triangle_memory(context* ctx)
 {
 	mesh *m;
 
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -145,7 +145,7 @@ int triangle_memory(context* ctx)
 
 int triangle_check_mesh(context *ctx)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -154,7 +154,7 @@ int triangle_check_mesh(context *ctx)
 
 int triangle_check_delaunay(context *ctx)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -168,7 +168,7 @@ int triangle_mesh_create(context* ctx, triangleio *in)
 
 	int status = 0;
 
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -249,7 +249,7 @@ int triangle_mesh_load(context* ctx, triangleio *in)
 
 	int status = 0;
 
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -319,7 +319,7 @@ int triangle_mesh_refine(context* ctx)
 
 	int status = 0;
 
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -350,7 +350,7 @@ int triangle_mesh_copy(context* ctx, triangleio *out,
 
 	int status = 0;
 
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -404,7 +404,7 @@ int triangle_mesh_copy(context* ctx, triangleio *out,
 	}
 
 	if (out->pointmarkerlist != NULL) {
-		restore_pointmarkers(ctx, out->pointmarkerlist);
+		triangle_restore_pointmarkers(ctx, out->pointmarkerlist);
 	}
 
 	return status;
@@ -419,7 +419,7 @@ void triangle_free(VOID *memptr)
 
 int triangle_write_nodes(context *ctx, FILE *file)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -428,7 +428,7 @@ int triangle_write_nodes(context *ctx, FILE *file)
 
 int triangle_write_elements(context *ctx, FILE *file)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -438,7 +438,7 @@ int triangle_write_elements(context *ctx, FILE *file)
 int triangle_write_poly(context *ctx, FILE *file,
 						REAL *holelist, int holes, REAL *regionlist, int regions)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -448,7 +448,7 @@ int triangle_write_poly(context *ctx, FILE *file,
 
 int triangle_write_edges(context *ctx, FILE *file)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -457,7 +457,7 @@ int triangle_write_edges(context *ctx, FILE *file)
 
 int triangle_write_neighbors(context *ctx, FILE *file)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 
@@ -466,7 +466,7 @@ int triangle_write_neighbors(context *ctx, FILE *file)
 
 int triangle_write_eps(context *ctx, FILE *file)
 {
-	if (check_context(ctx) < 0) {
+	if (triangle_check_context(ctx) < 0) {
 		return TRI_NULL;
 	}
 

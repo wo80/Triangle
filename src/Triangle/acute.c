@@ -2391,7 +2391,7 @@ int getWedgeIntersectionWithoutMaxAngle(mesh *m, behavior *b,
 	if(i == 0){
 		// line1 & line2: p1
 		lineLineIntersection(x0, y0, x_1, y_1, x1, y1, x_2, y_2, p1);		
-		if((p1[0] == 1.0)){			
+		if(p1[0] == 1.0){
 			// #0
 			initialConvexPoly[0] = p1[1]; initialConvexPoly[1] = p1[2];
 			// #1
