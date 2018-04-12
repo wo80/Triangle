@@ -229,15 +229,6 @@ extern "C" {
 	 */
 	EXPORT int triangle_read_area(const char* filename, triangleio *io);
 
-	/**
-	 * Set user func to steer mesh refinement. Function will only be invoked if the 'u' program
-	 * option is set.
-	 * @param func Callback function pointer. Takes three coordinates associated with a triangle and
-	 *        the triangle's area. Function pointer should 1 if the triangle should be refined
-	 *        further and 0 otherwise.
-	 */
-	EXPORT void triangle_set_triunsuitable_user_func(int(*func)(vertex, vertex, vertex, REAL));
-
 #endif /* NO_FILE_IO */
 
 #ifdef __cplusplus

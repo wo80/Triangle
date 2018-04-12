@@ -299,58 +299,6 @@ void behavior_update(behavior *b)
 /**                                                                         **/
 /********* Triangle utility functions end here                       *********/
 
-/********* User-defined triangle evaluation routine begins here      *********/
-/**                                                                         **/
-/**                                                                         **/
-
-/*****************************************************************************/
-/*                                                                           */
-/*  triunsuitable()   Determine if a triangle is unsuitable, and thus must   */
-/*                    be further refined.                                    */
-/*                                                                           */
-/*  You may write your own procedure that decides whether or not a selected  */
-/*  triangle is too big (and needs to be refined).  There are two ways to do */
-/*  this.                                                                    */
-/*                                                                           */
-/*  (1)  Modify the procedure `triunsuitable' below, then recompile          */
-/*  Triangle.                                                                */
-/*                                                                           */
-/*  (2)  Define the symbol EXTERNAL_TEST (either by adding the definition    */
-/*  to this file, or by using the appropriate compiler switch).  This way,   */
-/*  you can compile triangle.c separately from your test.  Write your own    */
-/*  `triunsuitable' procedure in a separate C file (using the same prototype */
-/*  as below).  Compile it and link the object code with triangle.o.         */
-/*                                                                           */
-/*  This procedure returns 1 if the triangle is too large and should be      */
-/*  refined; 0 otherwise.                                                    */
-/*                                                                           */
-/*****************************************************************************/
-
-/*****************************************************************************/
-/*  Symbol EXTERNAL_TEST was removed. Function 'triunsuitable' can now be    */
-/*  can now by assigning the 'triunsuitable_user_func' function ptr.         */
-/*  Please note that the user function is only used if the 'u' program       */
-/*  is set.                                                                  */
-/*****************************************************************************/
-
-int (*triunsuitable_user_func)(vertex, vertex, vertex, REAL) = NULL;
-
-void triangle_set_triunsuitable_user_func(int(*func)(vertex, vertex, vertex, REAL))
-{
-  triunsuitable_user_func = func;
-}
-
-int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area)
-{
-  if (triunsuitable_user_func)
-    return triunsuitable_user_func(triorg, tridest, triapex, area);
-  return 0;
-}
-
-/**                                                                         **/
-/**                                                                         **/
-/********* User-defined triangle evaluation routine ends here        *********/
-
 /********* Memory allocation and program exit wrappers begin here    *********/
 /**                                                                         **/
 /**                                                                         **/
@@ -2104,7 +2052,7 @@ void testtriangle(mesh *m, behavior *b, struct otri *testtri)
 
     if (b->usertest) {
       /* Check whether the user thinks this triangle is too large. */
-      if (triunsuitable(torg, tdest, tapex, area)) {
+      if (b->triunsuitable_user_func && b->triunsuitable_user_func(torg, tdest, tapex, area)) {
         enqueuebadtri(m, b, testtri, minedge, tapex, torg, tdest);
         return;
       }

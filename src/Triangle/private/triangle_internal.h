@@ -6,18 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/********* User-defined triangle evaluation routine begins here      *********/
-/**                                                                         **/
-
-/**
- * Determine if a triangle is unsuitable, and thus must be further refined.
- */
-int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area);
-
-
-/**                                                                         **/
-/********* User-defined triangle evaluation routine ends here        *********/
-
 void interpolate(vertex newvertex, vertex org, vertex dest, vertex apex, int nextras);
 
 void behavior_update(behavior *b);
