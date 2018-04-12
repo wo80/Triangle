@@ -110,14 +110,20 @@ Command Line Switches Details:
         constraint by invoking the -a switch twice, once with and once
         without a number following.  Each area specified may include a
         decimal point.
-    -u  Imposes a user-defined constraint on triangle size.  There are two
-        ways to use this feature.  One is to edit the triunsuitable()
-        procedure in triangle.c to encode any constraint you like, then
-        recompile Triangle.  The other is to compile triangle.c with the
-        EXTERNAL_TEST symbol set (compiler switch -DEXTERNAL_TEST), then
-        link Triangle with a separate object file that implements
-        triunsuitable().  In either case, the -u switch causes the user-
-        defined test to be applied to every triangle.
+    -u  Imposes a user-defined constraint on the triangle size. The
+        constraint can be defined by setting the function pointer in the
+        behavior struct of the context, i.e.
+
+        `ctx->b->triunsuitable_user_func = <YOUR FUNCTION PTR>`
+
+        The signature of the function is
+
+        `int (vertex triorg, vertex tridest, vertex triapex, REAL area)`
+
+        where the first three arguments represent the vertices of the
+        triangle and fourth argument represents the triangle's area.
+        The function should return 1 if the triangle is supposed to be
+        refined and 0 otherwise.
     -A  Assigns an additional floating-point attribute to each triangle
         that identifies what segment-bounded region each triangle belongs
         to.  Attributes are assigned to regions by the .poly file.  If a

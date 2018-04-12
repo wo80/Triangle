@@ -462,6 +462,11 @@ typedef struct behavior_t {
   /* Cosine of maxangle. */
   REAL maxgoodangle;
 #endif
+
+  /* Callback function for user-defined mesh sizing. */
+  /* Arguments are int (vertex triorg, vertex tridest, vertex triapex, REAL area) */
+  /* Should return 1 if triangle has to be further refined or 0 if not. */
+  int (*triunsuitable_user_func)(vertex, vertex, vertex, REAL);
 } behavior;                                     /* End of `struct behavior'. */
 
 /* Forward declaration of acute memorypool struct */

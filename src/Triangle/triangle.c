@@ -299,73 +299,6 @@ void behavior_update(behavior *b)
 /**                                                                         **/
 /********* Triangle utility functions end here                       *********/
 
-/********* User-defined triangle evaluation routine begins here      *********/
-/**                                                                         **/
-/**                                                                         **/
-
-/*****************************************************************************/
-/*                                                                           */
-/*  triunsuitable()   Determine if a triangle is unsuitable, and thus must   */
-/*                    be further refined.                                    */
-/*                                                                           */
-/*  You may write your own procedure that decides whether or not a selected  */
-/*  triangle is too big (and needs to be refined).  There are two ways to do */
-/*  this.                                                                    */
-/*                                                                           */
-/*  (1)  Modify the procedure `triunsuitable' below, then recompile          */
-/*  Triangle.                                                                */
-/*                                                                           */
-/*  (2)  Define the symbol EXTERNAL_TEST (either by adding the definition    */
-/*  to this file, or by using the appropriate compiler switch).  This way,   */
-/*  you can compile triangle.c separately from your test.  Write your own    */
-/*  `triunsuitable' procedure in a separate C file (using the same prototype */
-/*  as below).  Compile it and link the object code with triangle.o.         */
-/*                                                                           */
-/*  This procedure returns 1 if the triangle is too large and should be      */
-/*  refined; 0 otherwise.                                                    */
-/*                                                                           */
-/*****************************************************************************/
-
-#ifdef EXTERNAL_TEST
-
-int triunsuitable();
-
-#else /* not EXTERNAL_TEST */
-
-int triunsuitable(vertex triorg, vertex tridest, vertex triapex, REAL area)
-{
-  REAL dxoa, dxda, dxod;
-  REAL dyoa, dyda, dyod;
-  REAL oalen, dalen, odlen;
-  REAL maxlen;
-
-  dxoa = triorg[0] - triapex[0];
-  dyoa = triorg[1] - triapex[1];
-  dxda = tridest[0] - triapex[0];
-  dyda = tridest[1] - triapex[1];
-  dxod = triorg[0] - tridest[0];
-  dyod = triorg[1] - tridest[1];
-  /* Find the squares of the lengths of the triangle's three edges. */
-  oalen = dxoa * dxoa + dyoa * dyoa;
-  dalen = dxda * dxda + dyda * dyda;
-  odlen = dxod * dxod + dyod * dyod;
-  /* Find the square of the length of the longest edge. */
-  maxlen = (dalen > oalen) ? dalen : oalen;
-  maxlen = (odlen > maxlen) ? odlen : maxlen;
-
-  if (maxlen > 0.05 * (triorg[0] * triorg[0] + triorg[1] * triorg[1]) + 0.02) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-#endif /* not EXTERNAL_TEST */
-
-/**                                                                         **/
-/**                                                                         **/
-/********* User-defined triangle evaluation routine ends here        *********/
-
 /********* Memory allocation and program exit wrappers begin here    *********/
 /**                                                                         **/
 /**                                                                         **/
@@ -2119,7 +2052,7 @@ void testtriangle(mesh *m, behavior *b, struct otri *testtri)
 
     if (b->usertest) {
       /* Check whether the user thinks this triangle is too large. */
-      if (triunsuitable(torg, tdest, tapex, area)) {
+      if (b->triunsuitable_user_func && b->triunsuitable_user_func(torg, tdest, tapex, area)) {
         enqueuebadtri(m, b, testtri, minedge, tapex, torg, tdest);
         return;
       }
@@ -7381,7 +7314,7 @@ void splittriangle(mesh *m, behavior *b,
     /* Create a new vertex at the triangle's circumcenter. */
     newvertex = (vertex) poolalloc(&m->vertices);
 #ifndef NO_ACUTE
-    if (b->fixedarea || b->vararea) {
+    if (b->fixedarea || b->vararea || b->usertest) {
       // TODO: Acute fails for certain area constraints.
       findcircumcenter(m, b, borg, bdest, bapex, newvertex, &xi, &eta, 1);
     } else {

@@ -11,9 +11,12 @@ option(BUILD_TESTING "Enable unit tests." ON)
 if(BUILD_TESTING)
    enable_testing()
 endif()
+option(BUILD_EXAMPLES "Enable examples." ON)
+if(BUILD_EXAMPLES)
+   add_subdirectory(examples)
+endif()
 
 add_subdirectory(Triangle)
-add_subdirectory(examples)
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(

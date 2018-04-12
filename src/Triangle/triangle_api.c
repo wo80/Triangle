@@ -32,6 +32,10 @@ context* triangle_context_create()
 	m->dummysub = NULL;
 	m->dummysubbase = NULL;
 
+	/* Initialize triunsuitable user function to zero. */
+
+	b->triunsuitable_user_func = NULL;
+
 	return ctx;
 }
 
