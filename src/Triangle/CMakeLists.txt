@@ -1,5 +1,5 @@
-# triangle ist the legacy interface:
-add_library(triangle
+# triangle is the legacy interface:
+add_library(triangle STATIC
    acute.c
    eps_writer.c
    predicates.c
