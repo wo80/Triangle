@@ -4,6 +4,19 @@
 
 #include <triangle_internal.h>
 
+void triangle_version(int version[4])
+{
+	version[0] = TRIANGLE_VERSION_MAJOR;
+	version[1] = TRIANGLE_VERSION_MINOR;
+	version[2] = TRIANGLE_VERSION_PATCH;
+	
+#ifndef NO_ACUTE
+	version[3] = 1;
+#else
+	version[3] = 0;
+#endif
+}
+
 context* triangle_context_create()
 {
 	mesh *m = malloc(sizeof *m);

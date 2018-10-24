@@ -15,6 +15,22 @@ void assert(int result, char *message)
 	}
 }
 
+int test_version()
+{
+	int version[4] = { -1, -1, -1, -1 };
+
+	triangle_version(version);
+
+	int result = SUCCESS;
+
+	result &= (version[0] >= 0);
+	result &= (version[1] >= 0);
+	result &= (version[2] >= 0);
+	result &= (version[3] == 0 || version[3] == 1);
+
+	return result;
+}
+
 int test_context_create_destroy()
 {
 	context *ctx = triangle_context_create();

@@ -3,6 +3,7 @@
 
 #include <triangle.h>
 #include <triangle_export.h>
+#include <triangle_version.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +29,12 @@ extern "C" {
 		int edges;
 		rect bounds;
 	} statistics;
+
+	/**
+	 * Gets the Triangle version.
+	 * @param version Interger array of length 4 [major, minor, patch, has_acute].
+	 */
+	EXPORT void triangle_version(int version[4]);
 	
 	/**
 	 * Create a context struct.

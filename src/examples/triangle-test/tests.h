@@ -9,6 +9,8 @@
 
 void assert(int result, char *message);
 
+int test_version();
+
 int test_context_create_destroy();
 
 int test_behavior_parse();

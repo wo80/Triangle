@@ -34,6 +34,7 @@ int main()
 {
 	context *ctx;
 
+	assert(test_version(), "test_version");
 	assert(test_context_create_destroy(), "test_context_create_destroy");
 	assert(test_behavior_parse(), "test_behavior_parse");
 
