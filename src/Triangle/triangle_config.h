@@ -41,8 +41,10 @@
 /* Set correct size for pointer alignment calculations */
 #if defined(_M_X64) || defined(__amd64__)
   #define ULONG_PTR unsigned long long
+  #define LX "%llx"
 #else
   #define ULONG_PTR unsigned long
+  #define LX "%lx"
 #endif
 
 /* If yours is not a Unix system, define the NO_TIMER compiler switch to     */
