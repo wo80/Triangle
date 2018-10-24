@@ -32,7 +32,7 @@ extern "C" {
 
 	/**
 	 * Gets the Triangle version.
-	 * @param version Interger array of length 4 [major, minor, patch, has_acute].
+	 * @param version Integer array of length 4 [major, minor, patch, has_acute].
 	 */
 	EXPORT void triangle_version(int version[4]);
 	
