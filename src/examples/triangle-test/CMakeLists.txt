@@ -15,5 +15,5 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy            
             "$<TARGET_FILE_DIR:triangle-api>/$<TARGET_FILE_NAME:triangle-api>"
             "$<TARGET_FILE_DIR:triangle-test>/$<TARGET_FILE_NAME:triangle-api>"
-)
+    )
 endif()
