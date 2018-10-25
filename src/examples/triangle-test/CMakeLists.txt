@@ -10,8 +10,10 @@ add_test(
    NAME triangle-test
    COMMAND triangle-test)
 
-add_custom_command(TARGET triangle-test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy            
-        "$<TARGET_FILE_DIR:triangle-api>/$<TARGET_FILE_NAME:triangle-api>"
-        "$<TARGET_FILE_DIR:triangle-test>/$<TARGET_FILE_NAME:triangle-api>"
+if(WIN32)
+    add_custom_command(TARGET triangle-test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy            
+            "$<TARGET_FILE_DIR:triangle-api>/$<TARGET_FILE_NAME:triangle-api>"
+            "$<TARGET_FILE_DIR:triangle-test>/$<TARGET_FILE_NAME:triangle-api>"
 )
+endif()
